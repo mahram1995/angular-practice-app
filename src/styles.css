@@ -1,1 +1,193 @@
 /* You can add global styles to this file, and also import other style files */
+.ababil-card {
+    border-radius: 5px;
+    padding: 15px 15px 1px 15px;
+    flex: 2;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+}
+
+/* form input filed css */
+.ababil-input-checkbox {
+    font-size: 14px;
+    margin-top: 26px;
+
+}
+
+.ababil-input-checkbox label {
+    font-size: 13px;
+    color: #1aa89c;
+    font-weight: 500;
+}
+
+.ababil-input-field label {
+    display: block;
+    font-size: 14px;
+    transform: translate(0, -2.75rem);
+}
+
+.ababil-input-field {
+    font-size: 14px;
+}
+
+.ababil-input-field input {
+    width: 100%;
+    padding-left: 2px;
+    border: none;
+    border-bottom: 1px solid #737272;
+    transition: border-color 0.2s ease;
+    margin-top: 0px;
+}
+
+.ababil-input-field input:focus {
+    outline: none;
+    border-bottom: 2px solid #007D72;
+}
+
+
+@supports (not (-ms-ime-align:auto)) {
+    .ababil-input-field label {
+        color: #999;
+        transform: translate(0.25rem, -1.5rem);
+        /* transition: all 0.2s ease-out; */
+    }
+
+    .ababil-input-field input:focus+label,
+    .ababil-input-field input:not(:placeholder-shown)+label {
+        font-size: 15px;
+        color: #1aa89c;
+        font-weight: 500;
+        transform: translate(1px, -45px);
+    }
+}
+
+
+.ababil-input-field-date label {
+    display: block;
+    font-size: 14px;
+
+    transform: translate(0, -2.7rem);
+}
+
+.ababil-input-field-date {
+    font-size: 14px;
+}
+
+.ababil-input-field-date .error-message {
+    color: red;
+    font-size: 12px;
+    height: 10px;
+    padding-left: 2px;
+    margin-top: 16px;
+    transform: translate(0, -2rem);
+
+}
+
+.ababil-input-field .error-message {
+    color: red;
+    font-size: 12px;
+    height: 10px;
+    padding-left: 2px;
+    margin-top: 16px;
+    transform: translate(0, -2rem);
+
+}
+
+.ababil-input-field-date input {
+    width: 100%;
+    padding-left: 2px;
+    border: none;
+    border-bottom: 1px solid #737272;
+    transition: border-color 0.2s ease;
+
+}
+
+.ababil-input-field-date input:focus {
+    outline: none;
+    border-bottom: 2px solid #007D72;
+}
+
+
+@supports (not (-ms-ime-align:auto)) {
+    .ababil-input-field-date label {
+        color: #999;
+        transform: translate(0.25rem, -1.5rem);
+        /* transition: all 0.2s ease-out; */
+    }
+
+    .ababil-input-field-date input:focus+label,
+    .ababil-input-field-date input:not(:placeholder-shown)+label {
+        font-size: 15px;
+        color: #1aa89c;
+        font-weight: 500;
+        transform: translate(1px, -45px);
+    }
+}
+
+
+@supports (not (-ms-ime-align:auto)) {
+    .ababil-dropdwon label {
+        font-size: 15px;
+        font-weight: 500;
+        padding-left: 0px !important;
+        margin-bottom: 10px;
+        color: #1aa89c;
+        transform: translate(0.25rem, -3rem);
+    }
+}
+
+.ababil-dropdwon-field {
+    border: none;
+    width: 100%;
+    margin-top: 14px;
+    height: 35px;
+    padding: 0px !important;
+    border-bottom: 1px solid gray;
+    font-size: 17px;
+}
+
+/* user for set dropdwon filed position */
+@supports (not (-ms-ime-align:auto)) {
+    .ababil-dropdwon .ababil-dropdwon-field {
+        transform: translate(1px, -6px);
+    }
+}
+
+.ababil-dropdwon-field ol,
+ul {
+    padding: 0px !important;
+}
+
+.ababil-dropdwon .error-message {
+    color: red;
+    font-size: 12px;
+    height: 10px;
+    padding-left: 5px;
+    margin-top: 3px;
+    transform: translate(0, -2rem);
+}
+
+/* user for set dropdwon icon position */
+@supports (not (-ms-ime-align:auto)) {
+    .ababil-dropdwon .select {
+        transform: translate(1px, 8px);
+        font-size: 5px;
+        border: none;
+    }
+}
+
+.ababil-dropdown-filed {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid black;
+}
+
+
+.ababil-dropdown-filed:focus {
+    outline: none;
+}
+
+/* Remove border if a non-empty value is selected */
+.ababil-dropdown-filed option[value=""] {
+    color: gray;
+    /* placeholder color */
+}

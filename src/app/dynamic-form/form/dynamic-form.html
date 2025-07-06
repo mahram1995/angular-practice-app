@@ -1,0 +1,63 @@
+<div class="ababil-card container" style="margin-top: 20px;">
+    <div>
+        <h3>{{reportName}}</h3>
+        <hr>
+    </div>
+    <div class="ababil-card" style="margin-bottom: 20px;">
+        <form [formGroup]="form" (ngSubmit)="submitForm()" class="container mt-4">
+            <div class="row" *ngIf="form">
+                <ng-container *ngFor="let field of visibleFields(); let i = index">
+                    <div [class]="field.styleClass" style="padding-bottom: 30px;">
+                        <ng-container [ngSwitch]="field.dataType">
+
+                            <!-- DATE -->
+                            <div *ngSwitchCase="'DATE'" class="form-group">
+                                <label>{{ field.label }}<span
+                                        style="color: red;">{{field.mandatory==true?'*':''}}</span> </label>
+                                <input type="date" class="form-control" [formControlName]="field.name" />
+                                <div class="text-danger"
+                                    *ngIf="form.get(field.name)?.hasError('required') && form.get(field.name)?.touched">
+                                    {{ field.label }} is required.
+                                </div>
+                            </div>
+
+                            <!-- CHAR -->
+                            <div *ngSwitchCase="'CHAR'" class="form-group">
+                                <label>{{ field.label }}<span
+                                        style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
+                                <input type="text" class="form-control" [formControlName]="field.name" />
+                                <div class="text-danger"
+                                    *ngIf="form.get(field.name)?.hasError('required') && form.get(field.name)?.touched">
+                                    {{ field.label }} is required.
+                                </div>
+                            </div>
+
+                            <!-- DROP_DOWN -->
+                            <div *ngSwitchCase="'DROP_DOWN'" class="form-group">
+                                <label>{{ field.label }} <span
+                                        style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
+                                <select class="form-control" [formControlName]="field.name">
+                                    <option value="" disabled selected>
+                                        {{ 'Select ' + field.label }} </option>
+                                    <option *ngFor="let opt of field.userDefinedFieldDomainDataList"
+                                        [value]="opt.value">
+                                        {{ opt.label }}
+                                    </option>
+                                </select>
+                                <div class="text-danger"
+                                    *ngIf="form.get(field.name)?.hasError('required') && form.get(field.name)?.touched">
+                                    {{ field.label }} is required.
+                                </div>
+                            </div>
+
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button type="submit" class="btn btn-primary mt-3">Submit</button>
+            </div>
+
+        </form>
+    </div>
+</div>
