@@ -386,7 +386,7 @@ export let UDFFormData = {
             "mandatory": true,
             "order": 1,
             "userDefinedFieldDomainDataList": [],
-            "serviceEndpoint": "admin/branch/getBranches?asPage=false&bankId=3",
+            "serviceEndpoint": "admin/branch/get-branch?asPage=false",
             "dataDetailsEndpoint": null,
             "userDefinedFieldProfileId": 102634,
             "label": "Branch No.",
@@ -410,7 +410,7 @@ export let UDFFormData = {
             "mandatory": false,
             "order": 3,
             "userDefinedFieldDomainDataList": [],
-            "serviceEndpoint": "admin/branch/getBranches?asPage=false&bankId=54",
+            "serviceEndpoint": "admin/customer/search?page=false&branchId=PBRANCH_ID",
             "dataDetailsEndpoint": null,
             "userDefinedFieldProfileId": 102634,
             "label": "Customer",
@@ -422,12 +422,12 @@ export let UDFFormData = {
                     "userDefinedFieldId": 3001217003699,
                     "logicType": "NON_EMPTY",
                     "value": null,
-                    "paramKeyword": "p_branch"
+                    "paramKeyword": "PBRANCH_ID"
                 }
             ],
             "fieldGroup": "Miscellaneous",
-            "labelOfServiceEndpoint": "name",
-            "valueOfServiceEndpoint": "id",
+            "labelOfServiceEndpoint": "cusName",
+            "valueOfServiceEndpoint": "cusId",
             "validationExpression": null
         },
         {

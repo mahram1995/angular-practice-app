@@ -47,7 +47,7 @@ export class FloatingLabelDynamicFormComponent {
             this.form.addControl(field.name, new FormControl('', validators));
 
             if (field.dataType === 'DROP_DOWN') {
-                if (field.serviceEndpoint) {
+                if (field.serviceEndpoint && field.fieldAppearanceLogics.length == 0) {
                     this.loadDropdownFromService(field); // Load dynamic options
                 } else if (field.userDefinedFieldDomainDataList?.length) {
                     field.userDefinedFieldDomainDataList = field.userDefinedFieldDomainDataList.map(d => ({
@@ -59,9 +59,41 @@ export class FloatingLabelDynamicFormComponent {
 
         });
 
+        this.fields
+            .filter(field => field.dependsOn?.length)
+            .forEach(field => {
+                field.dependsOn.forEach(dependencyName => {
+                    this.form.get(dependencyName)?.valueChanges.subscribe(() => {
+                        this.loadDependentFieldOptions(field);
+                    });
+                });
+            });
+
         // Handle conditional logic
         this.setupConditionalFields();
     }
+
+
+    loadDependentFieldOptions(field: any) {
+        let endpoint = field.serviceEndpoint;
+
+        // Replace placeholders in the endpoint
+        field.dependsOn.forEach(dep => {
+            const selectedValue = this.form.get(dep)?.value;
+            const placeholder = 'P' + dep.toUpperCase();
+            endpoint = endpoint.replace(placeholder, selectedValue);
+        });
+
+        // Optional: Only call API if all dependencies have values
+        const allDependenciesFilled = field.dependsOn.every(dep => !!this.form.get(dep)?.value);
+        if (!allDependenciesFilled) return;
+
+        // Call the API
+        this.http.get<any[]>(endpoint).subscribe(data => {
+            field.options = data;
+        });
+    }
+
 
 
 
@@ -103,6 +135,24 @@ export class FloatingLabelDynamicFormComponent {
     getFieldNameById(id: number): string {
         const field = this.fields.find(f => f.id === id);
         return field?.name || '';
+    }
+    getFieldIdByFiledName(name: string): number {
+        const field = this.fields.find(f => f.name === name);
+        return field?.id || '';
+    }
+
+    getUDFIdByDependedFiledId(dependentFieldId: number) {
+
+        this.fields.forEach(logic => {
+            const data = logic.fieldAppearanceLogics.find(f => f.dependentFieldId === dependentFieldId)
+            if (data) {
+                let userDefinedFieldId = data.userDefinedFieldId
+                let filed = this.fields.find(f => f.id === userDefinedFieldId)
+                this.loadDependedDropdownFromService(filed, null)
+            }
+
+        })
+
     }
 
     evaluateLogic(value: any, logic: any): boolean {
@@ -156,6 +206,18 @@ export class FloatingLabelDynamicFormComponent {
 
     }
 
+    onSelectChange(event: Event, fieldName: string): void {
+        const selectedValue = (event.target as HTMLSelectElement).value;
+        //  console.log('Selected Value:', selectedValue, 'Field Name:', fieldName);
+
+        let dependedFiledId = this.getFieldIdByFiledName(fieldName)
+
+        let userDifineId: any = this.getUDFIdByDependedFiledId(dependedFiledId);
+
+
+        // You can also trigger any dependent logic from here
+    }
+
     loadDropdownFromService(field: any): void {
         const rawUrl = field.serviceEndpoint; ""
         const resolvedUrl = this.replaceUrlParams(rawUrl, this.form.getRawValue());
@@ -173,6 +235,37 @@ export class FloatingLabelDynamicFormComponent {
                 field.userDefinedFieldDomainDataList = [];
             }
         });
+    }
+
+    loadDependedDropdownFromService(field: any, name: string): void {
+        let rawUrl = field.serviceEndpoint; ""
+        let modifiedURL: string;
+        if (field.fieldAppearanceLogics) {
+            let logics = field.fieldAppearanceLogics
+
+            return logics.every(logic =>
+                modifiedURL = modifiedURL.replace(logic.paramKeyword, '1001')
+
+            )
+        }
+
+
+        this.dynamicFormService.getDataFromServiceEndPoint(modifiedURL).subscribe({
+            next: (response: any) => {
+                let data = response.content;
+
+                field.userDefinedFieldDomainDataList = data.map(item => ({
+                    label: item[field.labelOfServiceEndpoint || 'label'],
+                    value: item[field.valueOfServiceEndpoint || 'value']
+                }));
+            },
+            error: err => {
+                console.error(`Failed to load  ${field.label} using service endpoind ${field.serviceEndpoint}`, err);
+                field.userDefinedFieldDomainDataList = [];
+            }
+        });
+
+
     }
 
     private replaceUrlParams(url: string, formValues: any): string {
