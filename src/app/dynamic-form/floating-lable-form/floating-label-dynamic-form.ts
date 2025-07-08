@@ -141,14 +141,14 @@ export class FloatingLabelDynamicFormComponent {
         return field?.id || '';
     }
 
-    getUDFIdByDependedFiledId(dependentFieldId: number) {
+    getUDFIdByDependedFiledId(dependentFieldId: number, selectOptionValue: any) {
 
         this.fields.forEach(logic => {
             const data = logic.fieldAppearanceLogics.find(f => f.dependentFieldId === dependentFieldId)
             if (data) {
                 let userDefinedFieldId = data.userDefinedFieldId
                 let filed = this.fields.find(f => f.id === userDefinedFieldId)
-                this.loadDependedDropdownFromService(filed, null)
+                this.loadDependedDropdownFromService(filed, selectOptionValue)
             }
 
         })
@@ -207,12 +207,12 @@ export class FloatingLabelDynamicFormComponent {
     }
 
     onSelectChange(event: Event, fieldName: string): void {
-        const selectedValue = (event.target as HTMLSelectElement).value;
+        const selectOptionValue = (event.target as HTMLSelectElement).value;
         //  console.log('Selected Value:', selectedValue, 'Field Name:', fieldName);
 
         let dependedFiledId = this.getFieldIdByFiledName(fieldName)
 
-        let userDifineId: any = this.getUDFIdByDependedFiledId(dependedFiledId);
+        this.getUDFIdByDependedFiledId(dependedFiledId, selectOptionValue);
 
 
         // You can also trigger any dependent logic from here
@@ -237,33 +237,33 @@ export class FloatingLabelDynamicFormComponent {
         });
     }
 
-    loadDependedDropdownFromService(field: any, name: string): void {
-        let rawUrl = field.serviceEndpoint; ""
-        let modifiedURL: string;
-        if (field.fieldAppearanceLogics) {
-            let logics = field.fieldAppearanceLogics
+    loadDependedDropdownFromService(field: any, selectOptionValue: any): void {
+        let rawUrl = field.serviceEndpoint;
+        let modifiedURL: string = ""
+        if (selectOptionValue) {
+            if (field.fieldAppearanceLogics) {
+                let logics = field.fieldAppearanceLogics
+                logics.every(logic =>
+                    modifiedURL = rawUrl.replace(logic.paramKeyword, selectOptionValue)
 
-            return logics.every(logic =>
-                modifiedURL = modifiedURL.replace(logic.paramKeyword, '1001')
-
-            )
-        }
-
-
-        this.dynamicFormService.getDataFromServiceEndPoint(modifiedURL).subscribe({
-            next: (response: any) => {
-                let data = response.content;
-
-                field.userDefinedFieldDomainDataList = data.map(item => ({
-                    label: item[field.labelOfServiceEndpoint || 'label'],
-                    value: item[field.valueOfServiceEndpoint || 'value']
-                }));
-            },
-            error: err => {
-                console.error(`Failed to load  ${field.label} using service endpoind ${field.serviceEndpoint}`, err);
-                field.userDefinedFieldDomainDataList = [];
+                )
             }
-        });
+
+            this.dynamicFormService.getDataFromServiceEndPoint(modifiedURL).subscribe({
+                next: (response: any) => {
+                    let data = response.content;
+
+                    field.userDefinedFieldDomainDataList = data.map(item => ({
+                        label: item[field.labelOfServiceEndpoint || 'label'],
+                        value: item[field.valueOfServiceEndpoint || 'value']
+                    }));
+                },
+                error: err => {
+                    console.error(`Failed to load  ${field.label} using service endpoind ${field.serviceEndpoint}`, err);
+                    field.userDefinedFieldDomainDataList = [];
+                }
+            })
+        }
 
 
     }

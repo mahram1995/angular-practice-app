@@ -394,7 +394,7 @@ export let UDFFormData = {
             "fieldAppearanceLogics": [],
             "fieldGroup": "Miscellaneous",
             "labelOfServiceEndpoint": "name",
-            "valueOfServiceEndpoint": "id",
+            "valueOfServiceEndpoint": "branchId",
             "validationExpression": null
         },
         {

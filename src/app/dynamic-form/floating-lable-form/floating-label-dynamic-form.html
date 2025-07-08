@@ -48,7 +48,7 @@
                                 <div class="ababil-dropdwon">
                                     <select class="ababil-dropdown-filed" (change)="onSelectChange($event, field.name)"
                                         [formControlName]="field.name">
-                                        <option style="color: gray;" value="">
+                                        <option style="color: gray;" value=''>
                                             {{ 'Select ' + field.label }} </option>
                                         <option *ngFor="let opt of field.userDefinedFieldDomainDataList"
                                             [value]="opt.value">
