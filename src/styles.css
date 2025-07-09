@@ -65,12 +65,14 @@
     display: block;
     font-size: 14px;
 
-    transform: translate(0, -2.75rem);
+    transform: translate(0, -2.5rem);
 }
 
 .ababil-input-field-date {
     font-size: 14px;
 }
+
+
 
 .ababil-input-field-date .error-message {
     color: red;
@@ -95,6 +97,7 @@
 .ababil-input-field-date input {
     width: 100%;
     padding-left: 2px;
+    margin-top: 2px;
     border: none;
     border-bottom: 1px solid #737272;
     transition: border-color 0.2s ease;
@@ -103,7 +106,7 @@
 
 .ababil-input-field-date input:focus {
     outline: none;
-    border-bottom: 2px solid #007D72;
+    border-bottom: 2px solid #007D72 !important;
 }
 
 
