@@ -275,7 +275,7 @@ export let UDFFormData = {
             "mandatory": false,
             "order": 5,
             "userDefinedFieldDomainDataList": [],
-            "serviceEndpoint": "/ababil-tf-import/report/transmitLc?customerId=PCUSTOMER_ID&productId=PPRODUCT_ID",
+            "serviceEndpoint": "admin/customer/searchCustomer?page=false&cusId={PCUSTOMER_ID}&branchId={PBRANCH_ID}",
             "dataDetailsEndpoint": null,
             "userDefinedFieldProfileId": 102634,
             "label": "LC Number",
@@ -291,16 +291,16 @@ export let UDFFormData = {
                 },
                 {
                     "id": 1746,
-                    "dependentFieldId": 3001217003701,
+                    "dependentFieldId": 3001217003698,
                     "userDefinedFieldId": 3001217003695,
                     "logicType": "NON_EMPTY",
                     "value": null,
-                    "paramKeyword": "PPRODUCT_ID"
+                    "paramKeyword": "PBRANCH_ID"
                 }
             ],
             "fieldGroup": "Miscellaneous",
-            "labelOfServiceEndpoint": "transmitLcNumber",
-            "valueOfServiceEndpoint": "transmitLcId",
+            "labelOfServiceEndpoint": "cusName",
+            "valueOfServiceEndpoint": "cusId",
             "validationExpression": null
         },
         {
@@ -410,7 +410,7 @@ export let UDFFormData = {
             "mandatory": false,
             "order": 3,
             "userDefinedFieldDomainDataList": [],
-            "serviceEndpoint": "admin/customer/search?page=false&branchId=PBRANCH_ID",
+            "serviceEndpoint": "admin/customer/searchCustomer?page=false&branchId={PBRANCH_ID}",
             "dataDetailsEndpoint": null,
             "userDefinedFieldProfileId": 102634,
             "label": "Customer",

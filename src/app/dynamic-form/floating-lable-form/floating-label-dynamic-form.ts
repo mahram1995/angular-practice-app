@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { UDFFormData } from '../json-data/form-data';
 import { HttpClient } from '@angular/common/http';
 import { DynamicFormService } from '../service/dynamic.form.service';
+import { BaseService } from '../service/base-service';
 
 @Component({
     selector: 'dynamic-form',
@@ -21,6 +22,7 @@ export class FloatingLabelDynamicFormComponent {
 
     constructor(private fb: FormBuilder,
         private http: HttpClient,
+        private baseService: BaseService,
         private dynamicFormService: DynamicFormService
     ) { }
 
@@ -141,18 +143,16 @@ export class FloatingLabelDynamicFormComponent {
         return field?.id || '';
     }
 
-    getUDFIdByDependedFiledId(dependentFieldId: number, selectOptionValue: any) {
-
+    getUDFIdByDependedFiledId(dependentFieldId: number, selectOptionValue: any, fieldName: string) {
         this.fields.forEach(logic => {
             const data = logic.fieldAppearanceLogics.find(f => f.dependentFieldId === dependentFieldId)
             if (data) {
                 let userDefinedFieldId = data.userDefinedFieldId
                 let filed = this.fields.find(f => f.id === userDefinedFieldId)
-                this.loadDependedDropdownFromService(filed, selectOptionValue)
+
+                this.loadDependedDropdownFromService(filed, selectOptionValue, fieldName)
             }
-
         })
-
     }
 
     evaluateLogic(value: any, logic: any): boolean {
@@ -208,11 +208,9 @@ export class FloatingLabelDynamicFormComponent {
 
     onSelectChange(event: Event, fieldName: string): void {
         const selectOptionValue = (event.target as HTMLSelectElement).value;
-        //  console.log('Selected Value:', selectedValue, 'Field Name:', fieldName);
 
         let dependedFiledId = this.getFieldIdByFiledName(fieldName)
-
-        this.getUDFIdByDependedFiledId(dependedFiledId, selectOptionValue);
+        this.getUDFIdByDependedFiledId(dependedFiledId, selectOptionValue, fieldName);
 
 
         // You can also trigger any dependent logic from here
@@ -220,7 +218,6 @@ export class FloatingLabelDynamicFormComponent {
 
     loadDropdownFromService(field: any): void {
         const rawUrl = field.serviceEndpoint; ""
-        const resolvedUrl = this.replaceUrlParams(rawUrl, this.form.getRawValue());
         this.dynamicFormService.getDataFromServiceEndPoint(rawUrl).subscribe({
             next: (response: any) => {
                 let data = response.content;
@@ -237,22 +234,18 @@ export class FloatingLabelDynamicFormComponent {
         });
     }
 
-    loadDependedDropdownFromService(field: any, selectOptionValue: any): void {
-        let rawUrl = field.serviceEndpoint;
-        let modifiedURL: string = ""
-        if (selectOptionValue) {
-            if (field.fieldAppearanceLogics) {
-                let logics = field.fieldAppearanceLogics
-                logics.every(logic =>
-                    modifiedURL = rawUrl.replace(logic.paramKeyword, selectOptionValue)
+    loadDependedDropdownFromService(field: any, selectOptionValue: any, fieldName: string): void {
+        this.form.get(field.name)?.setValue(null);
+        this.setupConditionalFields()
+        let formValue = this.form.value;
+        let url = this.baseService.getPathParameterValue(field.serviceEndpoint, formValue);
+        const matches = url.match(/{(.*?)}/g);
 
-                )
-            }
+        if (matches == null) {
 
-            this.dynamicFormService.getDataFromServiceEndPoint(modifiedURL).subscribe({
+            this.dynamicFormService.getDataFromServiceEndPoint(url).subscribe({
                 next: (response: any) => {
                     let data = response.content;
-
                     field.userDefinedFieldDomainDataList = data.map(item => ({
                         label: item[field.labelOfServiceEndpoint || 'label'],
                         value: item[field.valueOfServiceEndpoint || 'value']
@@ -263,19 +256,41 @@ export class FloatingLabelDynamicFormComponent {
                     field.userDefinedFieldDomainDataList = [];
                 }
             })
+
+
+
         }
+
+
+
+        console.log(this.form.value);
+
+
 
 
     }
 
-    private replaceUrlParams(url: string, formValues: any): string {
-        return url.replace(/([?&])([^=]+)=([^&]*)/g, (match, sep, key, val) => {
-            const paramKey = val;
-            if (formValues[paramKey] != null) {
-                return `${sep}${key}=${formValues[paramKey]}`;
+    replaceParamsFromObject(url: string, parameters: any): string {
+        let fullURL = url;
+        // Use regular expression to find all matches within curly braces
+        const matches = fullURL.match(/{(.*?)}/g);
+        // Check if there are matches and extract the content
+        if (matches && matches.length > 0) {
+            const params = matches.map(match => match.substring(1, match.length - 1));
+
+            for (let index = 0; index < params.length; index++) {
+                let param = params[index];
+                if (parameters[param]) {
+                    fullURL = fullURL.replace('{' + param + '}', parameters[param])
+                } else {
+                    // console.log(param + " not found.");
+                    throw new Error(`Parameter ${param} was not provided`);
+                }
             }
-            return match;
-        });
+        } else {
+            throw new Error(`Please provide paremeter name in the end of API within in curly braces.`);
+        }
+        return fullURL
     }
 }
 
