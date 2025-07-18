@@ -17,6 +17,8 @@ import { BaseService } from './app.service/base-service';
 import { AppHeaderComponent } from './login-logout/header-page/header.page';
 import { AppHomePageComponent } from './login-logout/home-page/home.page';
 import { LoginFormComponent } from './login-logout/login-form/login.form';
+import { LoginService } from './login-logout/service/login.service';
+import { AuthService } from './login-logout/service/auth.service';
 
 
 
@@ -40,7 +42,13 @@ import { LoginFormComponent } from './login-logout/login-form/login.form';
 
 
   ],
-  providers: [DynamicFormService, NotificationService, HttpService, LoaderOverlayService, BaseService],
+  providers: [DynamicFormService,
+    NotificationService,
+    HttpService,
+    LoaderOverlayService,
+    LoginService,
+    AuthService,
+    BaseService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
