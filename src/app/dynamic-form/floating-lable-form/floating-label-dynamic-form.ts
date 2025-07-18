@@ -3,7 +3,8 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { UDFFormData } from '../json-data/form-data';
 import { HttpClient } from '@angular/common/http';
 import { DynamicFormService } from '../service/dynamic.form.service';
-import { BaseService } from '../service/base-service';
+import { BaseService } from '../../app.service/base-service';
+
 
 @Component({
     selector: 'dynamic-form',

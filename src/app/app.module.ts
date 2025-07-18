@@ -13,7 +13,8 @@ import { DynamicFormService } from './dynamic-form/service/dynamic.form.service'
 import { NotificationService } from './app.service/notification.service';
 import { HttpService } from './app.service/http.service';
 import { LoaderOverlayService } from './app.service/loader.overlay.service';
-import { BaseService } from './dynamic-form/service/base-service';
+import { BaseService } from './app.service/base-service';
+
 
 
 
