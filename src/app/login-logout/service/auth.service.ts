@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, retry, tap } from 'rxjs';
 import { BaseService } from '../../app.service/base-service';
 import { LoginService } from './login.service';
+import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -16,6 +17,7 @@ export class AuthService {
         private loginService: LoginService,
         private zone: NgZone) {
         this.setupActivityListeners();
+
 
     }
 
@@ -30,16 +32,22 @@ export class AuthService {
         );
     }
 
-    logout(): void {
+    logoutByUser(logoutType: String): void {
         const user = this.getUser();
         if (user?.userName) {
-            this.http.get(`/admin/auth/logout?username=${user.userName}`).subscribe();
+            const url = `${this.loginService.URL}admin/auth/logout?userName=${user.userName}&logoutType=${logoutType}`
+            this.http.get(url, {
+                responseType: 'text'
+            }).subscribe(response => {
+                sessionStorage.clear();
+                this.userSubject.next(null);
+                this.router.navigate(['/login']);
+                clearTimeout(this.logoutTimeout)
+            });
         }
-        sessionStorage.clear();
-        this.userSubject.next(null);
-        this.router.navigate(['/login']);
-        clearTimeout(this.logoutTimeout);
+
     }
+
 
     getUser(): any {
         const user = sessionStorage.getItem('user');
@@ -61,7 +69,7 @@ export class AuthService {
     private setAutoLogout(): void {
         clearTimeout(this.logoutTimeout);
         this.logoutTimeout = setTimeout(() => {
-            this.logout();
+            this.logoutByUser('SESSTION_TIME_OUT');
         }, this.TIMEOUT_MINUTES * 60 * 1000); // 20 minutes
     }
 
@@ -73,4 +81,13 @@ export class AuthService {
             window.addEventListener(event, reset)
         );
     }
+
+    getDeviceIPAddress(): Observable<string> {
+        return this.http.get<any>('https://api.ipify.org?format=json').pipe(
+            map(res => res.ip)
+        );
+    }
+
+
+
 }

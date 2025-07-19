@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../service/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-navbar',
@@ -8,15 +9,22 @@ import { AuthService } from '../service/auth.service';
 })
 export class AppHeaderComponent implements OnInit {
     title = 'angular-practice-app';
-    // isLogin: boolean
+    userName: string
+    isLogin: boolean
 
     constructor(private authServiec: AuthService) {
 
     }
     ngOnInit(): void {
-        // this.isLogin = this.authServiec.isLogin()
 
+        this.authServiec.getUserObservable().subscribe(user => {
+            this.userName = user.userName;
+        });
 
+    }
+
+    logout() {
+        this.authServiec.logoutByUser('USER_LOGOUT');
     }
 
 }

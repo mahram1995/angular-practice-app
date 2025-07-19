@@ -13,7 +13,7 @@ export class LoginService extends BaseService {
 
     private base = this.URL;
     private loginApi = this.URL + 'admin/auth/login';
-    private logout = this.URL + 'admin/auth/logout';
+    private logoutAPI = this.URL + 'admin/auth/logout';
 
     // budget Gl Acccount API
     private _getAccount = this.base + 'getAccount';
@@ -27,6 +27,10 @@ export class LoginService extends BaseService {
 
     login(data: any): Observable<any> {
         return this.httpclient.post<any>(`${this.loginApi}`, data);
+    }
+
+    logout(userName: any): Observable<any> {
+        return this.httpclient.post<any>(`${this.logoutAPI}`, userName);
     }
 
 

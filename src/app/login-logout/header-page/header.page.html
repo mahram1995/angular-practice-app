@@ -27,8 +27,9 @@
                         Form
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" routerLink="/plans">Dynamic form</a></li>
-                        <li><a class="dropdown-item" routerLink="/dynamic-form">Dynamic form with floating</a></li>
+                        <li><a class="dropdown-item" routerLink="/home/dynamic-form">Dynamic form</a></li>
+                        <li><a class="dropdown-item" routerLink="/home/floating-label-dynamic-form">Dynamic form with
+                                floating</a></li>
                     </ul>
                 </li>
 
@@ -38,8 +39,12 @@
 
             <!-- Optional: Right-aligned user or actions -->
             <span class="navbar-text text-white">
-                Welcome, User
+                {{userName}}
+
+                <button (click)="logout()" style="border-radius: 8px; height: 28px; width: 28px;">
+                    <span class="pi pi-sign-out" style="font-size: 14px"></span> </button>
             </span>
+
         </div>
     </div>
 </nav>

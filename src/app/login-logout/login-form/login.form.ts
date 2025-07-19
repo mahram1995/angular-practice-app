@@ -11,31 +11,52 @@ import { AuthService } from '../service/auth.service';
 export class LoginFormComponent implements OnInit {
     loginForm: FormGroup;
     errorMessage: string = '';
-    isLogin: boolean
+    isLogin: boolean;
+    userAgent: String;
+    loginTerminal: String;
 
     constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
 
     }
     ngOnInit(): void {
-        this.loginForm = this.fb.group({
-            userName: ['', Validators.required],
-            password: ['', Validators.required]
-        });
 
         this.isLogin = this.authService.isLogin()
-
         if (this.isLogin) {
             this.router.navigate(['/home']);
+
         }
+        this.userAgent = navigator.userAgent;
+        this.authService.getDeviceIPAddress().subscribe(ip => {
+            this.loginTerminal = ip;
+        });
+
+
+        this.loginForm = this.fb.group({
+            userName: ['', Validators.required],
+            password: ['', Validators.required],
+            loginTerminal: [this.loginTerminal],
+            userAgent: [this.userAgent,],
+        });
+
+
     }
 
+
+
     login() {
+
         if (this.loginForm.valid) {
-            console.log(this.loginForm.value);
-            this.authService.login(this.loginForm.value).subscribe({
-                next: () => this.router.navigate(['/home']),
-                error: err => this.errorMessage = 'Invalid credentials'
-            });
+
+            let formvalue = this.loginForm.value
+            formvalue.loginTerminal = this.loginTerminal;
+            this.authService.login(this.loginForm.value).subscribe(
+                (response) => {
+                    this.router.navigate(['/home'])
+                },
+                (error) => {
+                    this.errorMessage = error.error
+                }
+            );
         }
     }
 }
