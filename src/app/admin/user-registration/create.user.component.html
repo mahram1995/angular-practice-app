@@ -1,0 +1,149 @@
+<div>
+    <div style="padding: 0px 10px 0px 10px;">
+        <div style="float:left ; margin: 0px; padding: 0px; ">
+            <p class="app-page-header">Create User</p>
+        </div>
+
+        <div class="app-button-group">
+            <button (click)="save()"><i class="pi pi-save" style="font-size:12px"></i> Save</button>
+            <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+        </div>
+    </div>
+    <div class="clear-fix"></div>
+    <hr style="margin: 0px; padding: 0px; width: 100%;">
+</div>
+<div class="app-page">
+    <form [formGroup]="userForm">
+        <mat-card>
+            <mat-card-content>
+                <span class="app-card-title">User Info :</span>
+                <div class="app-card">
+                    <div class="row">
+                        <div class="col-sm-6  col-md-2 ">
+                            <div class="app-input-field">
+                                <input type="text" id="userName" placeholder=" " formControlName="userName" [ngClass]="{'is-invalid' :userForm.controls.userName.touched &&
+                                         userForm.controls.userNamer.errors}">
+                                <label for="userName">User Name<span style="color: red;">*</span></label>
+                                <div *ngIf="userForm.controls['userName'].errors && userForm.controls['r'].touched">
+                                    <div class="error-alert" [hidden]="!userForm.controls['userName'].errors.required">
+                                        User name required.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-2 ">
+                            <div class="app-input-field">
+                                <input type="password" id="password" placeholder=" " formControlName="password"
+                                    [ngClass]="{'is-invalid' :userForm.controls.password.touched &&
+                                                                 userForm.controls.password.errors}">
+                                <label for="password">Passward<span style="color: red;">*</span></label>
+                                <div *ngIf="userForm.controls['password'].errors && userForm.controls['r'].touched">
+                                    <div class="error-alert" [hidden]="!userForm.controls['password'].errors.required">
+                                        Password is required.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-2 ">
+                            <div class="app-input-field">
+                                <input type="titile" id="Title" placeholder=" " formControlName="titile" [ngClass]="{'is-invalid' :userForm.controls.titile.touched &&
+                                                           userForm.controls.titile.errors}">
+                                <label for="titile">Title</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-2 ">
+                            <div class="app-input-field">
+                                <input type="firstName" id="firstName" placeholder=" " formControlName="firstName"
+                                    [ngClass]="{'is-invalid' :userForm.controls.firstName.touched &&
+                                   userForm.controls.firstName.errors}">
+                                <label for="firstName">First Name</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-2 ">
+                            <div class="app-input-field">
+                                <input type="middleName" id="middleName" placeholder=" " formControlName="middleName"
+                                    [ngClass]="{'is-invalid' :userForm.controls.middleName.touched &&
+                                                           userForm.controls.middleName.errors}">
+                                <label for="middleName">Middle Name</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-2 ">
+                            <div class="app-input-field">
+                                <input type="lastName" id="lastName" placeholder=" " formControlName="lastName"
+                                    [ngClass]="{'is-invalid' :userForm.controls.password.touched &&
+                                                                                         userForm.controls.lastName.errors}">
+                                <label for="lastName">Last Name<span style="color: red;">*</span></label>
+                                <div *ngIf="userForm.controls['lastName'].errors && userForm.controls['r'].touched">
+                                    <div class="error-alert" [hidden]="!userForm.controls['lastName'].errors.required">
+                                        Last Name is required.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="app-card-title">Present Address :</span>
+                <div class="app-card">
+                    <div class="row">
+                        <div class="col-sm-6  col-md-2 ">
+                            <div class="app-input-field">
+                                <input type="text" id="userName" placeholder=" " formControlName="userName" [ngClass]="{'is-invalid' :userForm.controls.userName.touched &&
+                                                         userForm.controls.userNamer.errors}">
+                                <label for="userName">User Name<span style="color: red;">*</span></label>
+                                <div *ngIf="userForm.controls['userName'].errors && userForm.controls['r'].touched">
+                                    <div class="error-alert" [hidden]="!userForm.controls['userName'].errors.required">
+                                        User name required.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-2 ">
+                            <div class="app-input-field">
+                                <input type="password" id="password" placeholder=" " formControlName="password"
+                                    [ngClass]="{'is-invalid' :userForm.controls.password.touched &&
+                                                                                 userForm.controls.password.errors}">
+                                <label for="password">Passward<span style="color: red;">*</span></label>
+                                <div *ngIf="userForm.controls['password'].errors && userForm.controls['r'].touched">
+                                    <div class="error-alert" [hidden]="!userForm.controls['password'].errors.required">
+                                        Password is required.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-2 ">
+                            <div class="app-input-field">
+                                <input type="titile" id="Title" placeholder=" " formControlName="titile" [ngClass]="{'is-invalid' :userForm.controls.titile.touched &&
+                                                                           userForm.controls.titile.errors}">
+                                <label for="titile">Title</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-2 ">
+                            <div class="app-input-field">
+                                <input type="firstName" id="firstName" placeholder=" " formControlName="firstName"
+                                    [ngClass]="{'is-invalid' :userForm.controls.firstName.touched &&
+                                                   userForm.controls.firstName.errors}">
+                                <label for="firstName">First Name</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-2 ">
+                            <div class="app-input-field">
+                                <input type="middleName" id="middleName" placeholder=" " formControlName="middleName"
+                                    [ngClass]="{'is-invalid' :userForm.controls.middleName.touched &&
+                                                                           userForm.controls.middleName.errors}">
+                                <label for="middleName">Middle Name</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-2 ">
+                            <div class="app-input-field">
+                                <input type="lastName" id="lastName" placeholder=" " formControlName="lastName"
+                                    [ngClass]="{'is-invalid' :userForm.controls.password.touched &&
+                                                                                                         userForm.controls.lastName.errors}">
+                                <label for="lastName">Last Name<span style="color: red;">*</span></label>
+                                <div *ngIf="userForm.controls['lastName'].errors && userForm.controls['r'].touched">
+                                    <div class="error-alert" [hidden]="!userForm.controls['lastName'].errors.required">
+                                        Last Name is required.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </form>
+</div>

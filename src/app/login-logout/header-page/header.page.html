@@ -16,15 +16,21 @@
                     <a class="nav-link active" aria-current="page" href="#">Home</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="">Features</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                        User
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" routerLink="/home/create-user">Create User</a></li>
+                        <li><a class="dropdown-item" routerLink="/home/floating-label-dynamic-form">Update User</a></li>
+                    </ul>
                 </li>
 
                 <!-- Dropdown -->
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                        Form
+                        UDF
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" routerLink="/home/dynamic-form">Dynamic form</a></li>

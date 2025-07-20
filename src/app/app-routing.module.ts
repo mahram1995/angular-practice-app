@@ -6,6 +6,7 @@ import { FloatingLabelDynamicFormComponent } from './dynamic-form/floating-lable
 import { LoginFormComponent } from './login-logout/login-form/login.form';
 import { AppHomePageComponent } from './login-logout/home-page/home.page';
 import { AuthGuard } from './login-logout/service/auth.guard';
+import { UserRegistrationComponent } from './admin/user-registration/create.user.form';
 
 const routes: Routes = [
 
@@ -24,6 +25,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'dynamic-form', component: DynamicFormComponent },
+      { path: 'create-user', component: UserRegistrationComponent },
       { path: 'floating-label-dynamic-form', component: FloatingLabelDynamicFormComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

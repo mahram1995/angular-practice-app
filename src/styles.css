@@ -3,37 +3,64 @@
 @import "primeicons/primeicons.css";
 
 /* You can add global styles to this file, and also import other style files */
-.ababil-card {
+.app-card {
     border-radius: 5px;
     padding: 15px 15px 1px 15px;
     flex: 2;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
 }
 
+.row>* {
+    padding: 5px !important;
+
+}
+
+.mat-mdc-card-content:first-child {
+    padding-top: 5px !important;
+}
+
+
+.app-card-title {
+    font-size: 16px;
+    color: #108a7d;
+    font-weight: bold;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+}
+
+.app-page {
+    border-radius: 5px;
+    margin: 10px 20px 0px 20px;
+    padding: 5px 12px 10px 12px;
+    flex: 2;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+}
+
+
 /* form input filed css */
-.ababil-input-checkbox {
+.app-input-checkbox {
     font-size: 14px;
     margin-top: 26px;
 
 }
 
-.ababil-input-checkbox label {
+.app-input-checkbox label {
     font-size: 13px;
     color: #1aa89c;
     font-weight: 500;
 }
 
-.ababil-input-field label {
+.app-input-field label {
     display: block;
     font-size: 14px;
     transform: translate(0, -2.75rem);
 }
 
-.ababil-input-field {
+.app-input-field {
     font-size: 14px;
 }
 
-.ababil-input-field input {
+.app-input-field input {
     width: 100%;
     padding-left: 2px;
     border: none;
@@ -42,21 +69,21 @@
     margin-top: 0px;
 }
 
-.ababil-input-field input:focus {
+.app-input-field input:focus {
     outline: none;
     border-bottom: 2px solid #007D72;
 }
 
 
 @supports (not (-ms-ime-align:auto)) {
-    .ababil-input-field label {
+    .app-input-field label {
         color: #999;
         transform: translate(0.25rem, -1.5rem);
         /* transition: all 0.2s ease-out; */
     }
 
-    .ababil-input-field input:focus+label,
-    .ababil-input-field input:not(:placeholder-shown)+label {
+    .app-input-field input:focus+label,
+    .app-input-field input:not(:placeholder-shown)+label {
         font-size: 15px;
         color: #1aa89c;
         font-weight: 500;
@@ -65,20 +92,20 @@
 }
 
 
-.ababil-input-field-date label {
+.app-input-field-date label {
     display: block;
     font-size: 14px;
 
     transform: translate(0, -2.5rem);
 }
 
-.ababil-input-field-date {
+.app-input-field-date {
     font-size: 14px;
 }
 
 
 
-.ababil-input-field-date .error-message {
+.app-input-field-date .error-message {
     color: red;
     font-size: 12px;
     height: 10px;
@@ -88,7 +115,7 @@
 
 }
 
-.ababil-input-field .error-message {
+.app-input-field .error-message {
     color: red;
     font-size: 12px;
     height: 10px;
@@ -98,7 +125,7 @@
 
 }
 
-.ababil-input-field-date input {
+.app-input-field-date input {
     width: 100%;
     padding-left: 2px;
     margin-top: 2px;
@@ -108,21 +135,21 @@
 
 }
 
-.ababil-input-field-date input:focus {
+.app-input-field-date input:focus {
     outline: none;
     border-bottom: 2px solid #007D72 !important;
 }
 
 
 @supports (not (-ms-ime-align:auto)) {
-    .ababil-input-field-date label {
+    .app-input-field-date label {
         color: #999;
         transform: translate(0.25rem, -1.5rem);
         /* transition: all 0.2s ease-out; */
     }
 
-    .ababil-input-field-date input:focus+label,
-    .ababil-input-field-date input:not(:placeholder-shown)+label {
+    .app-input-field-date input:focus+label,
+    .app-input-field-date input:not(:placeholder-shown)+label {
         font-size: 15px;
         color: #1aa89c;
         font-weight: 500;
@@ -132,7 +159,7 @@
 
 
 @supports (not (-ms-ime-align:auto)) {
-    .ababil-dropdwon label {
+    .app-dropdwon label {
         font-size: 15px;
         font-weight: 500;
         padding-left: 0px !important;
@@ -142,7 +169,7 @@
     }
 }
 
-.ababil-dropdwon-field {
+.app-dropdwon-field {
     border: none;
     width: 100%;
     margin-top: 14px;
@@ -154,17 +181,17 @@
 
 /* user for set dropdwon filed position */
 @supports (not (-ms-ime-align:auto)) {
-    .ababil-dropdwon .ababil-dropdwon-field {
+    .app-dropdwon .app-dropdwon-field {
         transform: translate(1px, -6px);
     }
 }
 
-.ababil-dropdwon-field ol,
+.app-dropdwon-field ol,
 ul {
     padding: 0px !important;
 }
 
-.ababil-dropdwon .error-message {
+.app-dropdwon .error-message {
     color: red;
     font-size: 12px;
     height: 10px;
@@ -175,26 +202,60 @@ ul {
 
 /* user for set dropdwon icon position */
 @supports (not (-ms-ime-align:auto)) {
-    .ababil-dropdwon .select {
+    .app-dropdwon .select {
         transform: translate(1px, 8px);
         font-size: 5px;
         border: none;
     }
 }
 
-.ababil-dropdown-filed {
+.app-dropdown-filed {
     width: 100%;
     border: none;
     border-bottom: 1px solid black;
 }
 
 
-.ababil-dropdown-filed:focus {
+.app-dropdown-filed:focus {
     outline: none;
 }
 
 /* Remove border if a non-empty value is selected */
-.ababil-dropdown-filed option[value=""] {
+.app-dropdown-filed option[value=""] {
     color: gray;
     /* placeholder color */
+}
+
+/* style for button */
+.app-button-group {
+    text-align: right;
+}
+
+.app-button-group button {
+    height: 27px;
+    font-size: 12px;
+    text-align: right;
+    background-color: #108a7d;
+    margin-left: 2px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding-left: 10px;
+    padding-bottom: 3px;
+    padding-right: 10px;
+
+}
+
+.app-button-group button:hover {
+    background-color: #0ea899;
+}
+
+.app-page-header {
+    font-size: 20px;
+    font-weight: bold;
+    padding-bottom: 0px;
+    color: rgb(10, 95, 134);
+    margin: 0px;
+
+    /* transition: all 0.2s ease-out; */
 }
