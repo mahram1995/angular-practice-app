@@ -1,71 +1,61 @@
-import { HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+// src/app/interceptors/error.interceptor.ts
+
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, concatMap, retry, retryWhen } from 'rxjs/operators';
+import {
+    HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse
+} from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, retry } from 'rxjs/operators';
+import { MessageService } from 'primeng/api'; // Optional: for showing toast
+import { Router } from '@angular/router';
 import { NotificationService } from './notification.service';
 
+@Injectable()
+export class ErrorInterceptor implements HttpInterceptor {
 
-@Injectable({
-    providedIn: 'root'
-})
-export class HttpErrorInterceptorService implements HttpInterceptor {
+    constructor(private messageService: NotificationService, private router: Router) { }
 
-    constructor(private notificationService: NotificationService) { }
-    intercept(request: HttpRequest<any>, next: HttpHandler) {
-        console.log('HTTP Request started');
-        return next.handle(request)
-            .pipe(
+    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        return next.handle(req).pipe(
+            catchError((error: HttpErrorResponse) => {
+                // Global error handling logic here
+                let errorMsg = 'An unexpected error occurred';
 
-                catchError((error: HttpErrorResponse) => {
-                    const errorMessage = this.setError(error);
-                    this.notificationService.sendError(errorMessage);
-                    return throwError(errorMessage);
-                })
-            );
-    }
+                if (error.error instanceof ErrorEvent) {
+                    // Client-side error
+                    errorMsg = `Client Error: ${error.error.message}`;
+                } else {
+                    // Server-side error
+                    switch (error.status) {
+                        case 0:
+                            errorMsg = 'Server not reachable.\n' + error.url;
+                            break;
+                        case 400:
+                            errorMsg = error.error.message || 'Bad Request';
+                            break;
+                        case 401:
+                            errorMsg = 'Unauthorized. Please login again.';
+                            this.router.navigate(['/login']);
+                            break;
+                        case 403:
+                            errorMsg = 'Forbidden.';
+                            break;
+                        case 404:
+                            errorMsg = 'Resource not found.';
+                            break;
+                        case 500:
+                            errorMsg = error.error?.error;
+                            break
+                    }
+                }
 
-    // Retry the request in case of errror
-    retryRequest(error: Observable<unknown>, retryCount: number): Observable<unknown> {
-        return error.pipe(
-            // concatMap((checkErr: HttpErrorResponse, count: number) => {
+                // Optional: show toast message
+                this.messageService.sendError(errorMsg)
 
-            //     if (count <= retryCount) {
-            //         switch (checkErr.status) {
-            //             case ErrorCode.serverDown:
-            //                 return of(checkErr);
-
-            //             // case ErrorCode.unauthorised :
-            //             //     return of(checkErr);
-
-            //         }
-            //     }
-            //     return throwError(checkErr);
-            // })
+                return throwError(() => error);
+            })
         );
     }
 
-    setError(error: HttpErrorResponse): string {
-        let errorMessage = 'Unknown error occured';
-        if (error.error instanceof ErrorEvent) {
-            // Client side error
-            errorMessage = error.error.message;
-        } else {
-            // server side error
-            if (error.status === 401) {
-                return error.statusText;
-            }
-            if (error.status === 500) {
-                return error.error.message;
-            }
 
-            if (error.error.errorMessage && error.status !== 0) {
-                { errorMessage = error.error.errorMessage; }
-            }
-
-            if (!error.error.errorMessage && error.error && error.status !== 0) {
-                { errorMessage = error.error; }
-            }
-        }
-        return errorMessage;
-    }
 }

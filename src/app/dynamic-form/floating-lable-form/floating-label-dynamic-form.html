@@ -1,9 +1,9 @@
-<div class="ababil-card container" style="margin-top: 20px;">
+<div class="app-card container" style="margin-top: 20px;">
     <div>
         <h3>{{reportName}}</h3>
         <hr>
     </div>
-    <div class="ababil-card" style="margin-bottom: 10px;">
+    <div class="app-card" style="margin-bottom: 10px;">
         <form [formGroup]="form" (ngSubmit)="submitForm()" class="container mt-4">
             <div class="row" *ngIf="form">
                 <ng-container *ngFor="let field of visibleFields(); let i = index">
@@ -16,7 +16,7 @@
                                         style="color: red;">{{field.mandatory==true?'*':''}}</span> </label>
                                 <input type="date" class="form-control" [formControlName]="field.name" /> -->
 
-                                <div class="ababil-input-field-date">
+                                <div class="app-input-field-date">
                                     <input type="date" [id]="field.name" [formControlName]="field.name">
                                     <label [for]="field.name">{{ field.label }}<span
                                             style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
@@ -31,7 +31,7 @@
                             <!-- CHAR -->
                             <div *ngSwitchCase="'CHAR'" class="form-group">
 
-                                <div class="ababil-input-field">
+                                <div class="app-input-field">
                                     <input type="text" [id]="field.name" placeholder="" [formControlName]="field.name">
                                     <label [for]="field.name">{{ field.label }}<span
                                             style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
@@ -45,8 +45,8 @@
 
                             <!-- DROP_DOWN -->
                             <div *ngSwitchCase="'DROP_DOWN'">
-                                <div class="ababil-dropdwon">
-                                    <select class="ababil-dropdown-filed" (change)="onSelectChange($event, field.name)"
+                                <div class="app-dropdwon">
+                                    <select class="app-dropdown-filed" (change)="onSelectChange($event, field.name)"
                                         [formControlName]="field.name">
                                         <option style="color: gray;" value=''>
                                             {{ 'Select ' + field.label }} </option>
@@ -76,7 +76,7 @@
         </form>
     </div>
 
-    <div class="ababil-card">
+    <div class="app-card">
         <textarea name="" id="" style="width: 100%; height: 200px;">{{formValue}}</textarea>
 
     </div>

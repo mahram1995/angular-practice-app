@@ -7,9 +7,9 @@ export class PathParameters {
 export class BaseService {
     // all prefex
     //URL = 'http://192.168.0.107:9090/budget-service'
-    //URL = 'http://localhost:9090/budget-service'
+    // URL = 'http://localhost:5050/'
     // URL = 'http://192.168.0.1:8010'
-    URL = 'http://localhost:5050/'
+    URL = 'http://192.168.0.193:5050/'
 
     fullURL: string
 
