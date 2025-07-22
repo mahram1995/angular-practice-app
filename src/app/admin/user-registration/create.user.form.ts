@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Location } from '@angular/common';
 import { UserRegistratonDTO } from '../service/admin.domain';
+import { CommonService } from '../../app.service/common.service';
+import { AdminService } from '../service/admin.service';
+import { NotificationService } from '../../app.service/notification.service';
 
 @Component({
     selector: 'app-user-registration',
@@ -9,10 +13,21 @@ import { UserRegistratonDTO } from '../service/admin.domain';
 
 })
 export class UserRegistrationComponent {
+    required_field: any = {
+        userName: 'User Name',
+        password: 'Password',
+        email: 'Email',
+        lastName: 'Last Name',
+    };
+
     userForm: FormGroup;
     message: string = '';
 
-    constructor(private fb: FormBuilder, private http: HttpClient) {
+    constructor(private fb: FormBuilder,
+        protected location: Location,
+        private notificationService: NotificationService,
+        private adminService: AdminService,
+        private commonService: CommonService) {
         this.prepareForm(new UserRegistratonDTO)
     }
 
@@ -21,10 +36,10 @@ export class UserRegistrationComponent {
             id: [data.id],
             userName: [data.userName, Validators.required],
             password: [data.password, Validators.required],
-            firstName: [data.firstName, Validators.required],
+            firstName: [data.firstName],
             middleName: [data.middleName],
             lastName: [data.lastName, Validators.required],
-            email: [data.email, [Validators.required, Validators.email]],
+            email: [data.email, [Validators.email]],
             phone: [data.phone],
             employeeId: [data.employeeId],
             userStatus: [data.userStatus],
@@ -45,7 +60,24 @@ export class UserRegistrationComponent {
         return this.userForm.get('userPhoto') as FormArray;
     }
 
-    save() { }
-    back() { }
+    save() {
+        let formData = this.userForm.value
+        if (this.commonService.isFormInvalid(this.userForm, this.required_field)) {
+            return;
+        }
+        this.adminService.craetUser(formData).subscribe(
+            (response) => {
+                this.notificationService.sendSuccess(response.message);
+                this.prepareForm(new UserRegistratonDTO)
+            },
+            (error) => {
+
+            }
+        )
+    }
+    back() {
+
+        this.location.back()
+    }
 
 }

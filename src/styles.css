@@ -52,12 +52,12 @@
 
 .app-input-field label {
     display: block;
-    font-size: 14px;
+    font-size: 12px;
     transform: translate(0, -2.75rem);
 }
 
 .app-input-field {
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .app-input-field input {
@@ -84,7 +84,7 @@
 
     .app-input-field input:focus+label,
     .app-input-field input:not(:placeholder-shown)+label {
-        font-size: 15px;
+        font-size: 13px;
         color: #1aa89c;
         font-weight: 500;
         transform: translate(1px, -45px);
@@ -94,13 +94,13 @@
 
 .app-input-field-date label {
     display: block;
-    font-size: 14px;
+    font-size: 13px;
 
     transform: translate(0, -2.5rem);
 }
 
 .app-input-field-date {
-    font-size: 14px;
+    font-size: 12px;
 }
 
 
@@ -258,4 +258,76 @@ ul {
     margin: 0px;
 
     /* transition: all 0.2s ease-out; */
+}
+
+.error-alert {
+    color: red;
+    font-size: 12px;
+    height: 10px;
+    padding-left: 5px;
+    transform: translate(0, -1.3rem);
+}
+
+.app-dropdwon .error-alert {
+    color: red;
+    font-size: 12px;
+    height: 10px;
+    padding-left: 5px;
+    transform: translate(0, -2rem);
+}
+
+.toast-error-style {
+    background-color: rgb(187, 21, 21);
+    border-radius: 5px;
+    padding-bottom: 12px !important;
+    color: white;
+}
+
+.toast-success-style {
+    background-color: green;
+    padding-bottom: 12px !important;
+    border-radius: 5px;
+    color: white;
+}
+
+.toast-warning-style {
+    padding-bottom: 12px !important;
+    background-color: rgb(212, 111, 43);
+    border-radius: 5px;
+    color: white;
+}
+
+
+.toast-info-style {
+    background-color: rgb(228, 212, 72);
+    border-radius: 5px;
+    color: rgb(7, 1, 1);
+    padding-bottom: 12px !important;
+
+}
+
+.toast-success-style button {
+    color: rgb(250, 250, 250);
+    border-radius: 10px !important;
+}
+
+
+
+.toast-error-style button {
+    color: rgb(250, 250, 250);
+    border-radius: 15px !important;
+}
+
+.toast-error-style button:hover {
+    color: rgb(250, 250, 250);
+    background-color: #4b06bb;
+    border-radius: 10px !important;
+}
+
+.toast-info-style button {
+    color: rgb(0, 0, 0);
+}
+
+.toast-warning-style button {
+    color: rgb(250, 250, 250);
 }

@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { DynamicFormService } from './dynamic-form/service/dynamic.form.service';
 import { NotificationService } from './app.service/notification.service';
 import { HttpService } from './app.service/http.service';
@@ -23,7 +23,11 @@ import { UserRegistrationComponent } from './admin/user-registration/create.user
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatCardModule } from '@angular/material/card';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { CommonService } from './app.service/common.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { AdminService } from './admin/service/admin.service';
+import { ErrorInterceptor } from './app.service/http.error.hndller.service';
 
 
 
@@ -47,6 +51,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HttpClientModule,
     MatCardModule,
     BrowserAnimationsModule,
+    ToastModule
 
 
   ],
@@ -56,7 +61,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     LoaderOverlayService,
     LoginService,
     AuthService,
+    CommonService,
     BaseService,
+    MessageService,
+    NotificationService,
+    AdminService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    },
     provideAnimationsAsync()],
   bootstrap: [AppComponent]
 })

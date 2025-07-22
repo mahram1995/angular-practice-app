@@ -26,11 +26,11 @@ export class LoginService extends BaseService {
     }
 
     login(data: any): Observable<any> {
-        return this.httpclient.post<any>(`${this.loginApi}`, data);
+        return this.httpclient.post<any>(this.loginApi, data);
     }
 
     logout(userName: any): Observable<any> {
-        return this.httpclient.post<any>(`${this.logoutAPI}`, userName);
+        return this.httpclient.post<any>(this.logoutAPI, userName);
     }
 
 

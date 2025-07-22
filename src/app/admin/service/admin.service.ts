@@ -1,8 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
+import * as endpoints from '../service/admin.endpoints';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { BaseService } from '../../app.service/base-service';
 import { HttpService } from '../../app.service/http.service';
+import { UserRegistratonDTO } from './admin.domain';
 
 
 
@@ -10,27 +12,14 @@ import { HttpService } from '../../app.service/http.service';
 @Injectable()
 export class AdminService extends BaseService {
 
-
-    private base = this.URL;
-    private loginApi = this.URL + 'admin/auth/login';
-    private logoutAPI = this.URL + 'admin/auth/logout';
-
-    // budget Gl Acccount API
-    private _getAccount = this.base + 'getAccount';
-
-
     constructor(private httpclient: HttpClient,
         private http: HttpService
     ) {
         super()
     }
 
-    login(data: any): Observable<any> {
-        return this.httpclient.post<any>(`${this.loginApi}`, data);
-    }
-
-    logout(userName: any): Observable<any> {
-        return this.httpclient.post<any>(`${this.logoutAPI}`, userName);
+    public craetUser(data: UserRegistratonDTO): Observable<any> {
+        return this.http.post(endpoints.CREATE_USER, data);
     }
 
 
