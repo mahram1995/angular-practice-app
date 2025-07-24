@@ -18,6 +18,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(req).pipe(
             catchError((error: HttpErrorResponse) => {
+
                 // Global error handling logic here
                 let errorMsg = 'An unexpected error occurred';
 
@@ -53,6 +54,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                 this.messageService.sendError(errorMsg)
 
                 return throwError(() => error);
+
             })
         );
     }
