@@ -22,7 +22,7 @@
                         <div class="col-sm-6  col-md-3 ">
                             <div class="app-input-field">
                                 <input type="text" id="userName" placeholder=" " formControlName="userName" [ngClass]="{'is-invalid' :userForm.controls.userName?.touched &&
-                                         userForm.controls.userNamer?.errors}">
+                                         userForm.controls.userName?.errors}">
                                 <label for="userName">User Name<span style="color: red;">*</span></label>
                                 <div
                                     *ngIf="userForm.controls['userName']?.errors && userForm.controls['userName']?.touched">
@@ -34,21 +34,20 @@
                         </div>
                         <div class="col-sm-6  col-md-3 ">
                             <div class="app-input-field">
-                                <input type="firstName" id="firstName" placeholder=" " formControlName="firstName"
-                                    [ngClass]="{'is-invalid' :userForm.controls.firstName.touched &&
+                                <input type="text" id="firstName" placeholder=" " formControlName="firstName" [ngClass]="{'is-invalid' :userForm.controls.firstName.touched &&
                                    userForm.controls.firstName.errors}">
                                 <label for="firstName">First Name</label>
                             </div>
                         </div>
                         <div class="col-sm-6  col-md-3 ">
                             <div class="app-input-field">
-                                <input type="middleName" id="middleName" placeholder=" " formControlName="middleName">
+                                <input type="text" id="middleName" placeholder=" " formControlName="middleName">
                                 <label for="middleName">Middle Name</label>
                             </div>
                         </div>
                         <div class="col-sm-6  col-md-3 ">
                             <div class="app-input-field">
-                                <input type="lastName" id="lastName" placeholder=" " formControlName="lastName"
+                                <input type="text" id="lastName" placeholder=" " formControlName="lastName"
                                     [ngClass]="{'is-invalid' :userForm.controls.password?.touched &&
                                                                                          userForm.controls.lastName?.errors}">
                                 <label for="lastName">Last Name<span style="color: red;">*</span></label>
@@ -96,7 +95,7 @@
 
                         <div class="col-sm-6  col-md-3 ">
                             <div class="app-input-field">
-                                <input type="userStatus" id="userStatus" placeholder=" " formControlName="userStatus">
+                                <input type="text" id="userStatus" placeholder=" " formControlName="userStatus">
                                 <label for="userStatus"> Status</label>
 
                             </div>

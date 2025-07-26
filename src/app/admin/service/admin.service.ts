@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { BaseService } from '../../app.service/base-service';
 import { HttpService } from '../../app.service/http.service';
-import { UserRegistratonDTO } from './admin.domain';
+import { UserRegistrationDTO } from './admin.domain';
 
 
 
@@ -18,7 +18,7 @@ export class AdminService extends BaseService {
         super()
     }
 
-    public craetUser(data: UserRegistratonDTO): Observable<any> {
+    public createUser(data: UserRegistrationDTO): Observable<any> {
         return this.http.post(endpoints.CREATE_USER, data);
     }
 

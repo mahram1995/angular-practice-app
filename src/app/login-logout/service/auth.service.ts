@@ -55,7 +55,7 @@ export class AuthService {
     }
 
     isLogin() {
-        if (this.getUser) {
+        if (this.getUser()) {
             return true
         } else {
             return false

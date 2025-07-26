@@ -1,9 +1,10 @@
 import { Inject, Injectable, InjectionToken, Injector, Optional } from '@angular/core';
-import { HttpClient, HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpHeaders } from '@angular/common/http';
 import { Observable, timer } from "rxjs";
 import { finalize } from 'rxjs/operators';
 import { HttpServiceInterface, IRequestOptions } from './http.service.interface';
 import { LoaderOverlayService } from './loader.overlay.service';
+import { AuthService } from '../login-logout/service/auth.service';
 
 
 
@@ -21,10 +22,29 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
     constructor(
         private httpHandler: HttpHandler,
         @Optional() @Inject(HTTP_DYNAMIC_INTERCEPTORS) private interceptors: HttpInterceptor[] = [],
-        private loaderOverlayService: LoaderOverlayService
+        private loaderOverlayService: LoaderOverlayService,
+
 
     ) {
         super(httpHandler);
+    }
+
+    getToken(): string | null {
+        const user = sessionStorage.getItem('user');
+        if (!user) {
+            console.warn('No user found in sessionStorage.');
+            return null;
+        }
+
+        try {
+            const userInfo = JSON.parse(user);
+            console.log('Parsed user info:', userInfo);
+
+            return userInfo?.token || null;
+        } catch (error) {
+            console.error('Failed to parse user JSON:', error);
+            return null;
+        }
     }
 
     public override get(url: string, options?: IRequestOptions): Observable<any> {
@@ -32,6 +52,16 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
     }
 
     public override post(url: string, data: any, options?: IRequestOptions): Observable<any> {
+        let token = this.getToken()
+        console.log(token);
+
+        options = {
+            headers: new HttpHeaders({
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }),
+            responseType: 'json'
+        }
         this.showLoadingModal();
 
         return this.interceptRequest(super.post(url, data, options));

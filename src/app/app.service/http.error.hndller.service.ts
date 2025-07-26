@@ -45,7 +45,10 @@ export class ErrorInterceptor implements HttpInterceptor {
                             errorMsg = 'Resource not found.';
                             break;
                         case 500:
-                            errorMsg = error.error?.error;
+                            errorMsg = 'An unexpected server error occurred. Please try again later.';
+                            if (error.error?.error) {
+                                errorMsg += ` Details: ${error.error.error}`;
+                            }
                             break
                     }
                 }

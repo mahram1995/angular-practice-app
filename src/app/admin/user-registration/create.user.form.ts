@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Location } from '@angular/common';
-import { UserRegistratonDTO } from '../service/admin.domain';
+import { UserRegistrationDTO } from '../service/admin.domain';
 import { CommonService } from '../../app.service/common.service';
 import { AdminService } from '../service/admin.service';
 import { NotificationService } from '../../app.service/notification.service';
@@ -28,10 +28,10 @@ export class UserRegistrationComponent {
         private notificationService: NotificationService,
         private adminService: AdminService,
         private commonService: CommonService) {
-        this.prepareForm(new UserRegistratonDTO)
+        this.prepareForm(new UserRegistrationDTO)
     }
 
-    prepareForm(data: UserRegistratonDTO) {
+    prepareForm(data: UserRegistrationDTO) {
         this.userForm = this.fb.group({
             id: [data.id],
             userName: [data.userName, Validators.required],
@@ -65,10 +65,10 @@ export class UserRegistrationComponent {
         if (this.commonService.isFormInvalid(this.userForm, this.required_field)) {
             return;
         }
-        this.adminService.craetUser(formData).subscribe(
+        this.adminService.createUser(formData).subscribe(
             (response) => {
                 this.notificationService.sendSuccess(response.message);
-                this.prepareForm(new UserRegistratonDTO)
+                this.prepareForm(new UserRegistrationDTO)
             },
             (error) => {
 
