@@ -1,7 +1,7 @@
 .login-card {
     max-width: 400px;
     width: 100%;
-    margin-top: 160px;
+    margin-top: 20px;
     border-radius: 15px;
     background-color: #0a3d62;
     color: white;
@@ -21,6 +21,10 @@ body {
     background: linear-gradient(to right, #00c6ff, #0072ff);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+body, html {
+  height: 100%;
+  margin: 0;
+}
 
 
 input.form-control:focus {
@@ -31,10 +35,17 @@ input.form-control:focus {
 :host {
     display: block;
     height: 100vh;
-    background-image: url('/assets/image/login-page-background.jpg');
+   
     /* Your image path */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 
+}
+
+.login-container {
+  min-height: 100%;
+  background-image: url('/assets/image/login-page-background.jpg');
+  background-size: cover;
+  background-position: center;
 }

@@ -1,15 +1,13 @@
 import { HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { BASE_URL } from "./environment";
 export class PathParameters {
     [parameterName: string]: any;
 }
 @Injectable()
 export class BaseService {
-    // all prefex
-    //URL = 'http://192.168.0.107:9090/budget-service'
-    // URL = 'http://localhost:5050/'
-    // URL = 'http://192.168.0.1:8010'
-    URL = 'http://192.168.0.193:5050/'
+
+    URL = BASE_URL
 
     fullURL: string
 
