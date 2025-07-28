@@ -32,6 +32,7 @@ import { ErrorInterceptor } from './app.service/http.error.hndller.service';
 
 
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -65,6 +66,7 @@ import { ErrorInterceptor } from './app.service/http.error.hndller.service';
     BaseService,
     MessageService,
     NotificationService,
+    
     AdminService,
     {
       provide: HTTP_INTERCEPTORS,

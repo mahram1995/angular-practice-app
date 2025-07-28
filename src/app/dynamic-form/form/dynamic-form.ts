@@ -1,6 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { UDFFormData } from '../json-data/form-data';
+// pdf-report.component.ts
+import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
+import pdfjsWorker from 'pdfjs-dist/legacy/build/pdf.worker.min.js';
+import { HttpClient } from '@angular/common/http';
+GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 @Component({
     selector: 'dynamic-form',
@@ -16,7 +21,7 @@ export class DynamicFormComponent {
 
     jsonData = UDFFormData; // Paste your JSON here
 
-    constructor(private fb: FormBuilder) { }
+    constructor(private fb: FormBuilder, private httpclient: HttpClient) { }
 
     ngOnInit() {
         this.fields = this.jsonData.userDefinedFields.sort((a, b) => a.order - b.order);
@@ -138,6 +143,71 @@ export class DynamicFormComponent {
             return;
         }
         console.log("Form Submitted", this.form.value);
+    }
+
+    downloadedReport() {
+
+        //this.decodedTokenJTI = this.decodeToken(this.authService.accessToken()).jti;
+        let reportName = 'rpt_credit_card_bill_demo';
+        let reportExtension = 'pdf';
+        const jasperUrl = 'http://192.168.1.199:8080/jasperserver/rest_v2/reports/reports/AbabilNG/'
+
+        let url: string = '';
+        if (jasperUrl) {
+            url = jasperUrl + reportName + '.' + reportExtension + '?';
+
+            url += 'PYEAR=' + '2024' + '&';
+
+            url += 'PMONTH=' + '5' + '&';
+
+            url = url.concat('j_username=').concat('jasperadmin').concat('&j_password=').concat('jasperadmin');
+
+        }
+        // url = url.concat('jt=').concat(window.btoa(${this.userName}:${this.decodedTokenJTI}));
+        // url = url.concat('jt=').concat(window.btoa(${this.userName}:${this.decodedTokenJTI}));
+
+        // const iFrame = reportExtension === 'html' ? this.htmlIframe : this.pdfIframe;
+        // window.URL.revokeObjectURL(url);
+        //window.open(url, '_blank');
+
+        // iFrame.nativeElement.src = url;
+        this.downloadAndConvertPDF(url);
+
+    }
+    async downloadAndConvertPDF(url: string): Promise<void> {
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Failed to download PDF');
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        const text = await this.extractTextFromPDF(arrayBuffer);
+        this.downloadTextFile(text, 'report.txt');
+    }
+    
+    async extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<string> {
+        const pdf = await getDocument({ data: arrayBuffer }).promise;
+        let text = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            const pageText = content.items.map((item: any) => item.str).join(' ');
+            text += pageText + '\n\n';
+        }
+
+        return text;
+    }
+    downloadTextFile(text: string, filename: string): void {
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+
+        window.URL.revokeObjectURL(url);
     }
 }
 
