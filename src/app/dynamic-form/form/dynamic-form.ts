@@ -185,7 +185,7 @@ export class DynamicFormComponent {
         const text = await this.extractTextFromPDF(arrayBuffer);
         this.downloadTextFile(text, 'report.txt');
     }
-    
+
     async extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<string> {
         const pdf = await getDocument({ data: arrayBuffer }).promise;
         let text = '';
