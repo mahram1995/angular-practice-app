@@ -1,10 +1,10 @@
-<div class="app-card container" style="margin-top: 20px;">
+<div class="app-page app-card" style="margin-top: 20px;">
     <div>
         <h3>{{reportName}}</h3>
         <hr>
     </div>
     <div class="app-card" style="margin-bottom: 20px;">
-        <form [formGroup]="form" (ngSubmit)="submitForm()" class="container mt-4">
+        <form [formGroup]="form" (ngSubmit)="submitForm()" class="mt-4">
             <div class="row" *ngIf="form">
                 <ng-container *ngFor="let field of visibleFields(); let i = index">
                     <div [class]="field.styleClass" style="padding-bottom: 30px;">
