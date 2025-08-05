@@ -8,6 +8,10 @@
     margin-right: 50px !important;
 }
 
+.app-row {
+    margin-top: 15px;
+}
+
 .app-card {
     border-radius: 5px;
     padding: 15px 15px 1px 15px;
