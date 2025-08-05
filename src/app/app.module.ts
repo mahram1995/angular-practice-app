@@ -28,6 +28,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { AdminService } from './admin/service/admin.service';
 import { ErrorInterceptor } from './app.service/http.error.hndller.service';
+import { SafeUrlPipe } from './security/safe-url.pipe';
 
 
 
@@ -41,7 +42,8 @@ import { ErrorInterceptor } from './app.service/http.error.hndller.service';
     AppHeaderComponent,
     AppHomePageComponent,
     LoginFormComponent,
-    UserRegistrationComponent
+    UserRegistrationComponent,
+    SafeUrlPipe,
   ],
   imports: [
     BrowserModule,
@@ -66,7 +68,7 @@ import { ErrorInterceptor } from './app.service/http.error.hndller.service';
     BaseService,
     MessageService,
     NotificationService,
-    
+
     AdminService,
     {
       provide: HTTP_INTERCEPTORS,

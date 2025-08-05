@@ -5,6 +5,7 @@ import { UDFFormData } from '../json-data/form-data';
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/legacy/build/pdf.worker.min.js';
 import { HttpClient } from '@angular/common/http';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 @Component({
@@ -13,7 +14,7 @@ GlobalWorkerOptions.workerSrc = pdfjsWorker;
 })
 export class DynamicFormComponent {
     title = 'agular dynamic form';
-
+    reportUrl: string;
     form: FormGroup = this.fb.group({});
     fieldVisibility: { [key: string]: boolean } = {};
     fields: any[] = [];
@@ -21,7 +22,7 @@ export class DynamicFormComponent {
 
     jsonData = UDFFormData; // Paste your JSON here
 
-    constructor(private fb: FormBuilder, private httpclient: HttpClient) { }
+    constructor(private fb: FormBuilder, private httpclient: HttpClient, private sanitizer: DomSanitizer) { }
 
     ngOnInit() {
         this.fields = this.jsonData.userDefinedFields.sort((a, b) => a.order - b.order);
@@ -146,47 +147,31 @@ export class DynamicFormComponent {
     }
 
     downloadedReport() {
+        const reportName = 'ACCOUNT_BALANCE_REPORT';
+        const reportType = 'pdf'; // or 'html', 'txt'
+        const parameter = 'startDate=2023-01-01&endDate=2023-12-31&j_username=jasperadmin&j_password=jasperadmin';
+        const api = 'http://localhost:5050/reports/get-report?';
 
-        //this.decodedTokenJTI = this.decodeToken(this.authService.accessToken()).jti;
-        let reportName = 'rpt_credit_card_bill_demo';
-        let reportExtension = 'pdf';
-        const jasperUrl = 'http://192.168.1.199:8080/jasperserver/rest_v2/reports/reports/AbabilNG/'
+        const rawUrl = `${api}reportName=${reportName}&reportType=${reportType}&parameter=${encodeURIComponent(parameter)}`;
 
-        let url: string = '';
-        if (jasperUrl) {
-            url = jasperUrl + reportName + '.' + reportExtension + '?';
+        this.httpclient.get(rawUrl, { responseType: 'blob' }).subscribe(blob => {
+            const mimeType = this.getMimeType(reportType); // Create a helper function below
+            const file = new Blob([blob], { type: mimeType });
+            this.reportUrl = URL.createObjectURL(file);
+        });
 
-            url += 'PYEAR=' + '2024' + '&';
-
-            url += 'PMONTH=' + '5' + '&';
-
-            url = url.concat('j_username=').concat('jasperadmin').concat('&j_password=').concat('jasperadmin');
-
-        }
-        // url = url.concat('jt=').concat(window.btoa(${this.userName}:${this.decodedTokenJTI}));
-        // url = url.concat('jt=').concat(window.btoa(${this.userName}:${this.decodedTokenJTI}));
-
-        // const iFrame = reportExtension === 'html' ? this.htmlIframe : this.pdfIframe;
-        // window.URL.revokeObjectURL(url);
-        //window.open(url, '_blank');
-
-        // iFrame.nativeElement.src = url;
-        this.downloadAndConvertPDF(url);
 
     }
-    async downloadAndConvertPDF(url: string): Promise<void> {
-
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Failed to download PDF');
+    getMimeType(type: string): string {
+        switch (type.toLowerCase()) {
+            case 'pdf': return 'application/pdf';
+            case 'html': return 'text/html';
+            case 'txt': return 'text/plain';
+            case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+            case 'xls': return 'application/vnd.ms-excel';
+            default: return 'application/octet-stream';
         }
-
-        const arrayBuffer = await response.arrayBuffer();
-        // const text = await this.extractTextFromPDF(arrayBuffer);
-
     }
-
-
 
 }
 

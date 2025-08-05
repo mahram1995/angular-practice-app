@@ -7,6 +7,7 @@ import { CommonService } from '../../app.service/common.service';
 import { AdminService } from '../service/admin.service';
 import { NotificationService } from '../../app.service/notification.service';
 
+
 @Component({
     selector: 'app-user-registration',
     templateUrl: './create.user.component.html',
@@ -19,7 +20,7 @@ export class UserRegistrationComponent {
         email: 'Email',
         lastName: 'Last Name',
     };
-
+    detailsUI: 'home/create-user/detials'
     userForm: FormGroup;
     message: string = '';
 
