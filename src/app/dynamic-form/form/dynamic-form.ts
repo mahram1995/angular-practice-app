@@ -183,7 +183,7 @@ export class DynamicFormComponent {
 
         const arrayBuffer = await response.arrayBuffer();
         const text = await this.extractTextFromPDF(arrayBuffer);
-        this.downloadTextFile(text, 'report.txt');
+
     }
 
     async extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<string> {
@@ -198,16 +198,6 @@ export class DynamicFormComponent {
 
         return text;
     }
-    downloadTextFile(text: string, filename: string): void {
-        const blob = new Blob([text], { type: 'text/plain' });
-        const url = window.URL.createObjectURL(blob);
 
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        a.click();
-
-        window.URL.revokeObjectURL(url);
-    }
 }
 
