@@ -182,22 +182,11 @@ export class DynamicFormComponent {
         }
 
         const arrayBuffer = await response.arrayBuffer();
-        const text = await this.extractTextFromPDF(arrayBuffer);
+        // const text = await this.extractTextFromPDF(arrayBuffer);
 
     }
 
-    async extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<string> {
-        const pdf = await getDocument({ data: arrayBuffer }).promise;
-        let text = '';
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const content = await page.getTextContent();
-            const pageText = content.items.map((item: any) => item.str).join(' ');
-            text += pageText + '\n\n';
-        }
 
-        return text;
-    }
 
 }
 
