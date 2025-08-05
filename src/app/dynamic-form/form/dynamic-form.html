@@ -61,5 +61,8 @@
         </form>
 
         <button (click)="downloadedReport()">Show report</button>
+        <iframe *ngIf="reportUrl" [src]="reportUrl | safeUrl" width="100%" height="600px"
+            style="border: 1px solid #ccc;">
+        </iframe>
     </div>
 </div>
