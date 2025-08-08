@@ -6,7 +6,7 @@ import { FloatingLabelDynamicFormComponent } from './dynamic-form/floating-lable
 import { LoginFormComponent } from './login-logout/login-form/login.form';
 import { AppHomePageComponent } from './login-logout/home-page/home.page';
 import { AuthGuard } from './login-logout/service/auth.guard';
-import { UserRegistrationComponent } from './admin/user-registration/create.user.form';
+import { UserRegistrationComponent } from './admin/user-registration/create-user.form.component';
 
 const routes: Routes = [
 

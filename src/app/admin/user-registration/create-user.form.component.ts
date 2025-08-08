@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Location } from '@angular/common';
@@ -6,14 +6,17 @@ import { UserRegistrationDTO } from '../service/admin.domain';
 import { CommonService } from '../../app.service/common.service';
 import { AdminService } from '../service/admin.service';
 import { NotificationService } from '../../app.service/notification.service';
+import { FormBaseComponent } from '../base-component/form.base.component';
+import { ApprovalflowServiceInterface } from '../approval-flow/service/approval.flow.service.Interface';
+import { APPROVAL_FLOW_SERVICE } from '../approval-flow/service/approval-flow.token';
 
-
+const DETAILS_UI = 'home/user-details?';
 @Component({
     selector: 'app-user-registration',
-    templateUrl: './create.user.component.html',
+    templateUrl: './create-user-form.component.html',
 
 })
-export class UserRegistrationComponent {
+export class UserRegistrationComponent extends FormBaseComponent implements OnInit {
     required_field: any = {
         userName: 'User Name',
         password: 'Password',
@@ -25,10 +28,15 @@ export class UserRegistrationComponent {
     message: string = '';
 
     constructor(private fb: FormBuilder,
-        protected location: Location,
+        protected override location: Location,
         private notificationService: NotificationService,
         private adminService: AdminService,
+        @Inject(APPROVAL_FLOW_SERVICE) protected approvalFlow: ApprovalflowServiceInterface,
         private commonService: CommonService) {
+        super(location, approvalFlow);
+
+    }
+    ngOnInit(): void {
         this.prepareForm(new UserRegistrationDTO)
     }
 
@@ -62,11 +70,14 @@ export class UserRegistrationComponent {
     }
 
     save() {
+        const paramMap = new Map<string, any>();
+        const urlSearchParams = this.getQueryParamMapForApprovalFlow(paramMap, null, DETAILS_UI, this.location.path().concat('?'));
+
         let formData = this.userForm.value
         if (this.commonService.isFormInvalid(this.userForm, this.required_field)) {
             return;
         }
-        this.adminService.createUser(formData).subscribe(
+        this.adminService.createUser(formData, urlSearchParams).subscribe(
             (response) => {
                 this.notificationService.sendSuccess(response.message);
                 this.prepareForm(new UserRegistrationDTO)

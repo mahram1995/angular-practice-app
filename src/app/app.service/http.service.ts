@@ -35,11 +35,8 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
             console.warn('No user found in sessionStorage.');
             return null;
         }
-
         try {
             const userInfo = JSON.parse(user);
-            console.log('Parsed user info:', userInfo);
-
             return userInfo?.token || null;
         } catch (error) {
             console.error('Failed to parse user JSON:', error);
@@ -47,32 +44,48 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
         }
     }
 
-    public override get(url: string, options?: IRequestOptions): Observable<any> {
-        return super.get(url, options);
-    }
-
-    public override post(url: string, data: any, options?: IRequestOptions): Observable<any> {
+    getHttpHeader(header: any): any {
         let token = this.getToken()
-        console.log(token);
+        let headers = new HttpHeaders()
+            .set('Authorization', `Bearer ${token}`)
+            .set('Content-Type', 'application/json');
 
-        options = {
-            headers: new HttpHeaders({
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }),
-            responseType: 'json'
+        const verifier = header.get("verifier");
+        if (verifier !== null && verifier !== undefined) {
+            headers = headers.set('verifier', verifier);
         }
-        this.showLoadingModal();
 
-        return this.interceptRequest(super.post(url, data, options));
+        const correctionUI = header.get("correctionUI");
+        if (correctionUI !== null && correctionUI !== undefined) {
+            headers = headers.set('correctionUI', correctionUI);
+        }
+
+        const detailsUI = header.get("detailsUI");
+        if (detailsUI !== null && detailsUI !== undefined) {
+            headers = headers.set('detailsUI', detailsUI);
+        }
+
+        const httpHeaders = {
+            headers: headers,
+            responseType: 'json'
+        };
+        return httpHeaders;
+    }
+    public override get(url: string, options?: any): Observable<any> {
+        return super.get(url, this.getHttpHeader(options));
     }
 
-    public override put(url: string, body: any, options?: IRequestOptions): Observable<any> {
+    public override post(url: string, data: any, options?: any): Observable<any> {
         this.showLoadingModal();
-        return this.interceptRequest(super.put(url, body, options));
+        return this.interceptRequest(super.post(url, data, this.getHttpHeader(options)));
     }
 
-    public override delete(url: string, options?: IRequestOptions): Observable<any> {
+    public override put(url: string, body: any, options?: any): Observable<any> {
+        this.showLoadingModal();
+        return this.interceptRequest(super.put(url, body, this.getHttpHeader(options)));
+    }
+
+    public override delete(url: string, options?: any): Observable<any> {
         this.showLoadingModal();
         return this.interceptRequest(super.delete(url, this.userInfo));
     }

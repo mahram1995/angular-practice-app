@@ -18,8 +18,8 @@ export class AdminService extends BaseService {
         super()
     }
 
-    public createUser(data: UserRegistrationDTO): Observable<any> {
-        return this.http.post(endpoints.CREATE_USER, data);
+    public createUser(data: UserRegistrationDTO, urlSearchParams): Observable<any> {
+        return this.http.post(endpoints.CREATE_USER, data, urlSearchParams);
     }
 
 

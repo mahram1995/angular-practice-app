@@ -19,7 +19,7 @@ import { AppHomePageComponent } from './login-logout/home-page/home.page';
 import { LoginFormComponent } from './login-logout/login-form/login.form';
 import { DynamicFormComponent } from './dynamic-form/form/dynamic-form';
 import { FloatingLabelDynamicFormComponent } from './dynamic-form/floating-lable-form/floating-label-dynamic-form';
-import { UserRegistrationComponent } from './admin/user-registration/create.user.form';
+import { UserRegistrationComponent } from './admin/user-registration/create-user.form.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatCardModule } from '@angular/material/card';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -29,6 +29,10 @@ import { ToastModule } from 'primeng/toast';
 import { AdminService } from './admin/service/admin.service';
 import { ErrorInterceptor } from './app.service/http.error.hndller.service';
 import { SafeUrlPipe } from './security/safe-url.pipe';
+import { APPROVAL_FLOW_SERVICE } from './admin/approval-flow/service/approval-flow.token';
+import { ApprovalflowService } from './admin/approval-flow/service/approval-flow-service';
+import { BaseComponent } from './admin/base-component/base.component';
+import { FormBaseComponent } from './admin/base-component/form.base.component';
 
 
 
@@ -74,6 +78,10 @@ import { SafeUrlPipe } from './security/safe-url.pipe';
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
       multi: true
+    },
+    {
+      provide: APPROVAL_FLOW_SERVICE,
+      useClass: ApprovalflowService
     },
     provideAnimationsAsync()],
   bootstrap: [AppComponent]
