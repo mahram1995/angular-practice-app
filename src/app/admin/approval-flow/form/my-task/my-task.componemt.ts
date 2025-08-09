@@ -1,0 +1,68 @@
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, Route, Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { ApprovalflowService } from '../../service/approval-flow-service';
+import { ApprovalFlowTask } from '../../service/task.domain';
+import { FormBaseComponent } from '../../../base-component/form.base.component';
+
+@Component({
+    selector: 'approval-flow-task',
+    templateUrl: './my-task.component.html',
+})
+export class ApprovalFlowTaskComponent extends FormBaseComponent implements OnInit {
+
+    aprovalFlowTask: ApprovalFlowTask[];
+    selectedNode: ApprovalFlowTask;
+    urlSearchMap: Map<string, any> = new Map();
+    cols: any[] = []
+
+    constructor(
+        private approvalFlowService: ApprovalflowService,
+        protected override router: Router,
+        protected override location: Location,
+
+    ) {
+        super(location);
+
+    }
+
+    ngOnInit() {
+        this.fetchTask()
+        this.cols = [
+            { field: 'taskId', header: 'taskId' },
+            { field: 'maker', header: 'maker' },
+            { field: 'makerBranchId', header: 'makerBranchId' },
+            { field: 'activityName', header: 'activityName' },
+        ];
+    }
+
+    fetchTask() {
+        this.urlSearchMap = new Map();
+        this.urlSearchMap.set('module', 'ababil-admin');
+        this.urlSearchMap.set('status', 'START');
+        this.urlSearchMap.set('verifier', this.getUserInfo()?.userName);
+
+
+        this.approvalFlowService.fetchApprovalflowTasks(this.urlSearchMap).subscribe(data => {
+            this.aprovalFlowTask = data.content
+        })
+    }
+
+    search() { }
+    accept() { }
+    reject() { }
+    correction() { }
+    back() { this.location.back() }
+    refresh() { this.fetchTask() }
+
+    taskDetails(data: ApprovalFlowTask) {
+        this.router.navigate([data.taskDetailsUi, data.taskId]);
+    }
+
+    onRowSelect(event: any) {
+        console.log(event);
+
+
+    }
+
+}

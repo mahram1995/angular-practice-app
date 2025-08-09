@@ -2,11 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { ApprovalflowServiceInterface } from './approval.flow.service.Interface';
-import { PathParameters } from '../../../app.service/base-service';
+import { BaseService, PathParameters } from '../../../app.service/base-service';
+import { HttpService } from '../../../app.service/http.service';
+import * as endpoints from '../service/task.endpoints';
 
 @Injectable()
-export class ApprovalflowService implements ApprovalflowServiceInterface {
-    constructor(private http: HttpClient) { }
+export class ApprovalflowService extends BaseService implements ApprovalflowServiceInterface {
+    constructor(private http: HttpService) {
+        super()
+    }
+
 
     fetchApprovalFlowProfiles(urlSearchParams: Map<string, string>): Observable<any> {
         const params = this.mapToHttpParams(urlSearchParams);
@@ -25,9 +30,9 @@ export class ApprovalflowService implements ApprovalflowServiceInterface {
         return this.http.put(`/api/approvalflow/profiles/${pathParams.id}`, workflowProfile);
     }
 
-    fetchApprovalflowTasks(urlSearchParams: Map<string, string>, pathParams: PathParameters): Observable<any> {
-        const params = this.mapToHttpParams(urlSearchParams);
-        return this.http.get(`/api/approvalflow/tasks/${pathParams.id}`, { params });
+    fetchApprovalflowTasks(urlSearchParams: Map<string, string>): Observable<any> {
+        const options = { params: this.getHttpParam(urlSearchParams) };
+        return this.http.get(endpoints.GET_TASKS, options);
     }
 
     fetchApprovalflowTaskDetail(pathParams: PathParameters): Observable<any> {

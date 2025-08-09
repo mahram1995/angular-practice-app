@@ -33,6 +33,8 @@ import { APPROVAL_FLOW_SERVICE } from './admin/approval-flow/service/approval-fl
 import { ApprovalflowService } from './admin/approval-flow/service/approval-flow-service';
 import { BaseComponent } from './admin/base-component/base.component';
 import { FormBaseComponent } from './admin/base-component/form.base.component';
+import { TableModule } from 'primeng/table'; // <-- Import here
+import { ApprovalFlowTaskComponent } from './admin/approval-flow/form/my-task/my-task.componemt';
 
 
 
@@ -47,6 +49,7 @@ import { FormBaseComponent } from './admin/base-component/form.base.component';
     AppHomePageComponent,
     LoginFormComponent,
     UserRegistrationComponent,
+    ApprovalFlowTaskComponent,
     SafeUrlPipe,
   ],
   imports: [
@@ -58,7 +61,8 @@ import { FormBaseComponent } from './admin/base-component/form.base.component';
     HttpClientModule,
     MatCardModule,
     BrowserAnimationsModule,
-    ToastModule
+    ToastModule,
+    TableModule
 
 
   ],
@@ -72,6 +76,7 @@ import { FormBaseComponent } from './admin/base-component/form.base.component';
     BaseService,
     MessageService,
     NotificationService,
+    ApprovalflowService,
 
     AdminService,
     {

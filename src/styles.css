@@ -340,3 +340,91 @@ ul {
 .toast-warning-style button {
     color: rgb(250, 250, 250);
 }
+
+
+.p-datatable.p-datatable-sm .p-datatable-tbody>tr>td {
+    border: 1px solid rgb(190, 188, 188) !important;
+    padding: 0px !important;
+    padding-left: 6px !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-right: 6px !important;
+}
+
+.p-datatable.p-datatable-sm .p-datatable-tbody>tr:hover {
+    background-color: #d2d3d6;
+}
+
+.p-datatable.p-datatable-sm .p-datatable-thead>tr>th {
+    padding-top: 4px !important;
+    border: 1px solid rgb(190, 188, 188) !important;
+    text-align: center;
+    padding: 7px 5px 7px 5px !important;
+    background-color: #d2d3d6;
+}
+
+.p-paginator {
+    padding: 0px !important;
+    margin: 0px !important;
+    height: 37px;
+    background-color: rgb(6, 66, 94);
+    ;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+    background-color: #0860c5 !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page:hover {
+    background-color: #0860c5 !important;
+}
+
+.p-paginator .p-paginator-first:hover {
+    background-color: #0860c5;
+}
+
+.p-paginator .p-paginator-prev:hover {
+    background-color: #0860c5;
+}
+
+.p-paginator .p-paginator-next:hover {
+    background-color: #0860c5;
+}
+
+.p-paginator .p-paginator-last:hover {
+    background-color: #0860c5;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page {
+    border-radius: 15px;
+    height: 30px;
+    color: rgb(250, 245, 245);
+    margin-left: 2px;
+}
+
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-last {
+    border-radius: 15px;
+    height: 30px;
+    color: rgb(250, 245, 245);
+    margin-left: 2px;
+}
+
+.app-list {
+    border-radius: 5px;
+    margin: 0px 15px 20px 15px;
+    padding: 5px 10px 15px 10px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+}
+
+.btn-circle {
+    border: none;
+    width: 25x;
+    height: 25px;
+    padding-top: 3px;
+    border-radius: 13px;
+    background-color: #108a7d;
+    color: white;
+}

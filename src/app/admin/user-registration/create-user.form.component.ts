@@ -31,9 +31,8 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
         protected override location: Location,
         private notificationService: NotificationService,
         private adminService: AdminService,
-        @Inject(APPROVAL_FLOW_SERVICE) protected approvalFlow: ApprovalflowServiceInterface,
         private commonService: CommonService) {
-        super(location, approvalFlow);
+        super(location);
 
     }
     ngOnInit(): void {

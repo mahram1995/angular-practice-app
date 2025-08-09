@@ -22,5 +22,4 @@ export class AdminService extends BaseService {
         return this.http.post(endpoints.CREATE_USER, data, urlSearchParams);
     }
 
-
 }

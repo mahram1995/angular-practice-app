@@ -35,7 +35,6 @@ export class FormBaseComponent extends BaseComponent implements AfterViewInit {
 
     constructor(
         protected location: Location,
-        @Inject(APPROVAL_FLOW_SERVICE) protected approvalFlowService: ApprovalflowServiceInterface,
     ) {
         super();
     }
@@ -64,10 +63,7 @@ export class FormBaseComponent extends BaseComponent implements AfterViewInit {
     }
 
     protected fetchApprovalFlowTaskInstancePayload(): any {
-        return this.approvalFlowService.fetchApprovalFlowTaskInstancePayload(
-            { taskId: this.taskId },
-            {}
-        );
+
     }
 
     protected getCurrentPath(): string {
@@ -117,5 +113,20 @@ export class FormBaseComponent extends BaseComponent implements AfterViewInit {
 
     gotoPendingTaskPage(router: Router): void {
         router.navigate(['/approvalflow/pending-task']);
+    }
+
+    getUserInfo(): any {
+        const user = sessionStorage.getItem('user');
+        if (!user) {
+            console.warn('No user found in sessionStorage.');
+            return null;
+        }
+        try {
+            const userInfo = JSON.parse(user);
+            return userInfo
+        } catch (error) {
+            console.error('Failed to parse user JSON:', error);
+            return null;
+        }
     }
 }

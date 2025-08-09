@@ -69,10 +69,11 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
             headers: headers,
             responseType: 'json'
         };
+
         return httpHeaders;
     }
     public override get(url: string, options?: any): Observable<any> {
-        return super.get(url, this.getHttpHeader(options));
+        return super.get(url, options);
     }
 
     public override post(url: string, data: any, options?: any): Observable<any> {
