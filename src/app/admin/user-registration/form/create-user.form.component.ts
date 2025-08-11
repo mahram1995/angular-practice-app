@@ -2,15 +2,15 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Location } from '@angular/common';
-import { UserRegistrationDTO } from '../service/admin.domain';
-import { CommonService } from '../../app.service/common.service';
-import { AdminService } from '../service/admin.service';
-import { NotificationService } from '../../app.service/notification.service';
-import { FormBaseComponent } from '../base-component/form.base.component';
-import { ApprovalflowServiceInterface } from '../approval-flow/service/approval.flow.service.Interface';
-import { APPROVAL_FLOW_SERVICE } from '../approval-flow/service/approval-flow.token';
+import { UserRegistrationDTO } from '../../service/admin.domain';
+import { CommonService } from '../../../app.service/common.service';
+import { AdminService } from '../../service/admin.service';
+import { NotificationService } from '../../../app.service/notification.service';
+import { FormBaseComponent } from '../../base-component/form.base.component';
+import { ApprovalflowServiceInterface } from '../../approval-flow/service/approval.flow.service.Interface';
+import { APPROVAL_FLOW_SERVICE } from '../../approval-flow/service/approval-flow.token';
 
-const DETAILS_UI = 'home/user-details?';
+const DETAILS_UI = 'home/user-details';
 @Component({
     selector: 'app-user-registration',
     templateUrl: './create-user-form.component.html',
@@ -70,7 +70,7 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
 
     save() {
         const paramMap = new Map<string, any>();
-        const urlSearchParams = this.getQueryParamMapForApprovalFlow(paramMap, null, DETAILS_UI, this.location.path().concat('?'));
+        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, DETAILS_UI, this.location.path().concat('?'));
 
         let formData = this.userForm.value
         if (this.commonService.isFormInvalid(this.userForm, this.required_field)) {

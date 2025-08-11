@@ -41,8 +41,6 @@ export class ApprovalFlowTaskComponent extends FormBaseComponent implements OnIn
         this.urlSearchMap.set('module', 'ababil-admin');
         this.urlSearchMap.set('status', 'START');
         this.urlSearchMap.set('verifier', this.getUserInfo()?.userName);
-
-
         this.approvalFlowService.fetchApprovalflowTasks(this.urlSearchMap).subscribe(data => {
             this.aprovalFlowTask = data.content
         })
@@ -56,7 +54,16 @@ export class ApprovalFlowTaskComponent extends FormBaseComponent implements OnIn
     refresh() { this.fetchTask() }
 
     taskDetails(data: ApprovalFlowTask) {
-        this.router.navigate([data.taskDetailsUi, data.taskId]);
+        this.taskId = data.taskId
+        // this.router.navigate([data.taskDetailsUi, data.taskId]);
+        this.router.navigate([data.taskDetailsUi], {
+            queryParams: {
+                commandName: data.commandName,
+                taskId: data.taskId
+            }
+        }).then(() => {
+            window.history.replaceState({}, '', data.taskDetailsUi + '?taskId=' + data.taskId); // Removes params from URL
+        });
     }
 
     onRowSelect(event: any) {

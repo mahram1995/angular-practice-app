@@ -8,7 +8,7 @@ import * as endpoints from '../service/task.endpoints';
 
 @Injectable()
 export class ApprovalflowService extends BaseService implements ApprovalflowServiceInterface {
-    constructor(private http: HttpService) {
+    constructor(private http: HttpService, private https: HttpClient) {
         super()
     }
 
@@ -33,6 +33,10 @@ export class ApprovalflowService extends BaseService implements ApprovalflowServ
     fetchApprovalflowTasks(urlSearchParams: Map<string, string>): Observable<any> {
         const options = { params: this.getHttpParam(urlSearchParams) };
         return this.http.get(endpoints.GET_TASKS, options);
+    }
+
+    verifyTask(params: Map<string, any>): Observable<any> {
+        return this.http.post(endpoints.VERIFY_OPERATION, null, params);
     }
 
     fetchApprovalflowTaskDetail(pathParams: PathParameters): Observable<any> {
@@ -69,14 +73,12 @@ export class ApprovalflowService extends BaseService implements ApprovalflowServ
         return this.http.get(`/api/approvalflow/verify/details/${pathParams.id}`);
     }
 
-    verifyTask(command: any, pathParams: PathParameters, urlSearchParams: Map<string, string>, module_name: string): Observable<any> {
-        const params = this.mapToHttpParams(urlSearchParams);
-        return this.http.post(`/api/approvalflow/verify/${module_name}/${pathParams.id}`, command, { params });
+    fetchApprovalFlowTaskInstancePayload(pathParams: PathParameters): any {
+        let option = this.create(endpoints.GET_TASKS_INSTANCE_PAYLOAD, pathParams)
+        return this.http.get(option);
     }
 
-    fetchApprovalFlowTaskInstancePayload(pathParams: PathParameters, urlSearchParams?: any): any {
-        return this.http.get(`/api/approvalflow/task-instance/${pathParams.id}`, { params: urlSearchParams });
-    }
+
 
     pushElement(el: any): any {
         console.log('Element pushed:', el);

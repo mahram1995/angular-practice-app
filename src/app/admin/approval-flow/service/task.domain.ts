@@ -14,6 +14,7 @@ export class ApprovalFlowTask {
     status: string;
     verifierTerminal: string;
     makerTerminal: string;
-    createDate: Date
+    createDate: Date;
+    payloadJson: any;
 
 }

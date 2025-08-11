@@ -6,8 +6,9 @@ import { FloatingLabelDynamicFormComponent } from './dynamic-form/floating-lable
 import { LoginFormComponent } from './login-logout/login-form/login.form';
 import { AppHomePageComponent } from './login-logout/home-page/home.page';
 import { AuthGuard } from './login-logout/service/auth.guard';
-import { UserRegistrationComponent } from './admin/user-registration/create-user.form.component';
+import { UserRegistrationComponent } from './admin/user-registration/form/create-user.form.component';
 import { ApprovalFlowTaskComponent } from './admin/approval-flow/form/my-task/my-task.componemt';
+import { UserRegistrationViewComponent } from './admin/user-registration/view/create-user.view.component';
 
 const routes: Routes = [
 
@@ -29,6 +30,8 @@ const routes: Routes = [
       { path: 'create-user', component: UserRegistrationComponent },
       { path: 'floating-label-dynamic-form', component: FloatingLabelDynamicFormComponent },
       { path: 'my-task', component: ApprovalFlowTaskComponent },
+      { path: 'user-details', component: UserRegistrationViewComponent },
+
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

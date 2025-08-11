@@ -72,15 +72,15 @@ export class FormBaseComponent extends BaseComponent implements AfterViewInit {
     }
 
     protected getQueryParamMapForApprovalFlow(
-        map: Map<string, any> = new Map<string, any>(),
         verifier: string,
         detailsUI: string,
         correctionUI: string
     ): Map<string, any> {
-        map.set('verifier', verifier);
-        map.set('detailsUI', detailsUI);
-        map.set('correctionUI', correctionUI);
-        return map;
+        const params = new Map<string, any>();
+        params.set('verifier', verifier);
+        params.set('detailsUI', detailsUI);
+        params.set('correctionUI', correctionUI);
+        return params;
     }
 
 

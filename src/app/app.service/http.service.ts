@@ -1,5 +1,5 @@
 import { Inject, Injectable, InjectionToken, Injector, Optional } from '@angular/core';
-import { HttpClient, HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, timer } from "rxjs";
 import { finalize } from 'rxjs/operators';
 import { HttpServiceInterface, IRequestOptions } from './http.service.interface';
@@ -44,46 +44,60 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
         }
     }
 
-    getHttpHeader(header: any): any {
-        let token = this.getToken()
+    getHttpHeader(userSearchParam: any, data: any): any {
+        let token = this.getToken();
         let headers = new HttpHeaders()
             .set('Authorization', `Bearer ${token}`)
             .set('Content-Type', 'application/json');
 
-        const verifier = header.get("verifier");
-        if (verifier !== null && verifier !== undefined) {
-            headers = headers.set('verifier', verifier);
+        let httpParams = new HttpParams();
+
+        if (userSearchParam) {
+            if (data === null) {
+                // Add query params
+                if (userSearchParam && userSearchParam instanceof Map) {
+                    userSearchParam.forEach((value: any, key: string) => {
+                        if (value !== null && value !== undefined) {
+                            httpParams = httpParams.set(key, value); // dynamically add param
+                        }
+                    });
+                }
+            } else {
+                // Optional: Add special headers
+                const verifier = userSearchParam.get("verifier");
+                if (verifier != null) {
+                    headers = headers.set('verifier', verifier);
+                }
+                const detailsUI = userSearchParam.get("detailsUI");
+                if (detailsUI != null) {
+                    headers = headers.set('detailsUI', detailsUI);
+                }
+                const correctionUI = userSearchParam.get("correctionUI");
+                if (correctionUI != null) {
+                    headers = headers.set('correctionUI', correctionUI);
+                }
+            }
         }
 
-        const correctionUI = header.get("correctionUI");
-        if (correctionUI !== null && correctionUI !== undefined) {
-            headers = headers.set('correctionUI', correctionUI);
-        }
-
-        const detailsUI = header.get("detailsUI");
-        if (detailsUI !== null && detailsUI !== undefined) {
-            headers = headers.set('detailsUI', detailsUI);
-        }
-
-        const httpHeaders = {
+        return {
             headers: headers,
+            params: httpParams,
             responseType: 'json'
         };
-
-        return httpHeaders;
     }
+
     public override get(url: string, options?: any): Observable<any> {
         return super.get(url, options);
     }
 
     public override post(url: string, data: any, options?: any): Observable<any> {
         this.showLoadingModal();
-        return this.interceptRequest(super.post(url, data, this.getHttpHeader(options)));
+        return this.interceptRequest(super.post(url, data, this.getHttpHeader(options, data)));
     }
 
-    public override put(url: string, body: any, options?: any): Observable<any> {
+    public override put(url: string, data: any, options?: any): Observable<any> {
         this.showLoadingModal();
-        return this.interceptRequest(super.put(url, body, this.getHttpHeader(options)));
+        return this.interceptRequest(super.put(url, data, this.getHttpHeader(options, data)));
     }
 
     public override delete(url: string, options?: any): Observable<any> {

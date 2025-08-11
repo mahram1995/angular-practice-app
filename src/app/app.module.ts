@@ -19,7 +19,7 @@ import { AppHomePageComponent } from './login-logout/home-page/home.page';
 import { LoginFormComponent } from './login-logout/login-form/login.form';
 import { DynamicFormComponent } from './dynamic-form/form/dynamic-form';
 import { FloatingLabelDynamicFormComponent } from './dynamic-form/floating-lable-form/floating-label-dynamic-form';
-import { UserRegistrationComponent } from './admin/user-registration/create-user.form.component';
+import { UserRegistrationComponent } from './admin/user-registration/form/create-user.form.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatCardModule } from '@angular/material/card';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -35,6 +35,8 @@ import { BaseComponent } from './admin/base-component/base.component';
 import { FormBaseComponent } from './admin/base-component/form.base.component';
 import { TableModule } from 'primeng/table'; // <-- Import here
 import { ApprovalFlowTaskComponent } from './admin/approval-flow/form/my-task/my-task.componemt';
+import { UserRegistrationViewComponent } from './admin/user-registration/view/create-user.view.component';
+import { ApprovalFlowViewButtonComponent } from './admin/approval-flow/form/approvalflow-task-button/approvalflow-task-button';
 
 
 
@@ -50,6 +52,8 @@ import { ApprovalFlowTaskComponent } from './admin/approval-flow/form/my-task/my
     LoginFormComponent,
     UserRegistrationComponent,
     ApprovalFlowTaskComponent,
+    UserRegistrationViewComponent,
+    ApprovalFlowViewButtonComponent,
     SafeUrlPipe,
   ],
   imports: [
@@ -63,6 +67,7 @@ import { ApprovalFlowTaskComponent } from './admin/approval-flow/form/my-task/my
     BrowserAnimationsModule,
     ToastModule,
     TableModule
+
 
 
   ],
