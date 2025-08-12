@@ -64,6 +64,10 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
                 }
             } else {
                 // Optional: Add special headers
+                const taskId = userSearchParam.get("taskId");
+                if (taskId != null) {
+                    headers = headers.set('taskId', taskId);
+                }
                 const verifier = userSearchParam.get("verifier");
                 if (verifier != null) {
                     headers = headers.set('verifier', verifier);

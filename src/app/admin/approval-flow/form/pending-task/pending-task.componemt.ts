@@ -7,9 +7,9 @@ import { FormBaseComponent } from '../../../base-component/form.base.component';
 
 @Component({
     selector: 'approval-flow-task',
-    templateUrl: './my-task.component.html',
+    templateUrl: './pending-task.component.html',
 })
-export class ApprovalFlowTaskComponent extends FormBaseComponent implements OnInit {
+export class PendingTaskComponent extends FormBaseComponent implements OnInit {
 
     aprovalFlowTask: ApprovalFlowTask[];
     selectedNode: ApprovalFlowTask;
@@ -33,8 +33,8 @@ export class ApprovalFlowTaskComponent extends FormBaseComponent implements OnIn
     fetchTask() {
         this.urlSearchMap = new Map();
         this.urlSearchMap.set('module', 'ababil-admin');
-        this.urlSearchMap.set('status', 'START');
-        this.urlSearchMap.set('verifier', this.getUserInfo()?.userName);
+        this.urlSearchMap.set('status', 'CORRECTION');
+        this.urlSearchMap.set('maker', this.getUserInfo()?.userName);
         this.approvalFlowService.fetchApprovalflowTasks(this.urlSearchMap).subscribe(data => {
             this.aprovalFlowTask = data.content
         })
@@ -50,13 +50,13 @@ export class ApprovalFlowTaskComponent extends FormBaseComponent implements OnIn
     taskDetails(data: ApprovalFlowTask) {
         this.taskId = data.taskId
         // this.router.navigate([data.taskDetailsUi, data.taskId]);
-        this.router.navigate([data.taskDetailsUi], {
+        this.router.navigate([data.taskCorrectionUi], {
             queryParams: {
                 commandName: data.commandName,
                 taskId: data.taskId
             }
         }).then(() => {
-            window.history.replaceState({}, '', data.taskDetailsUi + '?taskId=' + data.taskId); // Removes params from URL
+            window.history.replaceState({}, '', data.taskCorrectionUi + '?taskId=' + data.taskId); // Removes params from URL
         });
     }
 

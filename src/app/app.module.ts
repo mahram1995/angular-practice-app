@@ -37,6 +37,7 @@ import { TableModule } from 'primeng/table'; // <-- Import here
 import { ApprovalFlowTaskComponent } from './admin/approval-flow/form/my-task/my-task.componemt';
 import { UserRegistrationViewComponent } from './admin/user-registration/view/create-user.view.component';
 import { ApprovalFlowViewButtonComponent } from './admin/approval-flow/form/approvalflow-task-button/approvalflow-task-button';
+import { PendingTaskComponent } from './admin/approval-flow/form/pending-task/pending-task.componemt';
 
 
 
@@ -54,6 +55,7 @@ import { ApprovalFlowViewButtonComponent } from './admin/approval-flow/form/appr
     ApprovalFlowTaskComponent,
     UserRegistrationViewComponent,
     ApprovalFlowViewButtonComponent,
+    PendingTaskComponent,
     SafeUrlPipe,
   ],
   imports: [

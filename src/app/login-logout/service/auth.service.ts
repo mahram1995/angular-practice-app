@@ -45,7 +45,6 @@ export class AuthService {
                 clearTimeout(this.logoutTimeout)
             });
         }
-
     }
 
 

@@ -1,0 +1,52 @@
+<div class="app-page app-card">
+    <div>
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left  ">
+                <p class="app-page-header">My Task</p>
+            </div>
+            <div class="app-button-group">
+                <button (click)="search()"><i class="pi pi-search" style="font-size:10px"></i> Search</button>
+                <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+            </div>
+        </div>
+
+    </div>
+
+    <hr style="margin-top: 5px;">
+    <div class="app-list">
+        <div style="padding: 0px 5px 5px 5px">
+            <p-table class="table-striped table-bordered table-hover table-responsive " [columns]="cols"
+                [value]="aprovalFlowTask" styleClass="p-datatable-sm" [paginator]="true" [rows]="16"
+                att.totalRecords="totalRecords" #dt>
+                <ng-template pTemplate="header">
+                    <tr style="font-size: 14px;">
+                        <th style="width: 70px;">Task Id</th>
+                        <th style="min-width: 200px;">Activaty</th>
+                        <th style="width: 150px;">Maker</th>
+                        <th style="width: 150px;">Verifier</th>
+                        <th style="width: 150px;">Task Status</th>
+                        <th style="width: 100px;">Branch Id</th>
+
+                        <th style="width: 110px; min-width: 100px;">Create Date</th>
+                        <th style="width: 65px;">Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-data>
+                    <tr style="font-size: 14px;">
+                        <td style="text-align: center;"> {{data.taskId}}</td>
+                        <td> {{data.activityName}}</td>
+                        <td style="text-align: center;"> {{data.maker}}</td>
+                        <td style="text-align: center;"> {{data.verifier}}</td>
+                        <td style="text-align: center;"> {{data.status}}</td>
+                        <td style="text-align: center;"> {{data.makerBranchId}}</td>
+                        <td style="text-align: center;"> {{data.createDate | date : "dd-MMM, YYYY" }}</td>
+                        <td style="text-align: center;">
+                            <button (click)="taskDetails(data)" class="btn-circle"><i class="pi pi-eye"></i></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

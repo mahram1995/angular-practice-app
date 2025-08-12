@@ -9,11 +9,12 @@ import { catchError, retry } from 'rxjs/operators';
 import { MessageService } from 'primeng/api'; // Optional: for showing toast
 import { Router } from '@angular/router';
 import { NotificationService } from './notification.service';
+import { AuthService } from '../login-logout/service/auth.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
 
-    constructor(private messageService: NotificationService, private router: Router) { }
+    constructor(private messageService: NotificationService, private router: Router, private authService: AuthService) { }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(req).pipe(
@@ -34,8 +35,8 @@ export class ErrorInterceptor implements HttpInterceptor {
                             errorMsg = error.error.message || 'Bad Request';
                             break;
                         case 401:
-                            errorMsg = 'Unauthorized. Please login again.';
-                            this.router.navigate(['/login']);
+                            errorMsg = error.error.message;
+                            this.authService.logoutByUser(null)
                             break;
                         case 403:
                             errorMsg = 'Forbidden.';

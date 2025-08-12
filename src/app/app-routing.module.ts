@@ -9,6 +9,7 @@ import { AuthGuard } from './login-logout/service/auth.guard';
 import { UserRegistrationComponent } from './admin/user-registration/form/create-user.form.component';
 import { ApprovalFlowTaskComponent } from './admin/approval-flow/form/my-task/my-task.componemt';
 import { UserRegistrationViewComponent } from './admin/user-registration/view/create-user.view.component';
+import { PendingTaskComponent } from './admin/approval-flow/form/pending-task/pending-task.componemt';
 
 const routes: Routes = [
 
@@ -30,8 +31,8 @@ const routes: Routes = [
       { path: 'create-user', component: UserRegistrationComponent },
       { path: 'floating-label-dynamic-form', component: FloatingLabelDynamicFormComponent },
       { path: 'my-task', component: ApprovalFlowTaskComponent },
+      { path: 'pending-task', component: PendingTaskComponent },
       { path: 'user-details', component: UserRegistrationViewComponent },
-
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

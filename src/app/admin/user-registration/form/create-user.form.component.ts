@@ -7,10 +7,11 @@ import { CommonService } from '../../../app.service/common.service';
 import { AdminService } from '../../service/admin.service';
 import { NotificationService } from '../../../app.service/notification.service';
 import { FormBaseComponent } from '../../base-component/form.base.component';
-import { ApprovalflowServiceInterface } from '../../approval-flow/service/approval.flow.service.Interface';
-import { APPROVAL_FLOW_SERVICE } from '../../approval-flow/service/approval-flow.token';
+import { ActivatedRoute } from '@angular/router';
+import { ApprovalflowService } from '../../approval-flow/service/approval-flow-service';
 
 const DETAILS_UI = 'home/user-details';
+const CORRECTION_UI = 'home/create-user';
 @Component({
     selector: 'app-user-registration',
     templateUrl: './create-user-form.component.html',
@@ -30,12 +31,26 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
     constructor(private fb: FormBuilder,
         protected override location: Location,
         private notificationService: NotificationService,
+        private approvalFlowService: ApprovalflowService,
         private adminService: AdminService,
+        private route: ActivatedRoute,
         private commonService: CommonService) {
         super(location);
 
     }
     ngOnInit(): void {
+        this.route.queryParams.subscribe(params => {
+            let command = params.commandName;
+            this.taskId = params.taskId
+            if (command == 'CREATE_NEW_USER') {
+
+            }
+            if (this.taskId) {
+                this.approvalFlowService.fetchApprovalFlowTaskInstancePayload({ taskId: this.taskId }).subscribe(data => {
+                    this.prepareForm(data);
+                })
+            }
+        });
         this.prepareForm(new UserRegistrationDTO)
     }
 
@@ -70,7 +85,7 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
 
     save() {
         const paramMap = new Map<string, any>();
-        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, DETAILS_UI, this.location.path().concat('?'));
+        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, CORRECTION_UI);
 
         let formData = this.userForm.value
         if (this.commonService.isFormInvalid(this.userForm, this.required_field)) {
