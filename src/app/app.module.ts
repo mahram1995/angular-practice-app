@@ -40,6 +40,8 @@ import { ApprovalFlowViewButtonComponent } from './admin/approval-flow/form/appr
 import { PendingTaskComponent } from './admin/approval-flow/form/pending-task/pending-task.componemt';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { UserListComponent } from './admin/user-registration/list/user-list.componemt';
+import { MenuModule } from 'primeng/menu';
 
 
 
@@ -58,6 +60,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     UserRegistrationViewComponent,
     ApprovalFlowViewButtonComponent,
     PendingTaskComponent,
+    UserListComponent,
     SafeUrlPipe,
   ],
   imports: [
@@ -72,7 +75,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     ToastModule,
     TableModule,
     DialogModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    MenuModule
 
 
 

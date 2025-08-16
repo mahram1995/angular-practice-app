@@ -27,6 +27,7 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
     detailsUI: 'home/create-user/detials'
     userForm: FormGroup;
     message: string = '';
+    isEdit = false;
 
     constructor(private fb: FormBuilder,
         protected override location: Location,
@@ -41,7 +42,7 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {
             let command = params.commandName;
-            this.taskId = params.taskId
+            this.taskId = params.taskId;
             if (command == 'CREATE_NEW_USER') {
 
             }
@@ -50,8 +51,22 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
                     this.prepareForm(data);
                 })
             }
+
+            // for edit the user
+            if (params.userName) {
+                this.getUser(params.userName)
+            }
         });
         this.prepareForm(new UserRegistrationDTO)
+    }
+    getUser(userName) {
+        this.isEdit = true;
+        let param = new Map();
+        param.set('userName', userName);
+        this.adminService.fetchUsers(param).subscribe(data => {
+            this.prepareForm(data.content[0])
+
+        })
     }
 
     prepareForm(data: UserRegistrationDTO) {
@@ -84,7 +99,6 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
     }
 
     save() {
-        const paramMap = new Map<string, any>();
         const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, CORRECTION_UI);
 
         let formData = this.userForm.value
@@ -95,6 +109,7 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
             (response) => {
                 this.notificationService.sendSuccess(response.message);
                 this.prepareForm(new UserRegistrationDTO)
+                this.location.back()
             },
             (error) => {
 

@@ -10,6 +10,7 @@ import { UserRegistrationComponent } from './admin/user-registration/form/create
 import { ApprovalFlowTaskComponent } from './admin/approval-flow/form/my-task/my-task.componemt';
 import { UserRegistrationViewComponent } from './admin/user-registration/view/create-user.view.component';
 import { PendingTaskComponent } from './admin/approval-flow/form/pending-task/pending-task.componemt';
+import { UserListComponent } from './admin/user-registration/list/user-list.componemt';
 
 const routes: Routes = [
 
@@ -28,6 +29,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'dynamic-form', component: DynamicFormComponent },
+      { path: 'user-list', component: UserListComponent },
       { path: 'create-user', component: UserRegistrationComponent },
       { path: 'floating-label-dynamic-form', component: FloatingLabelDynamicFormComponent },
       { path: 'my-task', component: ApprovalFlowTaskComponent },

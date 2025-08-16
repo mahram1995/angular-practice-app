@@ -91,7 +91,7 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
     }
 
     public override get(url: string, options?: any): Observable<any> {
-        return super.get(url, options);
+        return super.get(url, this.getHttpHeader(options, null));
     }
 
     public override post(url: string, data: any, options?: any): Observable<any> {

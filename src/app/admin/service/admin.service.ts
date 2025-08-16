@@ -21,5 +21,8 @@ export class AdminService extends BaseService {
     public createUser(data: UserRegistrationDTO, urlSearchParams): Observable<any> {
         return this.http.post(endpoints.CREATE_USER, data, urlSearchParams);
     }
+    public fetchUsers(urlSearchParams): Observable<any> {
+        return this.http.get(endpoints.GET_USERS, urlSearchParams);
+    }
 
 }

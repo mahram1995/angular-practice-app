@@ -459,7 +459,41 @@ body {
     height: 100%;
 }
 
-body {
-    margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+.tree-dot-button {
+    background: none;
+    color: black;
+    border: none;
+    padding: 0px !important;
+    margin: 0px !important;
+}
+
+.tree-dot-button:hover {
+    background: none;
+    color: black;
+    border: none;
+}
+
+.tree-dot-button:focus {
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.p-menu .p-submenu-header {
+    padding: 0px !important;
+    margin: 0px;
+}
+
+.p-menu.p-menu-overlay {
+    margin: 0px !important;
+    width: 150px !important;
+    padding: 0px !important;
+
+}
+
+.p-menu .p-menuitem .p-menuitem-content .p-menuitem-link {
+    padding: 5px !important;
+}
+
+.p-menu .p-menuitem .p-menuitem-content .p-menuitem-link:hover {
+    background-color: #c5bebe;
 }
