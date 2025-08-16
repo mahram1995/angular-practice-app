@@ -28,7 +28,6 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { AdminService } from './admin/service/admin.service';
 import { ErrorInterceptor } from './app-configuration/app.service/http.error.hndller.service';
-import { SafeUrlPipe } from './security/safe-url.pipe';
 import { APPROVAL_FLOW_SERVICE } from './admin/approval-flow/service/approval-flow.token';
 import { ApprovalflowService } from './admin/approval-flow/service/approval-flow-service';
 import { BaseComponent } from './admin/base-component/base.component';
@@ -42,6 +41,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { UserListComponent } from './admin/user-registration/list/user-list.componemt';
 import { MenuModule } from 'primeng/menu';
+import { SafeUrlPipe } from './app-configuration/app-security/safe-url.pipe';
 
 
 
