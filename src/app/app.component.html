@@ -1,2 +1,14 @@
 <router-outlet></router-outlet>
 <p-toast [style]="{ 'margin-top': '70px', 'width':'350px','color':'black', 'white-space': 'pre-line'}"></p-toast>
+<p-dialog header="Youser Logout Warning" [(visible)]="isVisibleLogoutDialog" [modal]="true"
+    [style]="{'width': '400px' }" [draggable]="true" [resizable]="false" [closable]="false">
+    <br>
+    <div style="text-align: center;">
+        <h2>You are logout. Please login again.</h2>
+    </div>
+    <div style="text-align: center;">
+        <button style="background-color: #086b61; color:white; height: 30px; width: 80px; border-radius: 5px;"
+            (click)="redirectToLoginPage()">Login</button>
+    </div>
+    <br>
+</p-dialog>

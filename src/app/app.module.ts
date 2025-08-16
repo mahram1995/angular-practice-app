@@ -38,6 +38,8 @@ import { ApprovalFlowTaskComponent } from './admin/approval-flow/form/my-task/my
 import { UserRegistrationViewComponent } from './admin/user-registration/view/create-user.view.component';
 import { ApprovalFlowViewButtonComponent } from './admin/approval-flow/form/approvalflow-task-button/approvalflow-task-button';
 import { PendingTaskComponent } from './admin/approval-flow/form/pending-task/pending-task.componemt';
+import { DialogModule } from 'primeng/dialog';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 
 
@@ -68,7 +70,9 @@ import { PendingTaskComponent } from './admin/approval-flow/form/pending-task/pe
     MatCardModule,
     BrowserAnimationsModule,
     ToastModule,
-    TableModule
+    TableModule,
+    DialogModule,
+    ConfirmDialogModule
 
 
 

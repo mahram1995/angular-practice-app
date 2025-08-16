@@ -22,6 +22,7 @@ export class AuthService {
     }
 
     login(data: any): Observable<any> {
+        sessionStorage.clear();
         // const url = `/admin/auth/login?userName=${userName}&password=${password}`;
         return this.loginService.login(data).pipe(
             tap(user => {
@@ -40,6 +41,8 @@ export class AuthService {
                 responseType: 'text'
             }).subscribe(response => {
                 sessionStorage.clear();
+                // Trigger logout event for other tabs
+                localStorage.setItem('logout-event', Date.now().toString());
                 this.userSubject.next(null);
                 this.router.navigate(['/login']);
                 clearTimeout(this.logoutTimeout)

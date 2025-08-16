@@ -261,6 +261,20 @@ ul {
     background-color: #0ea899;
 }
 
+.app-button {
+    height: 27px;
+    font-size: 12px;
+    text-align: right;
+    background-color: #108a7d;
+    margin-left: 2px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding-left: 10px;
+    padding-bottom: 3px;
+    padding-right: 10px;
+}
+
 .app-page-header {
     font-size: 20px;
     font-weight: bold;
@@ -438,4 +452,14 @@ ul {
 
 table tr:nth-child(even) {
     background-color: #ececec !important;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
