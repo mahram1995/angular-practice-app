@@ -28,6 +28,7 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
     userForm: FormGroup;
     message: string = '';
     isEdit = false;
+    header: string = 'Create new User';
 
     constructor(private fb: FormBuilder,
         protected override location: Location,
@@ -44,7 +45,7 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
             let command = params.commandName;
             this.taskId = params.taskId;
             if (command == 'CREATE_NEW_USER') {
-
+                this.header = 'Correction of create new user'
             }
             if (this.taskId) {
                 this.approvalFlowService.fetchApprovalFlowTaskInstancePayload({ taskId: this.taskId }).subscribe(data => {
@@ -54,6 +55,7 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
 
             // for edit the user
             if (params.userName) {
+                this.header = 'Modificaiton of user'
                 this.getUser(params.userName)
             }
         });

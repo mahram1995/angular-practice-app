@@ -1,5 +1,22 @@
 <div class="app-page">
-    <approval-flow-task-button [taskId]="taskId" [header]="header"></approval-flow-task-button>
+    <div *ngIf="taskId">
+        <approval-flow-task-button [taskId]="taskId" [header]="header"></approval-flow-task-button>
+    </div>
+    <div *ngIf="!taskId">
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left ; margin: 0px; padding: 0px; ">
+                <p class="app-page-header">User detials</p>
+            </div>
+
+            <div class="app-button-group">
+                <button (click)="onEdit()"><i class="pi pi-edit" style="font-size:12px"></i> Edit</button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+            </div>
+        </div>
+        <div class="clear-fix"></div>
+        <hr style="margin: 0px; padding: 0px; width: 100%;">
+    </div>
+
     <mat-card>
         <mat-card-content>
             <div class="row">

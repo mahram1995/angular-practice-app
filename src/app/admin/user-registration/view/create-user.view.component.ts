@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { UserRegistrationDTO } from '../../service/admin.domain';
 import { FormBaseComponent } from '../../base-component/form.base.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApprovalflowService } from '../../approval-flow/service/approval-flow-service';
 import { AdminService } from '../../service/admin.service';
 
@@ -18,6 +18,7 @@ export class UserRegistrationViewComponent extends FormBaseComponent implements 
     message: string = '';
     constructor(
         protected override location: Location,
+        protected override router: Router,
         private approvalFlowService: ApprovalflowService,
         private adminService: AdminService,
         private route: ActivatedRoute,) {
@@ -51,6 +52,18 @@ export class UserRegistrationViewComponent extends FormBaseComponent implements 
         this.adminService.fetchUsers(param).subscribe(data => {
             this.userInfo = data.content[0]
 
+        })
+    }
+
+    back() {
+        this.location.back()
+    }
+    onEdit() {
+        this.router.navigate(['home/create-user'], {
+            queryParams: {
+                userName: this.userName
+
+            }
         })
     }
 
