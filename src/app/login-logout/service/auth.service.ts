@@ -2,7 +2,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, retry, tap } from 'rxjs';
-import { BaseService } from '../../app.service/base-service';
+import { BaseService } from '../../app-configuration/app.service/base-service';
 import { LoginService } from './login.service';
 import { map } from 'rxjs/operators';
 

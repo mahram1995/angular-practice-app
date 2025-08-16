@@ -7,10 +7,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { DynamicFormService } from './dynamic-form/service/dynamic.form.service';
-import { NotificationService } from './app.service/notification.service';
-import { HttpService } from './app.service/http.service';
-import { LoaderOverlayService } from './app.service/loader.overlay.service';
-import { BaseService } from './app.service/base-service';
+import { NotificationService } from './app-configuration/app.service/notification.service';
+import { HttpService } from './app-configuration/app.service/http.service';
+import { LoaderOverlayService } from './app-configuration/app.service/loader.overlay.service';
+import { BaseService } from './app-configuration/app.service/base-service';
 
 import { LoginService } from './login-logout/service/login.service';
 import { AuthService } from './login-logout/service/auth.service';
@@ -23,11 +23,11 @@ import { UserRegistrationComponent } from './admin/user-registration/form/create
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatCardModule } from '@angular/material/card';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CommonService } from './app.service/common.service';
+import { CommonService } from './app-configuration/app.service/common.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { AdminService } from './admin/service/admin.service';
-import { ErrorInterceptor } from './app.service/http.error.hndller.service';
+import { ErrorInterceptor } from './app-configuration/app.service/http.error.hndller.service';
 import { SafeUrlPipe } from './security/safe-url.pipe';
 import { APPROVAL_FLOW_SERVICE } from './admin/approval-flow/service/approval-flow.token';
 import { ApprovalflowService } from './admin/approval-flow/service/approval-flow-service';

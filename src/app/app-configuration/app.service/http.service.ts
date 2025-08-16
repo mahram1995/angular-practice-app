@@ -4,7 +4,7 @@ import { Observable, timer } from "rxjs";
 import { finalize } from 'rxjs/operators';
 import { HttpServiceInterface, IRequestOptions } from './http.service.interface';
 import { LoaderOverlayService } from './loader.overlay.service';
-import { AuthService } from '../login-logout/service/auth.service';
+import { AuthService } from '../../login-logout/service/auth.service';
 
 
 

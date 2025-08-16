@@ -3,7 +3,7 @@ import { ActivatedRoute, Route, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { ApprovalFlowTask } from '../../service/task.domain';
 import { ApprovalflowService } from '../../service/approval-flow-service';
-import { NotificationService } from '../../../../app.service/notification.service';
+import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
 import { AuthService } from '../../../../login-logout/service/auth.service';
 import { HttpParams } from '@angular/common/http';
 

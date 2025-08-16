@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { ApprovalflowServiceInterface } from './approval.flow.service.Interface';
-import { BaseService, PathParameters } from '../../../app.service/base-service';
-import { HttpService } from '../../../app.service/http.service';
+import { BaseService, PathParameters } from '../../../app-configuration/app.service/base-service';
+import { HttpService } from '../../../app-configuration/app.service/http.service';
 import * as endpoints from '../service/task.endpoints';
 
 @Injectable()

@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { PathParameters } from '../../../app.service/base-service';
+import { PathParameters } from '../../../app-configuration/app.service/base-service';
 export interface ApprovalflowServiceInterface {
     fetchApprovalFlowProfiles(urlSearchParams: Map<string, string>): Observable<any>;
     fetchApprovalflowProfileDetail(pathParams: PathParameters): Observable<any>;
