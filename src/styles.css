@@ -244,21 +244,21 @@ ul {
 
 .app-button-group button {
     height: 27px;
-    font-size: 12px;
+    font-size: 13px;
     text-align: right;
     background-color: #108a7d;
     margin-left: 2px;
     border: none;
     border-radius: 5px;
     color: white;
-    padding-left: 10px;
+    padding-left: 14px;
     padding-bottom: 3px;
-    padding-right: 10px;
+    padding-right: 14px;
 
 }
 
 .app-button-group button:hover {
-    background-color: #0ea899;
+    background-color: #0ec2b0;
 }
 
 .app-button {
@@ -276,10 +276,10 @@ ul {
 }
 
 .app-page-header {
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
     padding-bottom: 0px;
-    color: rgb(10, 95, 134);
+    color: rgb(4, 151, 139);
     margin: 0px;
 
     /* transition: all 0.2s ease-out; */
@@ -496,4 +496,30 @@ body {
 
 .p-menu .p-menuitem .p-menuitem-content .p-menuitem-link:hover {
     background-color: #c5bebe;
+}
+
+.p-overlaypanel .p-overlaypanel-close{
+    background-color: rgb(226, 130, 4);
+    border-radius: 15px !important;
+    height: 30px !important;
+    width: 30px !important;
+}
+
+.app-action-button{
+    background: none;
+    height: 30px ;
+    text-align: left;
+    width: 100% !important;
+    color: black;
+    border: none;
+    padding: 0px 10px 0px 10px !important;
+    margin: 0px !important;
+}
+.app-action-button:hover{
+    background-color: #d1cdcd;
+    
+}
+
+.p-overlaypanel .p-overlaypanel-content {
+    padding: 5px !important;
 }

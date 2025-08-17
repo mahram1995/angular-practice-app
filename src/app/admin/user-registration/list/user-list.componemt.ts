@@ -19,9 +19,6 @@ export class UserListComponent implements OnInit {
     userSearchForm: FormGroup;
     totalPages: number;
     cols: any[] = []
-    items: MenuItem[] | undefined;
-    selectedUser: any;
-    @ViewChild('menu') menu!: Menu;
     isVisibleSearchDialog: boolean = false
 
     constructor(
@@ -36,21 +33,6 @@ export class UserListComponent implements OnInit {
 
     ngOnInit() {
         this.fetchUsers(null)
-        this.items = [{
-            items: [
-                {
-                    label: 'Details',
-                    icon: 'pi pi-details',
-                    command: () => this.onDetails()
-                },
-                {
-                    label: 'Edit',
-                    icon: 'pi pi-edit',
-                    command: () => this.onEdit()
-                }
-            ]
-        }];
-
         this.prepareSearchForm()
 
     }
@@ -63,23 +45,20 @@ export class UserListComponent implements OnInit {
             userStatus: [''],
         });
     }
-    openRowMenu(event: Event, user: any) {
-        this.selectedUser = user;
-        this.menu.toggle(event);
-    }
+ 
 
-    onDetails() {
+    onDetails(data:any) {
         this.router.navigate(['home/user-details'], {
             queryParams: {
-                userName: this.selectedUser.userName
+                userName: data.userName
             }
         })
     }
 
-    onEdit() {
+    onEdit(data) {
         this.router.navigate(['home/create-user'], {
             queryParams: {
-                userName: this.selectedUser.userName
+                userName: data.userName
             }
         })
     }

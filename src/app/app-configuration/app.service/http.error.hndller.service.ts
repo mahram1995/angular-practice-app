@@ -21,6 +21,8 @@ export class ErrorInterceptor implements HttpInterceptor {
             catchError((error: HttpErrorResponse) => {
                 // Global error handling logic here
                 let errorMsg = 'An unexpected error occurred';
+                console.log(error);
+                
 
                 if (error.error instanceof ErrorEvent) {
                     // Client-side error

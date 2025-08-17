@@ -40,9 +40,16 @@
                         <td style="text-align: center;">{{data.userStatus}}</td>
                         <td style="text-align: center;">{{data.userBranchId}}</td>
                         <td>
-                            <p-button [styleClass]="'tree-dot-button'" (click)="openRowMenu($event, data)"
+                            <p-button [styleClass]="'tree-dot-button'" (click)="opShowOption.show($event)"
                                 icon="pi pi-ellipsis-v"></p-button>
-                            <p-menu appendTo="body" #menu [model]="items" [popup]="true"></p-menu>
+                            <p-overlayPanel styleClass="app-overly-buttons" #opShowOption [style]="{ width: '180px'}">
+                                <button class="app-action-button" (click)="onDetails(data)">
+                                    <i class="pi pi-qrcode" style="font-size:13px ; padding-right:5px">
+                                    </i> Details</button>
+                                <button class="app-action-button" (click)="onEdit(data)">
+                                    <i class="pi pi-file-edit" style="font-size:13px ; padding-right:5px">
+                                    </i> Modification</button>
+                            </p-overlayPanel>
                         </td>
                     </tr>
                 </ng-template>
@@ -50,29 +57,30 @@
         </div>
     </div>
 
-    <p-overlayPanel #op  [style]="{ width: '450px' }">
-       <form [formGroup]="userSearchForm">
-        <div style="margin: 10px 10px 10px 10px;">
-            <div class="row app-row">
-                <div class="col-sm-6  col-md-4 ">
-                    <div class="app-input-field">
-                        <input type="text" id="userName" placeholder=" " formControlName="userName" >
-                        <label for="userName">User Name</label>
+
+    <p-overlayPanel #op [style]="{ width: '450px' }" showCloseIcon="true">
+        <form [formGroup]="userSearchForm">
+            <div style="margin: 0px 10px 10px 10px;">
+                <div class="row app-row">
+                    <div class="col-sm-6  col-md-4 ">
+                        <div class="app-input-field">
+                            <input type="text" id="userName" placeholder=" " formControlName="userName">
+                            <label for="userName">User Name</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6  col-md-4 ">
+                        <div class="app-input-field">
+                            <input type="text" id="branchId" placeholder=" " formControlName="branchId">
+                            <label for="branchId">Branch Id</label>
+                        </div>
                     </div>
                 </div>
-
-                <div class="col-sm-6  col-md-4 ">
-                    <div class="app-input-field">
-                        <input type="text" id="branchId" placeholder=" " formControlName="branchId" >
-                        <label for="branchId">Branch Id</label>
-                    </div>
+                <div style="text-align: center;">
+                    <button class="app-button" (click)="search();op.hide()">Search</button>
                 </div>
             </div>
-             <div style="text-align: center;">
-                <button class="app-button" (click)="search()"><i class="pi pi-plus" style="font-size:10px"></i> Search</button>
-             </div>
-        </div>
-    </form>
+        </form>
     </p-overlayPanel>
 
 </div>
