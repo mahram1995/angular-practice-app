@@ -33,7 +33,7 @@ export class AuthService {
         );
     }
 
-    logoutByUser(logoutType: String): void {
+    logoutByUser(logoutType: string): void {
         const user = this.getUser();
         if (user?.userName) {
             const url = `${this.loginService.URL}admin/auth/logout?userName=${user.userName}&logoutType=${logoutType}`
@@ -42,7 +42,7 @@ export class AuthService {
             }).subscribe(response => {
                 sessionStorage.clear();
                 // Trigger logout event for other tabs
-                localStorage.setItem('logout-event', Date.now().toString());
+                localStorage.setItem(logoutType, Date.now().toString());
                 this.userSubject.next(null);
                 this.router.navigate(['/login']);
                 clearTimeout(this.logoutTimeout)

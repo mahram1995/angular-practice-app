@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
     // when user log out in any tab in then user will be logout from all 
     // other open tab and redirect to login page for login back.
     window.addEventListener('storage', (event) => {
-      if (event.key === 'logout-event') {
+      if (event.key === 'USER_LOGOUT') {
         // Clear current tab session
         sessionStorage.removeItem('user');
         this.isVisibleLogoutDialog = true

@@ -4,7 +4,9 @@ import { Location } from '@angular/common';
 import { AdminService } from '../../service/admin.service';
 import { UserRegistrationDTO } from '../../service/admin.domain';
 import { Menu } from 'primeng/menu';
-import { MenuItem } from 'primeng/api';
+import { LazyLoadEvent, MenuItem } from 'primeng/api';
+import { TableLazyLoadEvent } from 'primeng/table';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'approval-flow-task',
@@ -13,22 +15,27 @@ import { MenuItem } from 'primeng/api';
 export class UserListComponent implements OnInit {
     users: UserRegistrationDTO[];
     urlSearchMap: Map<string, any> = new Map();
+    totalRecords: number = 0;
+    userSearchForm: FormGroup;
+    totalPages: number;
     cols: any[] = []
     items: MenuItem[] | undefined;
     selectedUser: any;
     @ViewChild('menu') menu!: Menu;
+    isVisibleSearchDialog: boolean = false
 
     constructor(
         private location: Location,
         private router: Router,
-        private adminService: AdminService
+        private adminService: AdminService,
+        private formBuilder: FormBuilder,
 
     ) {
 
     }
 
     ngOnInit() {
-        this.fetchUsers()
+        this.fetchUsers(null)
         this.items = [{
             items: [
                 {
@@ -44,6 +51,17 @@ export class UserListComponent implements OnInit {
             ]
         }];
 
+        this.prepareSearchForm()
+
+    }
+
+    prepareSearchForm() {
+        this.userSearchForm = this.formBuilder.group({
+            userName: [''],
+            branchId: [''],
+            email: [''],
+            userStatus: [''],
+        });
     }
     openRowMenu(event: Event, user: any) {
         this.selectedUser = user;
@@ -54,7 +72,6 @@ export class UserListComponent implements OnInit {
         this.router.navigate(['home/user-details'], {
             queryParams: {
                 userName: this.selectedUser.userName
-
             }
         })
     }
@@ -63,29 +80,57 @@ export class UserListComponent implements OnInit {
         this.router.navigate(['home/create-user'], {
             queryParams: {
                 userName: this.selectedUser.userName
-
             }
         })
     }
 
-    fetchUsers() {
-        let param = new Map();
-        // param.set('userName', 'mahram');
-        this.adminService.fetchUsers(param).subscribe(data => {
-            this.users = data.content
+    fetchUsers(searchParam: any) {
+        if (searchParam) {
+            this.urlSearchMap = searchParam
+        } else {
+            this.urlSearchMap = new Map();
+        }
 
+        this.urlSearchMap.set('asPage', true);
+        this.urlSearchMap.set('size', 15);
+        this.adminService.fetchUsers(this.urlSearchMap).subscribe(data => {
+            this.users = data.content
+            this.totalRecords = data.totalElements;
+            this.totalPages = data.totalPages;
         })
     }
 
     createUser() {
         this.router.navigate(['home/create-user']);
     }
-    viewUserDetials() { }
-    edit(data: any) { }
-    search() { }
-    back() { this.location.back() }
-    refresh() { this.fetchUsers() }
+  
+    search() {
+        this.urlSearchMap = new Map()
+        for (const control in this.userSearchForm.controls) {
+            this.urlSearchMap.delete(control);
+            const formControlValue = (this.userSearchForm.get(control).value).toString().trim();
+            if (formControlValue.length !== 0) {
+                this.urlSearchMap.set(control, formControlValue);
+            }
+        }
+        this.fetchUsers(this.urlSearchMap)
+        this.prepareSearchForm()
+        console.log(this.userSearchForm.value);
+    }
 
+    back() { this.location.back() }
+
+    refresh() { this.fetchUsers(null) }
+
+    onLazyLoad(event: TableLazyLoadEvent) {
+        this.urlSearchMap.set('asPage', true);
+        this.urlSearchMap.set('page', event.first / 15);
+        this.adminService.fetchUsers(this.urlSearchMap).subscribe(data => {
+            this.users = data.content;
+            this.totalRecords = data.totalElements;
+            this.totalPages = data.totalPages;
+        });
+    }
 
 
 

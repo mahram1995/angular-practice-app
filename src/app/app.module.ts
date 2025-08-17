@@ -42,6 +42,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { UserListComponent } from './admin/user-registration/list/user-list.componemt';
 import { MenuModule } from 'primeng/menu';
 import { SafeUrlPipe } from './app-configuration/app-security/safe-url.pipe';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 
 
@@ -76,7 +77,8 @@ import { SafeUrlPipe } from './app-configuration/app-security/safe-url.pipe';
     TableModule,
     DialogModule,
     ConfirmDialogModule,
-    MenuModule
+    MenuModule,
+    OverlayPanelModule
 
 
 

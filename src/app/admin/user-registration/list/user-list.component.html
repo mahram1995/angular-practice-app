@@ -5,20 +5,20 @@
                 <p class="app-page-header">My Task</p>
             </div>
             <div class="app-button-group">
-                <button (click)="search()"><i class="pi pi-search" style="font-size:10px"></i> Search</button>
+                <button (click)="op.show($event)"><i class="pi pi-search" style="font-size:10px"></i> Search</button>
                 <button (click)="createUser()"><i class="pi pi-plus" style="font-size:10px"></i> Create</button>
                 <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
                 <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
             </div>
         </div>
-
     </div>
 
     <hr style="margin-top: 5px;">
     <div class="app-list">
         <div style="padding: 0px 5px 5px 5px">
-            <p-table class="table-striped table-bordered table-hover table-responsive " [value]="users"
-                styleClass="p-datatable-sm" [paginator]="true" [rows]="16" att.totalRecords="totalRecords" #dt>
+            <p-table class="table-striped table-bordered table-hover table-responsive" [value]="users"
+                styleClass="p-datatable-sm" [paginator]="true" [rows]="15" [totalRecords]="totalRecords" [lazy]="true"
+                (onLazyLoad)="onLazyLoad($event)" #dt>
                 <ng-template pTemplate="header">
                     <tr style="font-size: 14px;">
                         <th style="width: 70px;">User Id</th>
@@ -30,24 +30,49 @@
                         <th style="width: 65px;">Action</th>
                     </tr>
                 </ng-template>
+
                 <ng-template pTemplate="body" let-data>
                     <tr style="font-size: 14px;">
-                        <td style="text-align: center;"> {{data.id}}</td>
-                        <td> {{data.userName}}</td>
-                        <td style="text-align: center;"> {{data.email}}</td>
-                        <td style="text-align: center;"> {{data.phone}}</td>
-                        <td style="text-align: center;"> {{data.userStatus}}</td>
-                        <td style="text-align: center;"> {{data.userBranchId}}</td>
+                        <td style="text-align: center;">{{data.id}}</td>
+                        <td>{{data.userName}}</td>
+                        <td style="text-align: center;">{{data.email}}</td>
+                        <td style="text-align: center;">{{data.phone}}</td>
+                        <td style="text-align: center;">{{data.userStatus}}</td>
+                        <td style="text-align: center;">{{data.userBranchId}}</td>
                         <td>
-                            <div>
-                                <p-button [styleClass]="'tree-dot-button'" (click)="openRowMenu($event, data)"
-                                    icon="pi pi-ellipsis-v" />
-                                <p-menu appendTo="body" #menu [model]="items" [popup]="true" />
-                            </div>
+                            <p-button [styleClass]="'tree-dot-button'" (click)="openRowMenu($event, data)"
+                                icon="pi pi-ellipsis-v"></p-button>
+                            <p-menu appendTo="body" #menu [model]="items" [popup]="true"></p-menu>
                         </td>
                     </tr>
                 </ng-template>
             </p-table>
         </div>
     </div>
+
+    <p-overlayPanel #op  [style]="{ width: '450px' }">
+       <form [formGroup]="userSearchForm">
+        <div style="margin: 10px 10px 10px 10px;">
+            <div class="row app-row">
+                <div class="col-sm-6  col-md-4 ">
+                    <div class="app-input-field">
+                        <input type="text" id="userName" placeholder=" " formControlName="userName" >
+                        <label for="userName">User Name</label>
+                    </div>
+                </div>
+
+                <div class="col-sm-6  col-md-4 ">
+                    <div class="app-input-field">
+                        <input type="text" id="branchId" placeholder=" " formControlName="branchId" >
+                        <label for="branchId">Branch Id</label>
+                    </div>
+                </div>
+            </div>
+             <div style="text-align: center;">
+                <button class="app-button" (click)="search()"><i class="pi pi-plus" style="font-size:10px"></i> Search</button>
+             </div>
+        </div>
+    </form>
+    </p-overlayPanel>
+
 </div>
