@@ -7,7 +7,7 @@ import { CommonService } from '../../../app-configuration/app.service/common.ser
 import { AdminService } from '../../service/admin.service';
 import { NotificationService } from '../../../app-configuration/app.service/notification.service';
 import { FormBaseComponent } from '../../base-component/form.base.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApprovalflowService } from '../../approval-flow/service/approval-flow-service';
 
 const DETAILS_UI = 'home/user-details';
@@ -35,6 +35,7 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
         private notificationService: NotificationService,
         private approvalFlowService: ApprovalflowService,
         private adminService: AdminService,
+        protected override router: Router,
         private route: ActivatedRoute,
         private commonService: CommonService) {
         super(location);
@@ -67,8 +68,11 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
         param.set('userName', userName);
         this.adminService.fetchUsers(param).subscribe(data => {
             this.prepareForm(data.content[0])
-
+            if (this.isEdit) {
+                this.userForm.get('userName')?.disable();
+            }
         })
+
     }
 
     prepareForm(data: UserRegistrationDTO) {
@@ -103,20 +107,33 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
     save() {
         const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, CORRECTION_UI);
 
-        let formData = this.userForm.value
+        let formData = this.userForm.getRawValue()
         if (this.commonService.isFormInvalid(this.userForm, this.required_field)) {
             return;
         }
-        this.adminService.createUser(formData, urlSearchParams).subscribe(
-            (response) => {
-                this.notificationService.sendSuccess(response.message);
-                this.prepareForm(new UserRegistrationDTO)
-                this.location.back()
-            },
-            (error) => {
+        if (this.isEdit) {
+            this.adminService.updateUser(formData, urlSearchParams).subscribe(
+                (response) => {
+                    this.notificationService.sendSuccess(response.message);
+                    this.prepareForm(new UserRegistrationDTO)
+                    this.router.navigate([this.location.back()], {
+                        queryParams: {
+                            userName: formData.userName
+                        }
+                    })
 
-            }
-        )
+                }
+            )
+        } else {
+            this.adminService.createUser(formData, urlSearchParams).subscribe(
+                (response) => {
+                    this.notificationService.sendSuccess(response.message);
+                    this.prepareForm(new UserRegistrationDTO)
+                    this.location.back()
+                }
+            )
+        }
+
     }
     back() {
 

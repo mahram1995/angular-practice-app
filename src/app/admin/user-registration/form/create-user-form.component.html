@@ -6,7 +6,8 @@
             </div>
 
             <div class="app-button-group">
-                <button (click)="save()"><i class="pi pi-save" style="font-size:12px"></i> Save</button>
+                <button (click)="save()"><i class="pi pi-save" style="font-size:12px"></i>
+                    {{isEdit==true?'Update':'Save'}}</button>
                 <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
             </div>
         </div>
