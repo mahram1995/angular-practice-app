@@ -394,6 +394,7 @@ ul {
 
 .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
     background-color: #0860c5 !important;
+
 }
 
 .p-paginator .p-paginator-pages .p-paginator-page:hover {
@@ -498,16 +499,16 @@ body {
     background-color: #c5bebe;
 }
 
-.p-overlaypanel .p-overlaypanel-close{
+.p-overlaypanel .p-overlaypanel-close {
     background-color: rgb(226, 130, 4);
     border-radius: 15px !important;
     height: 30px !important;
     width: 30px !important;
 }
 
-.app-action-button{
+.app-action-button {
     background: none;
-    height: 30px ;
+    height: 30px;
     text-align: left;
     width: 100% !important;
     color: black;
@@ -515,9 +516,10 @@ body {
     padding: 0px 10px 0px 10px !important;
     margin: 0px !important;
 }
-.app-action-button:hover{
+
+.app-action-button:hover {
     background-color: #d1cdcd;
-    
+
 }
 
 .p-overlaypanel .p-overlaypanel-content {

@@ -60,7 +60,7 @@
 
     <p-overlayPanel #op [style]="{ width: '450px' }" showCloseIcon="true">
         <form [formGroup]="userSearchForm">
-            <div style="margin: 0px 10px 10px 10px;">
+            <div style="margin: 20px 10px 10px 10px;">
                 <div class="row app-row">
                     <div class="col-sm-6  col-md-4 ">
                         <div class="app-input-field">
@@ -71,8 +71,14 @@
 
                     <div class="col-sm-6  col-md-4 ">
                         <div class="app-input-field">
-                            <input type="text" id="branchId" placeholder=" " formControlName="branchId">
-                            <label for="branchId">Branch Id</label>
+                            <input type="text" id="userBranchId" placeholder=" " formControlName="userBranchId">
+                            <label for="userBranchId">Branch Id</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-4 ">
+                        <div class="app-input-field">
+                            <input type="text" id="userStatus" placeholder=" " formControlName="userStatus">
+                            <label for="userStatus">Status</label>
                         </div>
                     </div>
                 </div>

@@ -22,7 +22,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                 // Global error handling logic here
                 let errorMsg = 'An unexpected error occurred';
                 console.log(error);
-                
+
 
                 if (error.error instanceof ErrorEvent) {
                     // Client-side error
@@ -37,7 +37,14 @@ export class ErrorInterceptor implements HttpInterceptor {
                             errorMsg = error.error.message || 'Bad Request';
                             break;
                         case 401:
-                            errorMsg = error.error.message;
+                            if (error.error.message) {
+                                errorMsg = error.error.message
+                            } else {
+                                errorMsg = error.error.error;
+                                console.log(error.error.error);
+
+                            }
+
                             this.authService.logoutByUser(null)
                             break;
                         case 403:

@@ -40,14 +40,14 @@ export class UserListComponent implements OnInit {
     prepareSearchForm() {
         this.userSearchForm = this.formBuilder.group({
             userName: [''],
-            branchId: [''],
+            userBranchId: [''],
             email: [''],
             userStatus: [''],
         });
     }
- 
 
-    onDetails(data:any) {
+
+    onDetails(data: any) {
         this.router.navigate(['home/user-details'], {
             queryParams: {
                 userName: data.userName
@@ -82,7 +82,7 @@ export class UserListComponent implements OnInit {
     createUser() {
         this.router.navigate(['home/create-user']);
     }
-  
+
     search() {
         this.urlSearchMap = new Map()
         for (const control in this.userSearchForm.controls) {

@@ -5,6 +5,7 @@ import { FormBaseComponent } from '../../base-component/form.base.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApprovalflowService } from '../../approval-flow/service/approval-flow-service';
 import { AdminService } from '../../service/admin.service';
+import { NotificationService } from '../../../app-configuration/app.service/notification.service';
 
 @Component({
     selector: 'app-user-registration',
@@ -20,6 +21,7 @@ export class UserRegistrationViewComponent extends FormBaseComponent implements 
         protected override location: Location,
         protected override router: Router,
         private approvalFlowService: ApprovalflowService,
+        private notificationService: NotificationService,
         private adminService: AdminService,
         private route: ActivatedRoute,) {
         super(location);
@@ -65,6 +67,31 @@ export class UserRegistrationViewComponent extends FormBaseComponent implements 
 
             }
         })
+    }
+    changePassword() { }
+    activeUser() {
+        let userData = { ...this.userInfo }; // shallow copy
+        userData.userStatus = 'ACTIVE'
+        this.updateUser(userData)
+
+    }
+    lockUser() {
+        let userData = { ...this.userInfo }; // shallow copy
+        userData.userStatus = 'BLOCKED'
+        this.updateUser(userData)
+    }
+    disable() {
+        let userData = { ...this.userInfo }; // shallow copy
+        userData.userStatus = 'DISABLE'
+        this.updateUser(userData)
+    }
+    updateUser(data: any) {
+        this.adminService.updateUser(data, null).subscribe(
+            (response) => {
+                this.getUser(data.userName)
+                this.notificationService.sendSuccess(response.message);
+            }
+        )
     }
 
 }

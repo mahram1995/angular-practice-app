@@ -9,6 +9,11 @@
             </div>
 
             <div class="app-button-group">
+                <button (click)="activeUser()"><i class="pi pi-edit" style="font-size:12px"></i>Active</button>
+                <button (click)="changePassword()"><i class="pi pi-edit" style="font-size:12px"></i> Resset
+                    Password</button>
+                <button (click)="lockUser()"><i class="pi pi-edit" style="font-size:12px"></i> Block</button>
+                <button (click)="disable()"><i class="pi pi-edit" style="font-size:12px"></i>Disable</button>
                 <button (click)="onEdit()"><i class="pi pi-edit" style="font-size:12px"></i> Edit</button>
                 <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
             </div>
@@ -59,6 +64,11 @@
                                 <th style="width: 200px;">Phone Number</th>
                                 <th style="width: 10px;">:</th>
                                 <td style="text-align: left;">{{userInfo.firstName}} </td>
+                            </tr>
+                            <tr>
+                                <th style="width: 200px;">User Status</th>
+                                <th style="width: 10px;">:</th>
+                                <td style="text-align: left;">{{userInfo.userStatus}} </td>
                             </tr>
                         </table>
                     </div>
