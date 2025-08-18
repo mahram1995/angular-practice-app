@@ -424,6 +424,44 @@ ul {
     margin-left: 2px;
 }
 
+/* Resize only the numeric page buttons */
+.p-datatable .p-paginator .p-paginator-element,
+.p-datatable .p-paginator .p-paginator-pages .p-paginator-page {
+    min-width: 30px !important;
+    height: 30px !important;
+    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Rows per page dropdown */
+.p-paginator .p-dropdown {
+    width: 80px !important;
+    height: 26px !important;
+    background-color: rgb(6, 66, 94);
+
+}
+
+.p-dropdown .p-dropdown-trigger {
+    color: white;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:first-child {
+    text-align: center;
+    padding: 5px 2px 5px 0px;
+}
+
+.p-paginator .p-dropdown .p-dropdown-label {
+    padding: 0px !important;
+    text-align: center;
+    padding-left: 5px !important;
+    width: 30px;
+    padding-top: 3px !important;
+    color: white;
+
+}
+
 .p-paginator .p-paginator-first,
 .p-paginator .p-paginator-prev,
 .p-paginator .p-paginator-next,

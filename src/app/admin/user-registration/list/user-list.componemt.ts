@@ -18,6 +18,7 @@ export class UserListComponent implements OnInit {
     totalRecords: number = 0;
     userSearchForm: FormGroup;
     totalPages: number;
+    rowPerPage: number = 20
     cols: any[] = []
     isVisibleSearchDialog: boolean = false
 
@@ -71,7 +72,7 @@ export class UserListComponent implements OnInit {
         }
 
         this.urlSearchMap.set('asPage', true);
-        this.urlSearchMap.set('size', 15);
+        this.urlSearchMap.set('size', this.rowPerPage);
         this.adminService.fetchUsers(this.urlSearchMap).subscribe(data => {
             this.users = data.content
             this.totalRecords = data.totalElements;
@@ -95,6 +96,10 @@ export class UserListComponent implements OnInit {
         this.fetchUsers(this.urlSearchMap)
         this.prepareSearchForm()
         console.log(this.userSearchForm.value);
+    }
+    onRowsChange(event: any) {
+        this.rowPerPage = event.rows;
+        this.fetchUsers(null)
     }
 
     back() { this.location.back() }

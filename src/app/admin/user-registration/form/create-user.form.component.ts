@@ -70,6 +70,8 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
             this.prepareForm(data.content[0])
             if (this.isEdit) {
                 this.userForm.get('userName')?.disable();
+                this.userForm.get('password')?.clearValidators();
+                this.userForm.get('password')?.updateValueAndValidity();
             }
         })
 
