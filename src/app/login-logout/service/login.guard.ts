@@ -1,17 +1,21 @@
+// login.guard.ts
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
-@Injectable({ providedIn: 'root' })
-export class AuthGuard {
+@Injectable({
+    providedIn: 'root'
+})
+export class LoginGuard {
     constructor(private authService: AuthService, private router: Router) { }
 
     canActivate(): boolean {
         if (this.authService.isLoggedIn()) {
-            return true;
+            this.router.navigate(['/home']);
+            return false;
         }
-        this.router.navigate(['/login']);
-        return false;
+        return true;
     }
+
 
 }

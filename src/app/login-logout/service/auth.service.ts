@@ -25,9 +25,9 @@ export class AuthService {
         sessionStorage.clear();
         // const url = `/admin/auth/login?userName=${userName}&password=${password}`;
         return this.loginService.login(data).pipe(
-            tap(user => {
-                sessionStorage.setItem('user', JSON.stringify(user));
-                this.userSubject.next(user);
+            tap(data => {
+                sessionStorage.setItem('user', JSON.stringify(data));
+                this.userSubject.next(data);
                 this.setAutoLogout();
             })
         );
@@ -52,17 +52,14 @@ export class AuthService {
 
 
     getUser(): any {
-        const user = sessionStorage.getItem('user');
-        return user ? JSON.parse(user) : null;
+         const user = sessionStorage.getItem('user');
+         return user ? JSON.parse(user) : null;
     }
 
-    isLogin() {
-        if (this.getUser()) {
-            return true
-        } else {
-            return false
-        }
-    }
+   isLoggedIn(): boolean {
+    const user = this.getUser();
+    return !!(user && user.token);
+  }
 
     getUserObservable(): Observable<any> {
         return this.userSubject.asObservable();

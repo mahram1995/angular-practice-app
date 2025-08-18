@@ -11,17 +11,12 @@ import { ApprovalFlowTaskComponent } from './admin/approval-flow/form/my-task/my
 import { UserRegistrationViewComponent } from './admin/user-registration/view/create-user.view.component';
 import { PendingTaskComponent } from './admin/approval-flow/form/pending-task/pending-task.componemt';
 import { UserListComponent } from './admin/user-registration/list/user-list.componemt';
+import { LoginGuard } from './login-logout/service/login.guard';
 
 const routes: Routes = [
+  { path: 'login', component: LoginFormComponent, canActivate: [LoginGuard] },
 
-  { path: 'login', component: LoginFormComponent },
-  //{ path: '', redirectTo: 'home', pathMatch: 'full' },
-
-  {
-    path: '',
-    redirectTo: 'home',
-    pathMatch: 'full'
-  },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
 
   {
     path: 'home',
@@ -35,10 +30,13 @@ const routes: Routes = [
       { path: 'my-task', component: ApprovalFlowTaskComponent },
       { path: 'pending-task', component: PendingTaskComponent },
       { path: 'user-details', component: UserRegistrationViewComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }  // make sure dashboard route exists
     ]
   },
+
+  { path: '**', redirectTo: 'home' } // fallback
 ];
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

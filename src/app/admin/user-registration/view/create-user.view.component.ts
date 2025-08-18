@@ -68,7 +68,9 @@ export class UserRegistrationViewComponent extends FormBaseComponent implements 
             }
         })
     }
-    changePassword() { }
+    changePassword() { let userData = { ...this.userInfo }; // shallow copy
+        userData.password = '@'
+        this.updateUser(userData) }
     activeUser() {
         let userData = { ...this.userInfo }; // shallow copy
         userData.userStatus = 'ACTIVE'
