@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { UserRegistrationDTO } from '../../service/admin.domain';
-import { FormBaseComponent } from '../../base-component/form.base.component';
+import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApprovalflowService } from '../../approval-flow/service/approval-flow-service';
+import { ApprovalflowService } from '../../../../admin/approval-flow/service/approval-flow-service';
 import { AdminService } from '../../service/admin.service';
-import { NotificationService } from '../../../app-configuration/app.service/notification.service';
+import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
 
 @Component({
     selector: 'app-user-registration',
@@ -68,9 +68,11 @@ export class UserRegistrationViewComponent extends FormBaseComponent implements 
             }
         })
     }
-    changePassword() { let userData = { ...this.userInfo }; // shallow copy
+    changePassword() {
+        let userData = { ...this.userInfo }; // shallow copy
         userData.password = '@'
-        this.updateUser(userData) }
+        this.updateUser(userData)
+    }
     activeUser() {
         let userData = { ...this.userInfo }; // shallow copy
         userData.userStatus = 'ACTIVE'

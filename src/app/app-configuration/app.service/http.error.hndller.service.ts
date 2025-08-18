@@ -9,7 +9,7 @@ import { catchError, retry } from 'rxjs/operators';
 import { MessageService } from 'primeng/api'; // Optional: for showing toast
 import { Router } from '@angular/router';
 import { NotificationService } from './notification.service';
-import { AuthService } from '../../login-logout/service/auth.service';
+import { AuthService } from '../../module/admin/login/service/auth.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {

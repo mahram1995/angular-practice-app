@@ -8,10 +8,10 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { BaseComponent } from './base.component';
-import { ApprovalflowServiceInterface } from '../approval-flow/service/approval.flow.service.Interface';
+import { ApprovalflowServiceInterface } from '../../../admin/approval-flow/service/approval.flow.service.Interface';
 
 import { Injectable } from '@angular/core';
-import { APPROVAL_FLOW_SERVICE } from '../approval-flow/service/approval-flow.token';
+import { APPROVAL_FLOW_SERVICE } from '../../../admin/approval-flow/service/approval-flow.token';
 
 @Injectable()
 export class FormBaseComponent extends BaseComponent implements AfterViewInit {

@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { BaseService } from '../../app-configuration/app.service/base-service';
-import { HttpService } from '../../app-configuration/app.service/http.service';
+import { BaseService } from '../../../../app-configuration/app.service/base-service';
+import { HttpService } from '../../../../app-configuration/app.service/http.service';
 
 
 

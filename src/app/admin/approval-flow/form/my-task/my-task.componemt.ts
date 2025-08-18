@@ -3,7 +3,7 @@ import { ActivatedRoute, Route, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { ApprovalflowService } from '../../service/approval-flow-service';
 import { ApprovalFlowTask } from '../../service/task.domain';
-import { FormBaseComponent } from '../../../base-component/form.base.component';
+import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
 
 @Component({
     selector: 'approval-flow-task',

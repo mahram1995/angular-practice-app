@@ -19,7 +19,7 @@
             <p-table class="table-striped table-bordered table-hover table-responsive" [value]="users"
                 styleClass="p-datatable-sm" [paginator]="true" [rows]="this.rowPerPage" [totalRecords]="totalRecords"
                 [lazy]="true" [rowsPerPageOptions]="[15,20, 25,30,50,100]" (onPage)="onRowsChange($event)"
-                (onLazyLoad)="onLazyLoad($event)" #dt>
+                (onPage)="onPageChange($event)" (onLazyLoad)="onLazyLoad($event)" #dt>
                 <ng-template pTemplate="header">
                     <tr style="font-size: 14px;">
                         <th style="width: 70px;">User Id</th>

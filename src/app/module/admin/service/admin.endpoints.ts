@@ -1,5 +1,5 @@
 
-import { BASE_URL } from "../../app-configuration/app.service/environment";
+import { BASE_URL } from "../../../app-configuration/app.service/environment";
 
 
 export const CREATE_USER = BASE_URL + 'admin/auth/register';

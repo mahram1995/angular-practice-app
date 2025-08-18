@@ -1,9 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import * as endpoints from '../service/admin.endpoints';
+import * as endpoints from './admin.endpoints';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { BaseService } from '../../app-configuration/app.service/base-service';
-import { HttpService } from '../../app-configuration/app.service/http.service';
+import { BaseService } from '../../../app-configuration/app.service/base-service';
+import { HttpService } from '../../../app-configuration/app.service/http.service';
 import { UserRegistrationDTO } from './admin.domain';
 
 

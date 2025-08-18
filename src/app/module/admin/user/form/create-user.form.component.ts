@@ -3,12 +3,12 @@ import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Location } from '@angular/common';
 import { UserRegistrationDTO } from '../../service/admin.domain';
-import { CommonService } from '../../../app-configuration/app.service/common.service';
+import { CommonService } from '../../../../app-configuration/app.service/common.service';
 import { AdminService } from '../../service/admin.service';
-import { NotificationService } from '../../../app-configuration/app.service/notification.service';
-import { FormBaseComponent } from '../../base-component/form.base.component';
+import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
+import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ApprovalflowService } from '../../approval-flow/service/approval-flow-service';
+import { ApprovalflowService } from '../../../../admin/approval-flow/service/approval-flow-service';
 
 const DETAILS_UI = 'home/user-details';
 const CORRECTION_UI = 'home/create-user';

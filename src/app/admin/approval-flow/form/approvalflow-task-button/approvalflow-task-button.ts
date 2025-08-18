@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { ApprovalFlowTask } from '../../service/task.domain';
 import { ApprovalflowService } from '../../service/approval-flow-service';
 import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
-import { AuthService } from '../../../../login-logout/service/auth.service';
+import { AuthService } from '../../../../module/admin/login/service/auth.service';
 import { HttpParams } from '@angular/common/http';
 
 

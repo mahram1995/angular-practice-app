@@ -2,13 +2,13 @@ import { Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, retry, tap } from 'rxjs';
-import { BaseService } from '../../app-configuration/app.service/base-service';
+import { BaseService } from '../../../../app-configuration/app.service/base-service';
 import { LoginService } from './login.service';
 import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-   private readonly STORAGE_KEY = 'user';
+  private readonly STORAGE_KEY = 'user';
   private userSubject = new BehaviorSubject<any>(null);
   private logoutTimeout: any;
   private readonly TIMEOUT_MINUTES = 20;
@@ -60,26 +60,26 @@ export class AuthService {
     this.userSubject.next(null);
     clearTimeout(this.logoutTimeout);
     // Trigger logout event for other tabs
-                localStorage.setItem(logoutType, Date.now().toString());
-                this.userSubject.next(null);
+    localStorage.setItem(logoutType, Date.now().toString());
+    this.userSubject.next(null);
     this.router.navigate(['/login']);
   }
 
   /** Prefer sessionStorage (tab copy). Fallback to localStorage (shared). */
   getUser(): any {
     const user = sessionStorage.getItem(this.STORAGE_KEY);
-    if (user!='null'){
-        return JSON.parse(user);
+    if (user != 'null') {
+      return JSON.parse(user);
     }
     const l = localStorage.getItem(this.STORAGE_KEY);
-     sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(l));
+    sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(l));
     return l ? JSON.parse(l) : null;
   }
 
   isLoggedIn(): boolean {
     const user = this.getUser();
     // adjust token key if your API uses accessToken/jwt/etc.
-    return user? true:false; // or: !!(user && (user.token || user.accessToken || user.jwt))
+    return user ? true : false; // or: !!(user && (user.token || user.accessToken || user.jwt))
   }
 
   getUserObservable(): Observable<any> {
