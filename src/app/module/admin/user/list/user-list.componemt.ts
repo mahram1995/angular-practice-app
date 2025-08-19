@@ -5,7 +5,7 @@ import { AdminService } from '../../service/admin.service';
 import { UserRegistrationDTO } from '../../service/admin.domain';
 import { Menu } from 'primeng/menu';
 import { LazyLoadEvent, MenuItem } from 'primeng/api';
-import { TableLazyLoadEvent } from 'primeng/table';
+import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -22,6 +22,8 @@ export class UserListComponent implements OnInit {
     pageNumber: number = 0;
     cols: any[] = []
     isVisibleSearchDialog: boolean = false
+
+    @ViewChild('dataTable') dt: Table | undefined;
 
     constructor(
         private location: Location,
@@ -66,8 +68,7 @@ export class UserListComponent implements OnInit {
     }
 
     fetchUsers(searchParam: any) {
-
-        this.adminService.fetchUsers(this.urlSearchMap).subscribe(data => {
+        this.adminService.fetchUsers(searchParam).subscribe(data => {
             this.users = data.content
             this.totalRecords = data.totalElements;
             this.totalPages = data.totalPages;
@@ -78,8 +79,10 @@ export class UserListComponent implements OnInit {
         this.router.navigate(['home/create-user']);
     }
 
-    search() {
-        this.urlSearchMap = new Map()
+    search(searchMap: Map<string, any>) {
+        this.dt?.reset();
+        this.urlSearchMap.set('page', 0);
+        if (searchMap != null) { this.urlSearchMap = searchMap; }
         for (const control in this.userSearchForm.controls) {
             this.urlSearchMap.delete(control);
             const formControlValue = (this.userSearchForm.get(control).value).toString().trim();
@@ -89,7 +92,6 @@ export class UserListComponent implements OnInit {
         }
         this.fetchUsers(this.urlSearchMap)
         this.prepareSearchForm()
-        console.log(this.userSearchForm.value);
     }
     onRowsChange(event: any) {
         this.rowPerPage = event.rows;
@@ -97,18 +99,18 @@ export class UserListComponent implements OnInit {
     }
 
     onPageChange(event: any) {
-        this.pageNumber = Math.floor(event.first / event.rows) + 1;
+        this.pageNumber = event.first / event.rows;
         const pageSize = event.rows;
-
-
     }
 
 
     back() { this.location.back() }
 
-    refresh() { this.setAsPage() }
+    refresh() {
+        this.dt?.reset();
+        this.setAsPage()
+    }
     setAsPage() {
-        this.users=[]
         this.urlSearchMap = new Map();
         this.urlSearchMap.set('asPage', true);
         this.urlSearchMap.set('size', this.rowPerPage);
@@ -117,15 +119,22 @@ export class UserListComponent implements OnInit {
     }
 
     onLazyLoad(event: TableLazyLoadEvent) {
+        this.rowPerPage = event.rows ?? this.rowPerPage;
+        this.pageNumber = event.first / this.rowPerPage;
+
+        if (this.urlSearchMap == null) {
+            this.urlSearchMap = new Map();
+        }
         this.urlSearchMap.set('asPage', true);
-        this.urlSearchMap.set('page', event.first / this.rowPerPage);
+        this.urlSearchMap.set('page', this.pageNumber);  // 0-based index
+        this.urlSearchMap.set('size', this.rowPerPage);
+
         this.adminService.fetchUsers(this.urlSearchMap).subscribe(data => {
             this.users = data.content;
-            this.totalRecords = data.data.pageSize * data.pageCount;;
+            this.totalRecords = data.totalElements;   // use backend's totalElements
             this.totalPages = data.totalPages;
         });
     }
-
 
 
 }

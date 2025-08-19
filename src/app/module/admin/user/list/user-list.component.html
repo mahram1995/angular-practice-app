@@ -16,10 +16,9 @@
     <hr style="margin-top: 5px;">
     <div class="app-list">
         <div style="padding: 0px 5px 5px 5px">
-            <p-table #dataTable class="table-striped table-bordered table-hover table-responsive" [value]="users"
-                styleClass="p-datatable-sm" [paginator]="true" [rows]="this.rowPerPage" [totalRecords]="totalRecords"
-                [lazy]="true" [rowsPerPageOptions]="[15,20, 25,30,50,100]" (onPage)="onRowsChange($event)"
-                (onPage)="onPageChange($event)" (onLazyLoad)="onLazyLoad($event)" #dt>
+            <p-table class="table-striped table-bordered table-hover table-responsive" #dataTable [value]="users"
+                [paginator]="true" [rows]="rowPerPage" [totalRecords]="totalRecords" styleClass="p-datatable-sm"
+                [rowsPerPageOptions]="[15,20,25,30,50,100]" [lazy]="true" (onLazyLoad)="onLazyLoad($event)">>
                 <ng-template pTemplate="header">
                     <tr style="font-size: 14px;">
                         <th style="width: 70px;">User Id</th>
@@ -84,7 +83,7 @@
                     </div>
                 </div>
                 <div style="text-align: center;">
-                    <button class="app-button" (click)="search();op.hide()">Search</button>
+                    <button class="app-button" (click)="search(null);op.hide()">Search</button>
                 </div>
             </div>
         </form>
