@@ -1,2 +1,131 @@
 <app-navbar></app-navbar>
+<app-topbar [isHomePage]="true"></app-topbar>
+
+<div class="home-page">
+    <div *ngIf="isLoggedIn">
+        <br><br><br>
+        <div class="row" style="width: 80% ; margin: auto;">
+            <div class="col-6 col-sm-4  col-md-3">
+                <div (click)="onApplicationClick('admin')" class="deshbord-app-card">
+                    <img src="../../../assets/image/admin.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Admin</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card">
+                    <img src="../../../assets/image/customer.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Customer</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card">
+                    <img src="../../../assets/image/general-ledger.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">General Ledger</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card">
+                    <img src="../../../assets/image/investment.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Investment</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card">
+                    <img src="../../../assets/image/sanction.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Saction</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card">
+                    <img src="../../../assets/image/sanction.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Cheque Requisition</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card">
+                    <img src="../../../assets/image/sanction.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Stock Asset</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card">
+                    <img src="../../../assets/image/sanction.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Treasury</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card">
+                    <img src="../../../assets/image/sanction.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Bank Guarantee</p>
+                </div>
+            </div>
+
+            <div class="col-6 col-sm-4  col-md-3">
+                <div (click)="onApplicationClick('tf-admin')" class="deshbord-app-card">
+                    <img src="../../../assets/image/tf-admin.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">TF-Admin</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div (click)="onApplicationClick('import')" class="deshbord-app-card">
+                    <img src="../../../assets/image/import.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">TF-Import</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div (click)="onApplicationClick('export')" class="deshbord-app-card">
+                    <img src="../../../assets/image/export.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">TF-Export</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card">
+                    <img src="../../../assets/image/remittance.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Remittance</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div (click)="onApplicationClick('cash')" class="deshbord-app-card">
+                    <img src="../../../assets/image/cash.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Cash</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card">
+                    <img src="../../../assets/image/deposit.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Deposit</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card">
+                    <img src="../../../assets/image/report.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Report</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card">
+                    <img src="../../../assets/image/foreign-remittance.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Foreign Remittance</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card" style="margin-bottom: 10px;">
+                    <img src="../../../assets/image/transaction.svg" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Batch Transation</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4  col-md-3">
+                <div class="deshbord-app-card" (click)="onApplicationClick('personal-budget')">
+                    <img src="../../../assets/image/budget.png" width="45px" height="45px" alt="">
+                    <p class="deshbord-card-title">Personal Budget</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="clear:both;">
+            <br>
+        </div>
+    </div>
+
+</div>
 <router-outlet></router-outlet>

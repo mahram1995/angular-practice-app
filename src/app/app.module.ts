@@ -48,6 +48,7 @@ import { SidebarModule } from 'primeng/sidebar';
 import { PasswordChangeComponent } from './app-configuration/app-component/password-change/password.change.component';
 import { BranchSwitchComponent } from './app-configuration/app-component/branch-switch/branch.change.component';
 import { AppHeaderComponent } from './app-configuration/header-page/header.page';
+import { AppTopbarComponent } from './app-configuration/app-topbar/app.topbar';
 
 
 
@@ -72,7 +73,8 @@ import { AppHeaderComponent } from './app-configuration/header-page/header.page'
     PanelMenuComponent,
     TaskProcessingDialogComponent,
     PasswordChangeComponent,
-    BranchSwitchComponent
+    BranchSwitchComponent,
+    AppTopbarComponent
   ],
   imports: [
     BrowserModule,

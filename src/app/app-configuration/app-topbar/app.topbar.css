@@ -1,0 +1,54 @@
+.ababil-topbar {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
+.p-panelmenu .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-action {
+    padding: 10px !important;
+}
+
+.right-dot-button {
+    button:active {
+        border-style: outset;
+    }
+}
+
+/* rotate the right menu icon on click */
+.left-menu-button.active i.pi-angle-right {
+    transform: rotate(180deg);
+}
+
+.module-name {
+    text-align: center;
+    font-size: large;
+    color: rgb(40, 8, 99);
+    font-weight: bold;
+}
+
+.module-name:hover{
+    cursor: pointer;
+    color: black;
+}
+
+
+.right-menu-item{
+    text-decoration: none !important;
+    color: #009688;
+}
+.parent-right-menu-item {
+    font-size: 14px;
+    width: 250px;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 4px;
+    text-decoration: none !important;
+    color: #009688;
+}
+
+.parent-right-menu-item:hover {
+    cursor: pointer;
+    background-color: rgb(215, 154, 228);
+
+}

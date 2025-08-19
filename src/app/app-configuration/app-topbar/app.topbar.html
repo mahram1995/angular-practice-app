@@ -1,0 +1,85 @@
+<task-processing-dialog></task-processing-dialog>
+<nav class="navbar fixed-top navbar-expand  ababil-topbar" style="background: rgb(3,92,83);
+background: linear-gradient(90deg, rgba(3,92,83,1) 17%, rgba(0,150,136,1) 20%)">
+
+  <div (click)="onLogoClick()" class="ababil-topbar" style="width: 230px !important; ">
+    <img
+      style="object-fit: contain; width: 250px; height: 50px; padding-top: 5px; padding-bottom: 5px; cursor: pointer; margin: 0px;"
+      src="../../../assets/image/logo2x.svg" alt="">
+  </div>
+
+  <!-- Toggle Button in Mobile View, not working perfectly, if wanted, can be worked on -->
+
+  <div class="collapse navbar-collapse left-menu-button" id="navbarSupportedContent">
+    <p-button *ngIf="!isHomePage" class="left-menu-button" [class.active]="sidebarVisible"
+      [style]="{'background-color': '#CDDC39', 'border-radius':'20px', 'height':'40px', 'width': '55px'}"
+      (click)="sidebarVisible=true">
+      <i class="pi pi-angle-right" style="font-size: 23px"></i>
+    </p-button>
+  </div>
+  <div [style]=" {'color':'white', 'width':'400px', 'text-align':'right' , 'padding-right':'5px' ,'font-size':'14px'}">
+    <div class="ababil-topbar">{{userInfo?.userBranch + ' (' + userInfo?.branchId+')'}}</div>
+    <div class="ababil-topbar">
+      September 12, 2023
+    </div>
+  </div>
+  <div>
+    <button (click)="op.toggle($event)"
+      [style]="{'background-color':' #009688','border':'none', 'color':'white', 'height':'40px', 'width': '40px','margin':'5px'}">
+      <i class="pi pi pi-ellipsis-v" style="font-size: 1.5rem"></i></button>
+  </div>
+</nav>
+
+
+
+<div style=" margin-top: -50px; ">
+  <p-sidebar [(visible)]="sidebarVisible"
+    [style]="{'height':'100%' , 'margin-top':'50px', 'width':'280px' , 'padding':'0px'}">
+    <p></p>
+    <div class="module-name" (click)="onModuleNameClick()">{{moduleName}}</div>
+    <hr>
+    <!-- <p-panelMenu  [multiple]="false" (click)="onMenuListItemClick($event)"
+     [model]="adminMenu" [style]="{'width':'250px'}"></p-panelMenu> -->
+    <new-menu (onMenuSelect)="onMenuListItemClick($event)" [menus]="menuItem"></new-menu>
+  </p-sidebar>
+</div>
+
+<!-- application right bar for module,   It is appare where module is selected -->
+<div class="ababil-topbar" style="width: 400px; font-size:15px;">
+  <p-overlayPanel #op id="op" [style]="{'padding':'0px', 'margin':'0px'}">
+    <app-right-mune (onRightMenuClink)="onRightMenuClink($event)"
+      (onPasswordChangeClick)="onPasswordChangeClick($event)"
+      (onBranchSwitchClick)="onSwitchBranchClick($event)"></app-right-mune>
+  </p-overlayPanel>
+</div>
+
+<div *ngIf="!isLoggedIn">
+
+</div>
+
+
+<p-dialog header="Change Password" [(visible)]="visibleChangePasswordForm" [modal]="true" [style]="{'width': '370px'}"
+  [draggable]="true" [resizable]="false">
+  <p class="m-0">
+    <password-change></password-change>
+  </p>
+</p-dialog>
+
+<p-dialog header="Switch Branch" [(visible)]="visibleSwitchBranchForm" [modal]="true" [style]="{'width': '350px' }"
+  [draggable]="true" [resizable]="false">
+  <p class="m-0">
+    <branch-change></branch-change>
+  </p>
+</p-dialog>
+
+<p-dialog header="Youser Logout Warning" [(visible)]="visibleLogOutDialog" [modal]="true" [style]="{'width': '350px' }"
+  [draggable]="true" [resizable]="false" [closable]="false">
+  <br>
+  <div style="text-align: center;">
+    <p>You are logedout. Please login.</p>
+  </div>
+  <div style="text-align: center;">
+    <button style="background-color: #086b61; color:white" (click)="sessionTimeoutLogout()">Login</button>
+  </div>
+  <br>
+</p-dialog>
