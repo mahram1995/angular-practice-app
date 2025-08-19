@@ -12,29 +12,19 @@ import { UserRegistrationViewComponent } from './module/admin/user/view/create-u
 import { PendingTaskComponent } from './admin/approval-flow/form/pending-task/pending-task.componemt';
 import { UserListComponent } from './module/admin/user/list/user-list.componemt';
 import { LoginGuard } from './module/admin/login/service/login.guard';
+import { AdminHomeComponent } from './module/admin/admin.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginFormComponent, canActivate: [LoginGuard] },
 
   { path: '', redirectTo: 'home', pathMatch: 'full' },
 
+  { path: 'home', component: AppHomePageComponent, canActivate: [AuthGuard] },
   {
-    path: 'home',
-    component: AppHomePageComponent,
-    canActivate: [AuthGuard],
-    children: [
-      { path: 'dynamic-form', component: DynamicFormComponent },
-      { path: 'user-list', component: UserListComponent },
-      { path: 'create-user', component: UserRegistrationComponent },
-      { path: 'floating-label-dynamic-form', component: FloatingLabelDynamicFormComponent },
-      { path: 'my-task', component: ApprovalFlowTaskComponent },
-      { path: 'pending-task', component: PendingTaskComponent },
-      { path: 'user-details', component: UserRegistrationViewComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }  // make sure dashboard route exists
-    ]
+    path: 'admin',
+    component: AdminHomeComponent,
+    data: { title: 'Ababil Admin', routeName: 'ababil-admin' },
   },
-
-  { path: '**', redirectTo: 'home' } // fallback
 ];
 
 

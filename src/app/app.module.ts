@@ -40,15 +40,10 @@ import { UserListComponent } from './module/admin/user/list/user-list.componemt'
 import { MenuModule } from 'primeng/menu';
 import { SafeUrlPipe } from './app-configuration/app-security/safe-url.pipe';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { AppRightMenuComponent } from './app-configuration/app-right-menu/app.right.menu';
-import { PanelMenuComponent } from './app-configuration/app-panel-manu/app.panel.menu';
-import { TaskProcessingDialogComponent } from './app-configuration/app-component/loader/task.processing.dialog';
-import { NgxSpinnerModule } from "ngx-spinner";
 import { SidebarModule } from 'primeng/sidebar';
-import { PasswordChangeComponent } from './app-configuration/app-component/password-change/password.change.component';
-import { BranchSwitchComponent } from './app-configuration/app-component/branch-switch/branch.change.component';
 import { AppHeaderComponent } from './app-configuration/header-page/header.page';
-import { AppTopbarComponent } from './app-configuration/app-topbar/app.topbar';
+import { AdminModule } from './module/admin/admin.module';
+import { AppShareModule } from './app-configuration/app-component/app-share-module/app-share-module';
 
 
 
@@ -69,14 +64,11 @@ import { AppTopbarComponent } from './app-configuration/app-topbar/app.topbar';
     UserListComponent,
     SafeUrlPipe,
     AppHeaderComponent,
-    AppRightMenuComponent,
-    PanelMenuComponent,
-    TaskProcessingDialogComponent,
-    PasswordChangeComponent,
-    BranchSwitchComponent,
-    AppTopbarComponent
+
+
   ],
   imports: [
+    AppShareModule,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
@@ -91,8 +83,8 @@ import { AppTopbarComponent } from './app-configuration/app-topbar/app.topbar';
     ConfirmDialogModule,
     MenuModule,
     OverlayPanelModule,
-    NgxSpinnerModule,
-    SidebarModule
+    SidebarModule,
+    AdminModule
 
 
 
