@@ -12,7 +12,7 @@ export class AppHomePageComponent implements OnInit {
     isHomePage: boolean = false
     constructor(private authService: AuthService, private router: Router) { }
     ngOnInit(): void {
-        if (this.authService.isLoggedIn) {
+        if (this.authService.isLoggedIn()) {
             this.isLoggedIn = true
         }
     }
@@ -20,10 +20,11 @@ export class AppHomePageComponent implements OnInit {
 
 
     onApplicationClick(data: any) {
-        // this.router.navigate(['/forgot-password']);
+        // this.router.navigate([data]);
         const url = this.router.serializeUrl(this.router.createUrlTree([data]));
 
-        window.open(url, '_blank');
+        //window.open(url, '_blank');
+        window.open(url, '_self');
     }
 
 }

@@ -44,6 +44,7 @@ import { SidebarModule } from 'primeng/sidebar';
 import { AppHeaderComponent } from './app-configuration/header-page/header.page';
 import { AdminModule } from './module/admin/admin.module';
 import { AppShareModule } from './app-configuration/app-component/app-share-module/app-share-module';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -114,6 +115,7 @@ import { AppShareModule } from './app-configuration/app-component/app-share-modu
       useClass: ApprovalflowService
     },
     provideAnimationsAsync()],
+  exports: [RouterModule],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -6,7 +6,7 @@ import { ApprovalFlowTask } from '../../service/task.domain';
 import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
 
 @Component({
-    selector: 'approval-flow-task',
+    selector: 'approval-flow-pending-task',
     templateUrl: './pending-task.component.html',
 })
 export class PendingTaskComponent extends FormBaseComponent implements OnInit {
