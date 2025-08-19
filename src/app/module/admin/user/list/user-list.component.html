@@ -16,7 +16,7 @@
     <hr style="margin-top: 5px;">
     <div class="app-list">
         <div style="padding: 0px 5px 5px 5px">
-            <p-table class="table-striped table-bordered table-hover table-responsive" [value]="users"
+            <p-table #dataTable class="table-striped table-bordered table-hover table-responsive" [value]="users"
                 styleClass="p-datatable-sm" [paginator]="true" [rows]="this.rowPerPage" [totalRecords]="totalRecords"
                 [lazy]="true" [rowsPerPageOptions]="[15,20, 25,30,50,100]" (onPage)="onRowsChange($event)"
                 (onPage)="onPageChange($event)" (onLazyLoad)="onLazyLoad($event)" #dt>
