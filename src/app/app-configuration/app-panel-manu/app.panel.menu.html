@@ -1,0 +1,21 @@
+<ul id="accordion" class="accordion1">
+    <li *ngFor="let menu of menus; let i = index" [class.active]="menu.active">
+        <div class="menu" (click)="toggle(i, menu?.routerLink , menu?.routerName)">
+            <div><i [class]="menu.icon" style="font-size: 13px"></i></div>
+
+            <p>{{menu.name}} <i *ngIf="menu?.submenu?.length>0" class="pi pi-angle-down" style="font-size: 15px"></i>
+            </p>
+
+
+        </div>
+        <ul class="submenu" #submenu [style.height.px]="menu.active ? submenu.scrollHeight : 0">
+            <li *ngFor="let submenu of menu.submenu">
+                <div style="float: left; padding-left: 30px;">
+                    <i class="fa fa-bars"></i>
+                </div>
+                <div><a (click)="onItemSelect(submenu.routerLink, submenu.routerName)">{{submenu.name }}</a></div>
+            </li>
+        </ul>
+
+    </li>
+</ul>

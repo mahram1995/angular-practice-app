@@ -138,5 +138,9 @@ export class AuthService {
   }
 
 
+  changePassword(urlSearchParam) {
+
+  }
+
 
 }

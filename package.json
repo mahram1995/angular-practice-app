@@ -25,6 +25,7 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.7",
     "jquery": "^3.7.1",
+    "ngx-spinner": "^19.0.0",
     "pdfjs-dist": "^2.16.105",
     "popper.js": "^1.16.1",
     "primeicons": "^7.0.0",

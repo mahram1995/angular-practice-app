@@ -1,0 +1,66 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <!-- Logo or Brand -->
+        <a class="navbar-brand" href="#">Angular Practice</a>
+
+        <!-- Toggle button for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Collapsible links -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Links -->
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                        User
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" routerLink="/home/user-list">User</a></li>
+                        <li><a class="dropdown-item" routerLink="/home/floating-label-dynamic-form">Update User</a></li>
+                    </ul>
+                </li>
+
+                <!-- Dropdown -->
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                        UDF
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" routerLink="/home/dynamic-form">Dynamic form</a></li>
+                        <li><a class="dropdown-item" routerLink="/home/floating-label-dynamic-form">Dynamic form with
+                                floating</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                        Task
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" routerLink="/home/my-task">My Task</a></li>
+                        <li><a class="dropdown-item" routerLink="/home/pending-task">Pending Task</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+
+
+
+            <!-- Optional: Right-aligned user or actions -->
+            <span class="navbar-text text-white">
+                {{userName}}
+
+                <button (click)="logout()" style="border-radius: 8px; height: 28px; width: 28px;">
+                    <span class="pi pi-sign-out" style="font-size: 14px"></span> </button>
+            </span>
+
+        </div>
+    </div>
+</nav>

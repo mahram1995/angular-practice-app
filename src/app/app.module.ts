@@ -14,7 +14,6 @@ import { BaseService } from './app-configuration/app.service/base-service';
 
 import { LoginService } from './module/admin/login/service/login.service';
 import { AuthService } from './module/admin/login/service/auth.service';
-import { AppHeaderComponent } from './app-configuration/header-page/header.page';
 import { AppHomePageComponent } from './app-configuration/app-component/home-page/home.page';
 import { LoginFormComponent } from './module/admin/login/login-form/login.form';
 import { DynamicFormComponent } from './dynamic-form/form/dynamic-form';
@@ -30,8 +29,6 @@ import { AdminService } from './module/admin/service/admin.service';
 import { ErrorInterceptor } from './app-configuration/app.service/http.error.hndller.service';
 import { APPROVAL_FLOW_SERVICE } from './admin/approval-flow/service/approval-flow.token';
 import { ApprovalflowService } from './admin/approval-flow/service/approval-flow-service';
-import { BaseComponent } from './app-configuration/app-component/base-component/base.component';
-import { FormBaseComponent } from './app-configuration/app-component/base-component/form.base.component';
 import { TableModule } from 'primeng/table'; // <-- Import here
 import { ApprovalFlowTaskComponent } from './admin/approval-flow/form/my-task/my-task.componemt';
 import { UserRegistrationViewComponent } from './module/admin/user/view/create-user.view.component';
@@ -43,6 +40,14 @@ import { UserListComponent } from './module/admin/user/list/user-list.componemt'
 import { MenuModule } from 'primeng/menu';
 import { SafeUrlPipe } from './app-configuration/app-security/safe-url.pipe';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { AppRightMenuComponent } from './app-configuration/app-right-menu/app.right.menu';
+import { PanelMenuComponent } from './app-configuration/app-panel-manu/app.panel.menu';
+import { TaskProcessingDialogComponent } from './app-configuration/app-component/loader/task.processing.dialog';
+import { NgxSpinnerModule } from "ngx-spinner";
+import { SidebarModule } from 'primeng/sidebar';
+import { PasswordChangeComponent } from './app-configuration/app-component/password-change/password.change.component';
+import { BranchSwitchComponent } from './app-configuration/app-component/branch-switch/branch.change.component';
+import { AppHeaderComponent } from './app-configuration/header-page/header.page';
 
 
 
@@ -53,7 +58,6 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
     AppComponent,
     DynamicFormComponent,
     FloatingLabelDynamicFormComponent,
-    AppHeaderComponent,
     AppHomePageComponent,
     LoginFormComponent,
     UserRegistrationComponent,
@@ -63,6 +67,12 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
     PendingTaskComponent,
     UserListComponent,
     SafeUrlPipe,
+    AppHeaderComponent,
+    AppRightMenuComponent,
+    PanelMenuComponent,
+    TaskProcessingDialogComponent,
+    PasswordChangeComponent,
+    BranchSwitchComponent
   ],
   imports: [
     BrowserModule,
@@ -78,7 +88,11 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
     DialogModule,
     ConfirmDialogModule,
     MenuModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    NgxSpinnerModule,
+    SidebarModule
+
+
 
 
 
