@@ -21,11 +21,13 @@ import { PanelMenuComponent } from '../../app-panel-manu/app.panel.menu';
 import { PasswordChangeComponent } from '../password-change/password.change.component';
 import { BranchSwitchComponent } from '../branch-switch/branch.change.component';
 import { NgxSpinnerModule } from "ngx-spinner";
+import { RouterModule } from '@angular/router';
 
 
 @NgModule({
     imports: [
         AppRoutingModule,
+        RouterModule,
         CommonModule,
         BrowserAnimationsModule,
         BrowserModule,
@@ -60,6 +62,7 @@ import { NgxSpinnerModule } from "ngx-spinner";
     ],
     exports: [
         AppTopbarComponent,
+        RouterModule,
         TaskProcessingDialogComponent,
         FormsModule,
         ReactiveFormsModule,

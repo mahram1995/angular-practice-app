@@ -1,11 +1,10 @@
-<app-topbar [isHomePage]="true"></app-topbar>
-
+<app-topbar [isHomePage]="isLoggedIn"></app-topbar>
 <div class="home-page">
     <div *ngIf="isLoggedIn">
         <br><br><br>
         <div class="row" style="width: 80% ; margin: auto;">
             <div class="col-6 col-sm-4  col-md-3">
-                <div (click)="onApplicationClick('admin')" class="deshbord-app-card">
+                <div (click)="onApplicationClick('/admin')" class="deshbord-app-card">
                     <img src="../../../assets/image/admin.svg" width="45px" height="45px" alt="">
                     <p class="deshbord-card-title">Admin</p>
                 </div>
@@ -127,4 +126,3 @@
     </div>
 
 </div>
-<router-outlet></router-outlet>

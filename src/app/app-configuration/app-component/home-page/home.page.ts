@@ -23,8 +23,8 @@ export class AppHomePageComponent implements OnInit {
         // this.router.navigate([data]);
         const url = this.router.serializeUrl(this.router.createUrlTree([data]));
 
-        //window.open(url, '_blank');
-        window.open(url, '_self');
+        window.open(url, '_blank');
+        // window.open(data, '_self');
     }
 
 }

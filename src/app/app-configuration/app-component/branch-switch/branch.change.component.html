@@ -2,10 +2,9 @@
 <div style="padding: 0px 20px 10px 20px ;">
     <form [formGroup]="branchChangeForm" (ngSubmit)="onSubmit()">
         <div class="row">
-            <div class="col-md-12">
-                <p-dropdown styleClass="ababil-dropdwon-field" appendTo="body" [filter]="true"
-                    [resetFilterOnHide]='true' [options]="branchs" filterBy="label" optionLabel="label"
-                    [placeholder]="'Select a branch'">
+            <div class=" col-md-12 app-dropdwon">
+                <p-dropdown styleClass="app-dropdwon-field" appendTo="body" [filter]="true" [resetFilterOnHide]='true'
+                    [options]="branchs" filterBy="label" optionLabel="label" [placeholder]="'Select a branch'">
                 </p-dropdown>
             </div>
         </div>

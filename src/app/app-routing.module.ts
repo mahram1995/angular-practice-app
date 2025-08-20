@@ -5,6 +5,7 @@ import { AppHomePageComponent } from './app-configuration/app-component/home-pag
 import { AuthGuard } from './module/admin/login/service/auth.guard';
 import { LoginGuard } from './module/admin/login/service/login.guard';
 import { AdminHomeComponent } from './module/admin/admin.component';
+import { FloatingLabelDynamicFormComponent } from './dynamic-form/floating-lable-form/floating-label-dynamic-form';
 
 const routes: Routes = [
   { path: 'login', component: LoginFormComponent, canActivate: [LoginGuard] },
@@ -15,6 +16,8 @@ const routes: Routes = [
     component: AdminHomeComponent,
     data: { title: 'Ababil Admin', routeName: 'ababil-admin' },
   },
+  { path: '', redirectTo: 'home', pathMatch: 'full' }
+
 ];
 
 

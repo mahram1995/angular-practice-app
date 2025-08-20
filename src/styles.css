@@ -602,3 +602,38 @@ body {
     bottom: 0;
     left: 0;
 }
+
+/* remove box shado on dropdwon focus and set border line green  */
+.p-dropdown:not(.p-disabled).p-focus {
+    box-shadow: none;
+    border-bottom: 2px solid green !important;
+}
+
+.p-dropdown-header {
+    padding: 0px !important;
+    margin: 0px !important;
+    border: none;
+}
+
+.p-dropdown-filter {
+    border: none;
+    height: 30px;
+    /* background-color: #009688; */
+    background-color: #086b61;
+    color: white;
+}
+
+.p-dropdown-item {
+    font-size: 14px;
+    text-align: left !important;
+    padding: 2px 10px 2px 5px !important;
+}
+
+.p-dropdown-item:hover {
+    background-color: #b9bdc0;
+}
+
+.app-dropdwon-field ol,
+ul {
+    padding: 0px !important;
+}

@@ -11,28 +11,9 @@ import { NotificationService } from './notification.service';
 export class CommonService {
 
     constructor(
-        private router: Router,
-        private route: ActivatedRoute,
         private notificationService: NotificationService,
 
     ) {
-
-    }
-
-    navigate(routerLink: string, routerName: any) {
-        if (typeof window !== 'undefined' && localStorage.getItem('token') != null) {
-            var moduleName = ((routerLink.replace(/\//g, " ")).trim()).split(" ")[0];
-            // if (routerName == "cash-deposit") {
-            //   this.router.navigate([routerLink]);
-            // } else {
-            //   this.router.navigate(["/" + moduleName + "/access-denied"]);
-            // }
-
-            this.router.navigate([routerLink], { relativeTo: this.route });
-
-        } else {
-            this.router.navigate(['/login'], { relativeTo: this.route });
-        }
 
     }
 

@@ -58,23 +58,7 @@ export class AppTopbarComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (typeof window !== 'undefined' && localStorage.getItem('token') != null) {
-            this.isLoggedIn = true;
-
-            // if user already loggedin and want to go login page then redirect to home page
-            this.router.events.subscribe(
-                (event: any) => {
-                    if (event.routerEvent?.url == '/login') {
-                        this.location.back()
-                        this.isHomePage = true;
-                    }
-                }
-            );
-
-            this.getUserInfo()
-        } else {
-            this.router.navigate(['/login']);
-        }
+        this.userInfo = this.authService.getUser()
 
         if (this.module == 'ababil-admin') {
             this.menuItem = AdminMenuList

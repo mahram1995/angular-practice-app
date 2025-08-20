@@ -84,8 +84,7 @@ import { RouterModule } from '@angular/router';
     ConfirmDialogModule,
     MenuModule,
     OverlayPanelModule,
-    SidebarModule,
-    AdminModule
+    SidebarModule
 
 
 

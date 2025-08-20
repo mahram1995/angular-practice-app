@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Config, Menu } from "./new-menu-domain";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { CommonService } from "../app.service/common.service";
 
 
@@ -20,7 +20,7 @@ export class PanelMenuComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private commonService: CommonService
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit(): void {
@@ -52,7 +52,7 @@ export class PanelMenuComponent implements OnInit {
 
   onItemSelect(routerLink: any, routerName: any) {
     this.onMenuSelect.emit(false)
-    this.commonService.navigate(routerLink, routerName)
+    this.router.navigate([routerLink], { relativeTo: this.route });
   }
 
 }
