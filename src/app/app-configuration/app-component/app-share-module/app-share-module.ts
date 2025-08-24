@@ -26,11 +26,8 @@ import { RouterModule } from '@angular/router';
 
 @NgModule({
     imports: [
-        AppRoutingModule,
         RouterModule,
         CommonModule,
-        BrowserAnimationsModule,
-        BrowserModule,
         FormsModule,
         ReactiveFormsModule,
         ButtonModule,

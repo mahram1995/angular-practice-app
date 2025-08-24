@@ -45,6 +45,7 @@ import { AppHeaderComponent } from './app-configuration/header-page/header.page'
 import { AdminModule } from './module/admin/admin.module';
 import { AppShareModule } from './app-configuration/app-component/app-share-module/app-share-module';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 
 
@@ -57,12 +58,6 @@ import { RouterModule } from '@angular/router';
     FloatingLabelDynamicFormComponent,
     AppHomePageComponent,
     LoginFormComponent,
-    UserRegistrationComponent,
-    ApprovalFlowTaskComponent,
-    UserRegistrationViewComponent,
-    ApprovalFlowViewButtonComponent,
-    PendingTaskComponent,
-    UserListComponent,
     SafeUrlPipe,
     AppHeaderComponent,
 
@@ -70,14 +65,15 @@ import { RouterModule } from '@angular/router';
   ],
   imports: [
     AppShareModule,
-    BrowserModule,
     AppRoutingModule,
+    CommonModule,
+    BrowserModule,
+    BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
     DropdownModule,
     HttpClientModule,
     MatCardModule,
-    BrowserAnimationsModule,
     ToastModule,
     TableModule,
     DialogModule,

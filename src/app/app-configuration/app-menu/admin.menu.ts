@@ -37,7 +37,7 @@ export const AdminMenuList = [
         name: 'User',
         icon: 'pi pi-bars',
         active: false,
-        routerLink: "user-list"
+        routerLink: "/admin/user-list"
 
     },
     {

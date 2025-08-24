@@ -13,8 +13,8 @@ const routes: Routes = [
   { path: 'home', component: AppHomePageComponent, canActivate: [AuthGuard] },
   {
     path: 'admin',
-    component: AdminHomeComponent,
-    data: { title: 'Ababil Admin', routeName: 'ababil-admin' },
+    loadChildren: () =>
+      import('../app/module/admin/admin.module').then(m => m.AdminModule)
   },
   { path: '', redirectTo: 'home', pathMatch: 'full' }
 

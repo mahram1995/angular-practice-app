@@ -14,7 +14,7 @@ import { AdminHomePageComponent } from './admin-home-page/admin.home.page';
 
 export const routes: Routes = [
   {
-    path: 'admin',
+    path: '',
     component: AdminHomeComponent,
     children: [
       { path: '', component: AdminHomePageComponent },
