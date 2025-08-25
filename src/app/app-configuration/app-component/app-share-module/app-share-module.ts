@@ -74,6 +74,7 @@ import { RouterModule } from '@angular/router';
         CommonModule,
         TreeModule,
         MatCardModule,
+        TableModule,
     ],
 
     providers: [
