@@ -26,16 +26,14 @@ export class AppRightMenuComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        if (typeof window !== 'undefined' && localStorage.getItem('token') != null) {
-            this.userName = sessionStorage.getItem('userName')
-            this.getUserInfo()
-        }
+        this.getUserInfo()
+
     }
 
     getUserInfo() {
-        if (typeof window !== 'undefined') {
+        if (this.authService.isLoggedIn()) {
             const user = this.authService.getUser()
-            this.userInfo = user !== null ? user : new UserRegistrationDTO();
+            this.userInfo = user != null ? user : new UserRegistrationDTO();
         }
     }
     logOut() {

@@ -1,4 +1,4 @@
-<div>
+<div style="padding-bottom: 15px; padding-top: 10px;">
     <div class="parent-right-menu-item">{{'Hi ' + userInfo?.userName}}</div>
     <div class="parent-right-menu-item"> Saturday, September 30, 2023</div>
     <div class="parent-right-menu-item"> Agrabad Corporate Branch (801) </div>
@@ -16,8 +16,8 @@
         <hr>
     </div>
 
-    <div class="parent-right-menu-item">
-        <a class="right-menu-item" style="width: 100%;" (click)="logOut()" href="">
+    <div class="parent-right-menu-item" (click)="logOut()">
+        <a class="right-menu-item" style="width: 100%;" href="">
             <i class="pi pi-power-off">
             </i> Logout</a>
     </div>

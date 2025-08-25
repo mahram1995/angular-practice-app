@@ -107,3 +107,8 @@ ul {
   padding: 0;
   box-sizing: border-box;
 }
+
+.p-sidebar-header {
+  margin: 0px !important;
+  padding: 0px !important;
+}

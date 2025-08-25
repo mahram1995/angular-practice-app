@@ -33,7 +33,7 @@ background: linear-gradient(90deg, rgba(3,92,83,1) 17%, rgba(0,150,136,1) 20%)">
 
 
 <div style=" margin-top: -50px; ">
-  <p-sidebar [(visible)]="sidebarVisible"
+  <p-sidebar [(visible)]="sidebarVisible" [showCloseIcon]="false" header="moduleName"
     [style]="{'height':'100%' , 'margin-top':'50px', 'width':'280px' , 'padding':'0px'}">
     <p></p>
     <div class="module-name" (click)="onModuleNameClick()">{{moduleName}}</div>
