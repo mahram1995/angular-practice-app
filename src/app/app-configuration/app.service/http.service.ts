@@ -127,7 +127,7 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
         return observable
             .pipe(
                 finalize(() => {
-                    timer(100).subscribe(t => this.hideLoadingModal());
+                    timer(200).subscribe(t => this.hideLoadingModal());
                 })
             );
     }
@@ -135,7 +135,7 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
     showLoadingModal() {
         if (!this.loaderVisble) {
             this.loaderVisble = true;
-            this.loaderOverlayService.show();
+            this.loaderOverlayService.show(true);
         }
     }
 
@@ -143,7 +143,7 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
         this.requestsPending--;
         if (this.requestsPending <= 0) {
             if (this.loaderVisble) {
-                this.loaderOverlayService.hide();
+                this.loaderOverlayService.show(false);
             }
             this.loaderVisble = false;
         }

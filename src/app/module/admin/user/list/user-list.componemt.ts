@@ -52,7 +52,7 @@ export class UserListComponent implements OnInit {
 
 
     onDetails(data: any) {
-        this.router.navigate(['home/user-details'], {
+        this.router.navigate(['admin/user-details'], {
             queryParams: {
                 userName: data.userName
             }
@@ -60,7 +60,7 @@ export class UserListComponent implements OnInit {
     }
 
     onEdit(data) {
-        this.router.navigate(['home/create-user'], {
+        this.router.navigate(['admin/create-user'], {
             queryParams: {
                 userName: data.userName
             }
@@ -76,7 +76,7 @@ export class UserListComponent implements OnInit {
     }
 
     createUser() {
-        this.router.navigate(['home/create-user']);
+        this.router.navigate(['admin/create-user']);
     }
 
     search(searchMap: Map<string, any>) {

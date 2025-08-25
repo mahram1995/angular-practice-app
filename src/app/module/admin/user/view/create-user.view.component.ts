@@ -61,7 +61,7 @@ export class UserRegistrationViewComponent extends FormBaseComponent implements 
         this.location.back()
     }
     onEdit() {
-        this.router.navigate(['home/create-user'], {
+        this.router.navigate(['admin/create-user'], {
             queryParams: {
                 userName: this.userName
 

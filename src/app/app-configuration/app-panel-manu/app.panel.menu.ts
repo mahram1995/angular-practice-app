@@ -52,7 +52,7 @@ export class PanelMenuComponent implements OnInit {
 
   onItemSelect(routerLink: any, routerName: any) {
     this.onMenuSelect.emit(false)
-    this.router.navigate(['/admin']);
+    this.router.navigate([routerLink]);
   }
 
 }

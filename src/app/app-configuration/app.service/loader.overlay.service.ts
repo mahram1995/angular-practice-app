@@ -7,13 +7,10 @@ export class LoaderOverlayService {
     // private budgetYear = new Subject<any>();
     constructor() { }
 
-    show() {
-        this.showProgressLoader.next({ value: true });
+    show(data: boolean) {
+        this.showProgressLoader.next({ value: data });
     }
 
-    hide() {
-        //  this.showProgressLoader.next({ value: false });
-    }
     showModal(): Observable<any> {
         return this.showProgressLoader.asObservable();
 
