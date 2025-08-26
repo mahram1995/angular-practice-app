@@ -16,6 +16,7 @@ export const AdminMenuList = [
         active: false,
         submenu: [
             { name: 'Command Mapping', url: '#', routerLink: "/admin/create-lc-draft" },
+            { name: 'Panel Menu', url: '#', routerLink: "/admin/demo-panel-manue" },
 
         ]
     },

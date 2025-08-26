@@ -8,6 +8,7 @@ import { ApprovalFlowTaskComponent } from '../../admin/approval-flow/form/my-tas
 import { PendingTaskComponent } from '../../admin/approval-flow/form/pending-task/pending-task.componemt';
 import { UserRegistrationViewComponent } from './user/view/create-user.view.component';
 import { AdminHomePageComponent } from './admin-home-page/admin.home.page';
+import { PanelMenuControlledDemo } from './panel-menu-demo/panel.menu.demo';
 
 
 
@@ -23,6 +24,7 @@ export const routes: Routes = [
       { path: 'my-task', component: ApprovalFlowTaskComponent },
       { path: 'pending-task', component: PendingTaskComponent },
       { path: 'user-details', component: UserRegistrationViewComponent },
+      { path: 'demo-panel-manue', component: PanelMenuControlledDemo },
     ]
   },
 

@@ -10,12 +10,15 @@ import { UserRegistrationViewComponent } from './user/view/create-user.view.comp
 import { ApprovalFlowViewButtonComponent } from '../../admin/approval-flow/form/approvalflow-task-button/approvalflow-task-button';
 import { PendingTaskComponent } from '../../admin/approval-flow/form/pending-task/pending-task.componemt';
 import { UserListComponent } from './user/list/user-list.componemt';
+import { PanelMenuControlledDemo } from './panel-menu-demo/panel.menu.demo';
+import { PanelMenuModule } from 'primeng/panelmenu';
 
 @NgModule({
     imports: [
         AppShareModule,
         CommonModule,
-        AdminRoutesModule
+        AdminRoutesModule,
+        PanelMenuModule
 
     ],
 
@@ -28,9 +31,11 @@ import { UserListComponent } from './user/list/user-list.componemt';
         ApprovalFlowViewButtonComponent,
         PendingTaskComponent,
         UserListComponent,
+        PanelMenuControlledDemo
 
 
     ],
+
     providers: [
 
     ],

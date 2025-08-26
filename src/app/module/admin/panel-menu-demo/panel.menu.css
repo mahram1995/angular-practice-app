@@ -1,0 +1,31 @@
+/* all submenu items (any depth) */
+.admin-menu .p-submenu-list>li.p-menuitem>.p-menuitem-content>a.p-menuitem-link {
+    padding-left: 10px !important;
+}
+
+/* 1st submenu level */
+.admin-menu .p-submenu-list>li.p-menuitem>.p-menuitem-content>a.p-menuitem-link {
+    padding-left: 10px !important;
+}
+
+/* 2nd submenu level */
+.admin-menu .p-submenu-list .p-submenu-list>li.p-menuitem>.p-menuitem-content>a.p-menuitem-link {
+    padding-left: 20px !important;
+}
+
+/* 3rd submenu level */
+.admin-menu .p-submenu-list .p-submenu-list .p-submenu-list>li.p-menuitem>.p-menuitem-content>a.p-menuitem-link {
+    padding-left: 30px !important;
+}
+
+.p-menuitem-content .ng-tns-c1818545701-10 {
+    padding: 10px !important;
+    border: 5px solid #0d3586;
+    background: #ffffff;
+    color: #e6192a;
+    border-top: 0;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
