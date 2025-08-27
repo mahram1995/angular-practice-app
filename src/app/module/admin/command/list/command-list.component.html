@@ -1,0 +1,85 @@
+<div class="app-page">
+    <div>
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left  ">
+                <p class="app-page-header">Commands</p>
+            </div>
+            <div class="app-button-group">
+                <button (click)="op.show($event)"><i class="pi pi-search" style="font-size:10px"></i> Search</button>
+                <button (click)="saveData()"><i class="pi pi-plus" style="font-size:10px"></i>
+                    Save</button>
+                <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+            </div>
+        </div>
+    </div>
+
+    <hr style="margin-top: 5px; margin-bottom: 2px;">
+    <div class="app-list">
+        <div style="padding: 0px 5px 5px 5px">
+            <p-table class=" table-hover table-responsive" #dataTable [value]="data" dataKey="id" editMode="row"
+                [paginator]="true" [rows]="rowPerPage" [totalRecords]="totalRecords" [lazy]="true"
+                (onLazyLoad)="onLazyLoad($event)" styleClass="p-datatable-sm" (onRowEditSave)="onRowEditSave($event)">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 100px;">Code</th>
+                        <th style="min-width: 200px;">Comand Name</th>
+                        <th style="width: 150px;">Module</th>
+                        <th style="width: 250px;">Activity Name</th>
+                        <th style="width: 200px;">Command Value</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-row let-editing="editing" let-ri="rowIndex">
+                    <tr [pEditableRow]="row">
+                        <td>{{ row.commandCode }}</td>
+                        <td>{{ row.commandName }}</td>
+                        <td>{{ row.moduleName }}</td>
+                        <td>{{ row.activityName }}</td>
+
+                        <td pEditableColumn>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText [(ngModel)]="row.isApprovalFlowRequired" />
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{ row.isApprovalFlowRequired }}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+    </div>
+
+
+    <p-overlayPanel #op [style]="{ width: '450px' }" showCloseIcon="true">
+        <form [formGroup]="searchForm">
+            <div style="margin: 20px 10px 10px 10px;">
+                <div class="row app-row">
+                    <div class="col-sm-6  col-md-6 ">
+                        <div class="app-input-field">
+                            <input type="text" id="commandName" placeholder=" " formControlName="commandName">
+                            <label for="commandName">Command Name</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6  col-md-6 ">
+                        <div class="app-input-field">
+                            <input type="text" id="moduleName" placeholder=" " formControlName="moduleName">
+                            <label for="moduleName">Module Name</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="text-align: center;">
+                    <button class="app-button" (click)="search(null);op.hide()">Search</button>
+                </div>
+            </div>
+        </form>
+    </p-overlayPanel>
+
+</div>

@@ -9,6 +9,8 @@ import { PendingTaskComponent } from '../../admin/approval-flow/form/pending-tas
 import { UserRegistrationViewComponent } from './user/view/create-user.view.component';
 import { AdminHomePageComponent } from './admin-home-page/admin.home.page';
 import { PanelMenuControlledDemo } from './panel-menu-demo/panel.menu.demo';
+import { CommandListComponent } from './command/list/command-list.componemt';
+import { CommandService } from './command/service/comand.service';
 
 
 
@@ -25,6 +27,7 @@ export const routes: Routes = [
       { path: 'pending-task', component: PendingTaskComponent },
       { path: 'user-details', component: UserRegistrationViewComponent },
       { path: 'demo-panel-manue', component: PanelMenuControlledDemo },
+      { path: 'command', component: CommandListComponent },
     ]
   },
 
@@ -34,7 +37,8 @@ export const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [CommandService]
 
 })
 

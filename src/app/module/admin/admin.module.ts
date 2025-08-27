@@ -12,6 +12,7 @@ import { PendingTaskComponent } from '../../admin/approval-flow/form/pending-tas
 import { UserListComponent } from './user/list/user-list.componemt';
 import { PanelMenuControlledDemo } from './panel-menu-demo/panel.menu.demo';
 import { PanelMenuModule } from 'primeng/panelmenu';
+import { CommandListComponent } from './command/list/command-list.componemt';
 
 @NgModule({
     imports: [
@@ -31,7 +32,8 @@ import { PanelMenuModule } from 'primeng/panelmenu';
         ApprovalFlowViewButtonComponent,
         PendingTaskComponent,
         UserListComponent,
-        PanelMenuControlledDemo
+        PanelMenuControlledDemo,
+        CommandListComponent
 
 
     ],

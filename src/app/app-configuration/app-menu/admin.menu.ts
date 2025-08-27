@@ -15,7 +15,7 @@ export const AdminMenuList = [
         icon: 'pi pi-qrcode',
         active: false,
         submenu: [
-            { name: 'Command Mapping', url: '#', routerLink: "/admin/create-lc-draft" },
+            { name: 'Command Mapping', url: '#', routerLink: "/admin/command" },
             { name: 'Panel Menu', url: '#', routerLink: "/admin/demo-panel-manue" },
 
         ]

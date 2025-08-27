@@ -6,12 +6,6 @@
 @import url(https://use.fontawesome.com/releases/v5.3.1/css/all.css);
 
 /* You can add global styles to this file, and also import other style files */
-.app-page {
-    margin-left: 30px !important;
-    margin-right: 30px !important;
-    margin-top: 0px !important;
-}
-
 .deshbord-app-card {
     width: 100%;
     background-color: white;
@@ -71,10 +65,9 @@
 
 .app-page {
     border-radius: 5px;
-    margin: 10px 20px 0px 20px;
-    padding: 5px 12px 10px 12px;
+    margin: 5px 5px 0px 5px;
+
     flex: 2;
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
 }
 
 
@@ -505,7 +498,7 @@ ul {
 .app-list {
     border-radius: 5px;
     margin: 0px 15px 20px 15px;
-    padding: 5px 10px 15px 10px;
+    padding: 10px 10px 15px 10px;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
 }
 
