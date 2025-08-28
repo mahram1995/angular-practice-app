@@ -630,3 +630,8 @@ body {
 ul {
     padding: 0px !important;
 }
+
+.app-button-line{
+    margin-top: 5px;
+     margin-bottom: 2px;
+}

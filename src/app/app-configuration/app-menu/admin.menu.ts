@@ -5,7 +5,7 @@ export const AdminMenuList = [
         active: false,
         submenu: [
             { name: 'Change Verifier', url: '#', routerLink: "/admin/charge-verifier" },
-            { name: 'View Task Status', url: '#', routerLink: "/admin/my-task-status" },
+            { name: 'View Task Status', url: '#', routerLink: "/admin/pending-task" },
             { name: 'My Task', url: '#', routerLink: "/admin/my-task" },
 
         ]
