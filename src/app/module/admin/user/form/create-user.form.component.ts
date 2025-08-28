@@ -10,8 +10,8 @@ import { FormBaseComponent } from '../../../../app-configuration/app-component/b
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApprovalflowService } from '../../../../admin/approval-flow/service/approval-flow-service';
 
-const DETAILS_UI = 'home/user-details';
-const CORRECTION_UI = 'home/create-user';
+const DETAILS_UI = 'admin/user-details';
+const CORRECTION_UI = 'admin/create-user';
 @Component({
     selector: 'app-user-registration',
     templateUrl: './create-user-form.component.html',
@@ -24,11 +24,10 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
         email: 'Email',
         lastName: 'Last Name',
     };
-    detailsUI: 'home/create-user/detials'
     userForm: FormGroup;
     message: string = '';
     isEdit = false;
-    header: string = 'Create new User';
+    header: string = 'Create New User';
 
     constructor(private fb: FormBuilder,
         protected override location: Location,

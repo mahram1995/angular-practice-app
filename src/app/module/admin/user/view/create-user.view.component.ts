@@ -7,6 +7,8 @@ import { ApprovalflowService } from '../../../../admin/approval-flow/service/app
 import { AdminService } from '../../service/admin.service';
 import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
 
+const DETAILS_UI = 'admin/user-details';
+const CORRECTION_UI = 'admin/create-user';
 @Component({
     selector: 'app-user-registration',
     templateUrl: './create-user-view.component.html',
@@ -90,7 +92,9 @@ export class UserRegistrationViewComponent extends FormBaseComponent implements 
         this.updateUser(userData)
     }
     updateUser(data: any) {
-        this.adminService.updateUser(data, null).subscribe(
+        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, CORRECTION_UI);
+
+        this.adminService.updateUser(data, urlSearchParams).subscribe(
             (response) => {
                 this.getUser(data.userName)
                 this.notificationService.sendSuccess(response.message);
