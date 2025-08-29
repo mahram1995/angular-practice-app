@@ -1,12 +1,12 @@
 <p-toast [style]="{ 'margin-top': '70px', 'width':'350px','color':'black', 'white-space': 'pre-line'}"></p-toast>
-<p-dialog header={{logoutWorningMessage}} [(visible)]="isVisibleLogoutDialog" [modal]="true"
+<p-dialog header={{logoutWorningModalHeader}} [(visible)]="isVisibleLogoutDialog" [modal]="true"
     [style]="{'width': '400px' }" [draggable]="true" [resizable]="false" [closable]="false">
     <br>
     <div style="text-align: center;">
-        <h2>You are logout. Please login again.</h2>
+        <h2>{{logoutWorningMessage}}</h2>
     </div>
     <div style="text-align: center;">
-        <button style="background-color: #086b61; color:white; height: 30px; width: 80px; border-radius: 5px;"
+        <button class="app-button" style="width: 70px; text-align: center; font-size: 15px;"
             (click)="redirectToLoginPage()">Login</button>
     </div>
     <br>

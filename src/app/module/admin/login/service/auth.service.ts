@@ -60,8 +60,12 @@ export class AuthService {
     clearTimeout(this.logoutTimeout);
     // Trigger logout event for other tabs
     localStorage.setItem(logoutType, Date.now().toString());
+    // when user logut the system retrun to login page. otherwise show logout warning message
     this.userSubject.next(null);
-    this.router.navigate(['/login']);
+    if (logoutType == "USER_LOGOUT") {
+      this.router.navigate(['/login']);
+    }
+
   }
 
   /** Prefer sessionStorage (tab copy). Fallback to localStorage (shared). */

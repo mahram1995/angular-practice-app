@@ -298,6 +298,10 @@ ul {
     padding-right: 10px;
 }
 
+.app-button:hover {
+    background-color: #1ae4d0;
+}
+
 .app-page-header {
     font-size: 15px;
     font-weight: bold;
