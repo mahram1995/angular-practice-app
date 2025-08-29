@@ -50,7 +50,15 @@ export class LoginFormComponent implements OnInit {
             formvalue.loginTerminal = this.loginTerminal;
             this.authService.login(this.loginForm.value).subscribe(
                 (response) => {
-                    this.router.navigate(['/home'])
+                    const returnUrl = sessionStorage.getItem('returnUrl');
+                    sessionStorage.removeItem('returnUrl'); // clear after use
+                    if (returnUrl) {
+                        this.router.navigateByUrl(returnUrl);
+                    } else {
+                        this.router.navigate(['/home'])
+
+                    }
+
                 }
             );
         }

@@ -11,6 +11,7 @@ import { AdminHomePageComponent } from './admin-home-page/admin.home.page';
 import { PanelMenuControlledDemo } from './panel-menu-demo/panel.menu.demo';
 import { CommandListComponent } from './command/list/command-list.componemt';
 import { CommandService } from './command/service/comand.service';
+import { AuthGuard } from './login/service/auth.guard';
 
 
 
@@ -19,15 +20,16 @@ export const routes: Routes = [
   {
     path: '',
     component: AdminHomeComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: '', component: AdminHomePageComponent },
-      { path: 'user-list', component: UserListComponent },
-      { path: 'create-user', component: UserRegistrationComponent },
-      { path: 'my-task', component: ApprovalFlowTaskComponent },
-      { path: 'pending-task', component: PendingTaskComponent },
-      { path: 'user-details', component: UserRegistrationViewComponent },
-      { path: 'demo-panel-manue', component: PanelMenuControlledDemo },
-      { path: 'command', component: CommandListComponent },
+      { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard] },
+      { path: 'create-user', component: UserRegistrationComponent, canActivate: [AuthGuard] },
+      { path: 'my-task', component: ApprovalFlowTaskComponent, canActivate: [AuthGuard], },
+      { path: 'pending-task', component: PendingTaskComponent, canActivate: [AuthGuard], },
+      { path: 'user-details', component: UserRegistrationViewComponent, canActivate: [AuthGuard], },
+      { path: 'demo-panel-manue', component: PanelMenuControlledDemo, canActivate: [AuthGuard], },
+      { path: 'command', component: CommandListComponent, canActivate: [AuthGuard], },
     ]
   },
 

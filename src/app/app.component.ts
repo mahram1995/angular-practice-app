@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
-
+  logoutWorningMessage: string
   isVisibleLogoutDialog: boolean = false
   constructor(private router: Router,) {
 
@@ -21,6 +21,13 @@ export class AppComponent implements OnInit {
       if (event.key === 'USER_LOGOUT') {
         // Clear current tab session
         sessionStorage.removeItem('user');
+        this.logoutWorningMessage = "User Logout Warning"
+        this.isVisibleLogoutDialog = true
+      }
+      if (event.key === 'SESSION_TIMEOUT') {
+        // Clear current tab session
+        sessionStorage.removeItem('user');
+        this.logoutWorningMessage = "User Session Logout Warning"
         this.isVisibleLogoutDialog = true
       }
     });

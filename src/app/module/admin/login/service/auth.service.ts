@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterStateSnapshot } from '@angular/router';
 import { BehaviorSubject, Observable, retry, tap } from 'rxjs';
 import { BaseService } from '../../../../app-configuration/app.service/base-service';
 import { LoginService } from './login.service';
@@ -11,14 +11,13 @@ export class AuthService {
   private readonly STORAGE_KEY = 'user';
   private userSubject = new BehaviorSubject<any>(null);
   private logoutTimeout: any;
-  private readonly TIMEOUT_MINUTES = 20;
+  private readonly TIMEOUT_MINUTES = 1;
 
   constructor(
     private http: HttpClient,
     private router: Router,
     private loginService: LoginService,
-    private zone: NgZone
-  ) {
+    private zone: NgZone) {
     this.initFromLocalStorage();   // 👈 hydrate session on app start / new tab
     this.setupActivityListeners();
     this.setupStorageSync();       // 👈 cross-tab sync for login/logout if desired
@@ -122,7 +121,7 @@ export class AuthService {
         if (evt.type === 'logout') {
           sessionStorage.removeItem(this.STORAGE_KEY);
           this.userSubject.next(null);
-          this.router.navigate(['/login']);
+          //this.router.navigate(['/login']);
         }
         if (evt.type === 'login') {
           this.initFromLocalStorage();

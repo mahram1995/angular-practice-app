@@ -44,7 +44,7 @@ import { SidebarModule } from 'primeng/sidebar';
 import { AppHeaderComponent } from './app-configuration/header-page/header.page';
 import { AdminModule } from './module/admin/admin.module';
 import { AppShareModule } from './app-configuration/app-component/app-share-module/app-share-module';
-import { RouterModule } from '@angular/router';
+import { RouterModule, RouterStateSnapshot } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 
@@ -98,7 +98,6 @@ import { CommonModule } from '@angular/common';
     MessageService,
     NotificationService,
     ApprovalflowService,
-
     AdminService,
     {
       provide: HTTP_INTERCEPTORS,

@@ -1,5 +1,5 @@
 <p-toast [style]="{ 'margin-top': '70px', 'width':'350px','color':'black', 'white-space': 'pre-line'}"></p-toast>
-<p-dialog header="Youser Logout Warning" [(visible)]="isVisibleLogoutDialog" [modal]="true"
+<p-dialog header={{logoutWorningMessage}} [(visible)]="isVisibleLogoutDialog" [modal]="true"
     [style]="{'width': '400px' }" [draggable]="true" [resizable]="false" [closable]="false">
     <br>
     <div style="text-align: center;">

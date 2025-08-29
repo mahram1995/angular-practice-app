@@ -13,6 +13,7 @@ import { UserListComponent } from './user/list/user-list.componemt';
 import { PanelMenuControlledDemo } from './panel-menu-demo/panel.menu.demo';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { CommandListComponent } from './command/list/command-list.componemt';
+import { RouterStateSnapshot } from '@angular/router';
 
 @NgModule({
     imports: [
