@@ -332,6 +332,7 @@ ul {
 .toast-error-style {
     background-color: rgb(187, 21, 21);
     border-radius: 5px;
+
     padding-bottom: 12px !important;
     color: white;
 }
@@ -631,7 +632,7 @@ ul {
     padding: 0px !important;
 }
 
-.app-button-line{
+.app-button-line {
     margin-top: 5px;
-     margin-bottom: 2px;
+    margin-bottom: 2px;
 }
