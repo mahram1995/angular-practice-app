@@ -39,5 +39,18 @@ export class CommonService {
         return form.invalid;
     }
 
+    getQueryParamMapForApprovalFlow(
+        verifier: string,
+        taskId: number,
+        detailsUI: string,
+        correctionUI: string
+    ): Map<string, any> {
+        const params = new Map<string, any>();
+        params.set('verifier', verifier != null ? verifier : null);
+        params.set('taskId', taskId != null ? taskId : null);
+        params.set('detailsUI', detailsUI != null ? detailsUI : null);
+        params.set('correctionUI', correctionUI != null ? correctionUI : null);
+        return params;
+    }
 
 }

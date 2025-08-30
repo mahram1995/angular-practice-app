@@ -12,6 +12,9 @@ import { PanelMenuControlledDemo } from './panel-menu-demo/panel.menu.demo';
 import { CommandListComponent } from './command/list/command-list.componemt';
 import { CommandService } from './command/service/comand.service';
 import { AuthGuard } from './login/service/auth.guard';
+import { UdfListComponent } from './udf/list/udf-list.componemt';
+import { UDFService } from './udf/service/udf.service';
+import { CreateUdfFormComponent } from './udf/form/create-udf-form';
 
 
 
@@ -30,6 +33,8 @@ export const routes: Routes = [
       { path: 'user-details', component: UserRegistrationViewComponent, canActivate: [AuthGuard], },
       { path: 'demo-panel-manue', component: PanelMenuControlledDemo, canActivate: [AuthGuard], },
       { path: 'command', component: CommandListComponent, canActivate: [AuthGuard], },
+      { path: 'udf-list', component: UdfListComponent, canActivate: [AuthGuard], },
+      { path: 'create-udf', component: CreateUdfFormComponent, canActivate: [AuthGuard], },
     ]
   },
 
@@ -40,7 +45,7 @@ export const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
-  providers: [CommandService]
+  providers: [CommandService, UDFService]
 
 })
 

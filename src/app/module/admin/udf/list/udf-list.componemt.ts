@@ -2,33 +2,46 @@ import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core'
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Command } from '../service/comand.domain';
-import { CommandService } from '../service/comand.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
+import { UDFDomain } from '../service/udf.domain';
+import { UDFService } from '../service/udf.service';
+import { CommonService } from '../../../../app-configuration/app.service/common.service';
+import { OverlayPanel } from 'primeng/overlaypanel';
 
+const DETAILS_UI = 'admin/udf-details';
+const CORRECTION_UI = 'admin/create-udf';
 @Component({
-    selector: 'command-list',
-    templateUrl: './command-list.component.html',
+    selector: 'udf-list',
+    templateUrl: './udf-list.component.html',
 })
-export class CommandListComponent implements OnInit {
-    data: Command[];
+export class UdfListComponent implements OnInit {
+    required_field: any = {
+        userName: 'code',
+        password: 'name',
+        email: 'module',
+    };
+    data: UDFDomain[];
     urlSearchMap: Map<string, any> = new Map();
     totalRecords: number = 0;
     searchForm: FormGroup;
+    udfForm: FormGroup;
     totalPages: number;
     rowPerPage: number = 15
     pageNumber: number = 0;
     cols: any[] = []
+    selectedCustomer: any;
+
     isVisibleSearchDialog: boolean = false
 
     @ViewChild('dataTable') dt: Table | undefined;
-
+    @ViewChild('opUdfForm') overlayPanel!: OverlayPanel;
     constructor(
         private location: Location,
         private router: Router,
+        private commonService: CommonService,
         private notificationService: NotificationService,
-        private commandService: CommandService,
+        private UDFService: UDFService,
         private formBuilder: FormBuilder,
 
     ) {
@@ -36,8 +49,9 @@ export class CommandListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.fetchCommands(null)
-        this.prepareSearchForm()
+        this.fetchUdfs(null)
+        this.prepareSearchForm();
+        this.prepareUdfForm();
 
     }
 
@@ -48,23 +62,41 @@ export class CommandListComponent implements OnInit {
         });
     }
 
+    prepareUdfForm() {
+        this.udfForm = this.formBuilder.group({
+            code: ['', Validators.required],
+            name: ['', Validators.required],
+            module: ['', Validators.required]
+        });
+    }
 
-    fetchCommands(searchParam: any) {
-        this.commandService.getCommands(searchParam).subscribe(data => {
+
+    fetchUdfs(searchParam: any) {
+        this.UDFService.getUdf(searchParam).subscribe(data => {
             this.data = data.content
             this.totalRecords = data.totalElements;
             this.totalPages = data.totalPages;
         })
     }
 
-    saveData() {
-        console.log(this.data);
+    save() {
+        const urlSearchParams = this.commonService.getQueryParamMapForApprovalFlow(null, null, DETAILS_UI, CORRECTION_UI);
 
-        this.commandService.updateCommand(this.data, this.urlSearchMap).subscribe(data => {
-            this.notificationService.sendSuccess(data.message)
-        });
+        let formData = this.udfForm.getRawValue()
+        if (this.commonService.isFormInvalid(this.udfForm, this.required_field)) {
+            return;
+        }
+        this.UDFService.saveUdf(formData, urlSearchParams).subscribe(
+            (response) => {
+                this.notificationService.sendSuccess(response.message);
+                this.prepareUdfForm();
+                this.fetchUdfs(null);
+                this.overlayPanel.hide()
+
+            }
+        )
+
     }
-
     search(searchMap: Map<string, any>) {
         this.dt?.reset();
         this.urlSearchMap.set('page', 0);
@@ -76,25 +108,27 @@ export class CommandListComponent implements OnInit {
                 this.urlSearchMap.set(control, formControlValue);
             }
         }
-        this.fetchCommands(this.urlSearchMap)
+        this.fetchUdfs(this.urlSearchMap)
         this.prepareSearchForm()
     }
     onRowsChange(event: any) {
         this.rowPerPage = event.rows;
-        this.fetchCommands(null)
+        this.fetchUdfs(null)
     }
 
     onPageChange(event: any) {
         this.pageNumber = event.first / event.rows;
         const pageSize = event.rows;
     }
-
-    onRowEditSave(event: any) {
-        const updatedRow = event.data;  // <-- this is the modified object
-        console.log('Row saved:', updatedRow);
-
-
+    onRowSelect(event: any) {
+        console.log(event.data);
+        this.router.navigate(['admin/create-udf'], {
+            queryParams: {
+                udfProfileId: event.data.id
+            }
+        })
     }
+
 
     back() { this.location.back() }
 
@@ -107,7 +141,7 @@ export class CommandListComponent implements OnInit {
         this.urlSearchMap.set('asPage', true);
         this.urlSearchMap.set('size', this.rowPerPage);
         this.urlSearchMap.set('page', this.pageNumber);
-        this.fetchCommands(this.urlSearchMap);
+        this.fetchUdfs(this.urlSearchMap);
     }
 
     onLazyLoad(event: TableLazyLoadEvent) {
@@ -121,7 +155,7 @@ export class CommandListComponent implements OnInit {
         this.urlSearchMap.set('page', this.pageNumber);  // 0-based index
         this.urlSearchMap.set('size', this.rowPerPage);
 
-        this.commandService.getCommands(this.urlSearchMap).subscribe(data => {
+        this.UDFService.getUdf(this.urlSearchMap).subscribe(data => {
             this.data = data.content;
             this.totalRecords = data.totalElements;   // use backend's totalElements
             this.totalPages = data.totalPages;

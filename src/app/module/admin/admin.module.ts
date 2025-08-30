@@ -14,6 +14,8 @@ import { PanelMenuControlledDemo } from './panel-menu-demo/panel.menu.demo';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { CommandListComponent } from './command/list/command-list.componemt';
 import { RouterStateSnapshot } from '@angular/router';
+import { CreateUdfFormComponent } from './udf/form/create-udf-form';
+import { UdfListComponent } from './udf/list/udf-list.componemt';
 
 @NgModule({
     imports: [
@@ -34,7 +36,9 @@ import { RouterStateSnapshot } from '@angular/router';
         PendingTaskComponent,
         UserListComponent,
         PanelMenuControlledDemo,
-        CommandListComponent
+        CommandListComponent,
+        CreateUdfFormComponent,
+        UdfListComponent
 
 
     ],

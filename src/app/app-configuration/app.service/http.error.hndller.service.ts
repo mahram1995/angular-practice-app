@@ -46,6 +46,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                             }
 
                             this.authService.logoutByUser(null)
+                            this.router.navigate(['/login']);
                             break;
                         case 403:
                             errorMsg = 'Forbidden.';

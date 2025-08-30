@@ -46,15 +46,7 @@ export const AdminMenuList = [
         icon: 'pi pi-qrcode',
         active: false,
         submenu: [
-            {
-                name: 'General Configuratoin',
-                icon: 'pi pi-qrcode',
-                active: false,
-                submenu: [{ name: 'Employee Configuration', url: '#', routerLink: "/admin/document-lodge" },
-                { name: 'Employee Configuration', url: '#', routerLink: "/admin/document-lodge" }
-                ]
-
-            },
+            { name: 'UDF', url: '#', routerLink: "/admin/udf-list" },
             { name: 'Employee Configuration', url: '#', routerLink: "/admin/document-lodge" },
             { name: 'User Configuration', url: '#', routerLink: "/admin/document-lodge" },
         ]
