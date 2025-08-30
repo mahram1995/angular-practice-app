@@ -32,21 +32,21 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
     header: string = 'Create New User';
     selectedCustomer: any;
     data: UDFDomain;
+    userDefinedField: UserDefinedFields[];
     urlSearchMap: Map<string, any> = new Map();
     profileId: number;
+    type: string;
     dataType = [
         { label: "CHAR", value: 'CHAR' },
         { label: "DATE", value: 'DATE' },
         { label: "NUMBER", value: 'NUMBER' },
         { label: "BOOLEAN", value: 'BOOLEAN' },
-        { label: "DROP_DOWN", value_: 'DROP_DOWN' },
-
-    ]
+        { label: "DROP_DOWN", value: 'DROP_DOWN' }
+    ];
 
     constructor(private fb: FormBuilder,
         protected override location: Location,
         private notificationService: NotificationService,
-        private approvalFlowService: ApprovalflowService,
         private udfService: UDFService,
         protected override router: Router,
         private route: ActivatedRoute,
@@ -71,20 +71,26 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
     fetchUdfs(profileId: any) {
         this.urlSearchMap.set('id', profileId)
         this.udfService.getUdfById(this.urlSearchMap).subscribe(data => {
-
             this.data = data
+            this.userDefinedField = this.commonService.sortByKeyAsc(data.userDefinedFields, 'orderNo')
         })
     }
 
     onRowSelect(event: any) {
         console.log(event.data);
-        this.prepareForm(event.data
-        )
+        this.type = event.data.dataType;
+        this.prepareForm(event.data)
+        if (this.type == 'DROP_DOWN') {
+            this.udfForm.get('isServiceEndpoint')?.setValue(1);
+        } else {
+            this.udfForm.get('isServiceEndpoint')?.setValue(0);
+        }
     }
 
     refresh() {
 
         this.fetchUdfs(this.profileId)
+        this.prepareForm(new UserDefinedFields)
     }
     prepareForm(data: UserDefinedFields) {
         this.udfForm = this.fb.group({
@@ -93,12 +99,15 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
             styleClass: [data.styleClass],
             maximumLength: [data.maximumLength],
             minimumLength: [data.minimumLength],
+            minimumDate: [data.minimumDate],
+            miximumDate: [data.miximumDate],
             regularExpression: [data.regularExpression],
             dataType: [data.dataType], // you may need to cast/convert if it's actually Date
             singleData: [data.singleData],
             multipleSelection: [data.multipleSelection],
             mandatory: [data.mandatory],
-            order: [data.order],
+            isServiceEndpoint: [''],
+            orderNo: [data.orderNo],
             userDefinedFieldDomainDataList: [data.userDefinedFieldDomainDataList],
             serviceEndpoint: [data.serviceEndpoint],
             dataDetailsEndpoint: [data.dataDetailsEndpoint],
@@ -111,6 +120,15 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
             valueOfServiceEndpoint: [data.valueOfServiceEndpoint],
             validationExpression: [data.validationExpression]
         });
+    }
+
+    onDataTypeSeclect(event) {
+        this.type = event.value
+        if (event.value == 'DROP_DOWN') {
+            this.udfForm.get('isServiceEndpoint')?.setValue(1);
+        } else {
+            this.udfForm.get('isServiceEndpoint')?.setValue(0);
+        }
     }
 
     save() {

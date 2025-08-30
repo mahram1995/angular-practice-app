@@ -13,12 +13,14 @@ export class UserDefinedFields {
     styleClass: string;
     maximumLength: number;
     minimumLength: number;
+    minimumDate: string;
+    miximumDate: string;
     regularExpression: string;
-    dataType: Date;
+    dataType: string;
     singleData: boolean;
     multipleSelection: boolean;
     mandatory: boolean;
-    order: number;
+    orderNo: number;
     userDefinedFieldDomainDataList: UserDefinedFieldDomainDataList[];
     serviceEndpoint: string;
     dataDetailsEndpoint: string;

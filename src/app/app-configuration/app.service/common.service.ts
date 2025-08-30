@@ -53,4 +53,28 @@ export class CommonService {
         return params;
     }
 
+    sortByKeyDesc(array: any, key: string) {
+        return array.sort(function (a: any, b: any) {
+            var x = a[key]; var y = b[key];
+            return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+        })
+    }
+
+    sortByKeyAsc(array: any, key: string) {
+        return array.sort(function (a: any, b: any) {
+            var x = a[key]; var y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        })
+    }
+
+
+    getMaxValu(arr: any, key: any) {
+        var max = 0;
+        for (var i = 0; i < arr.length; i++) {
+            if (max < arr[i][key])
+                max = arr[i][key];
+        }
+        return max;
+    }
+
 }

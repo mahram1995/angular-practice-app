@@ -22,10 +22,10 @@
                     <tr style="background-color: rgb(226, 224, 222); height: 40px;">
                         <th style="width: 100px; padding-left: 5px;">Name</th>
                         <th style="width: 10px;">:</th>
-                        <td style="text-align: left; width: 350px;">{{data.name}} </td>
+                        <td style="text-align: left; width: 350px;">{{data?.name}} </td>
                         <th style="width: 100px;">Code</th>
                         <th style="width: 10px;">:</th>
-                        <td style="text-align: left;">{{data.code}} </td>
+                        <td style="text-align: left;">{{data?.code}} </td>
                     </tr>
 
                 </table>
@@ -42,15 +42,15 @@
                         <button class="app-button" style="width: 60px; text-align: center;">+ New</button>
                     </div>
 
-                    <p-table class=" table-hover table-responsive" #dataTable [value]="data.userDefinedFields"
-                        dataKey="id" editMode="row" [(selection)]="selectedCustomer" styleClass="p-datatable-sm"
+                    <p-table class=" table-hover table-responsive" #dataTable [value]="userDefinedField" dataKey="id"
+                        editMode="row" [(selection)]="selectedCustomer" styleClass="p-datatable-sm"
                         (onRowSelect)="onRowSelect($event)" selectionMode="single">
                         <ng-template pTemplate="header">
                             <tr style="font-size: 12px;">
                                 <th style="width: 30px;">Order</th>
-                                <th style="width: 100px;">Lebel</th>
+                                <th style="width: 150px;">Lebel</th>
                                 <th style="min-width: 150px;">Param Name</th>
-                                <th style="width: 120px;">Data Type</th>
+                                <th style="width: 100px;">Data Type</th>
                             </tr>
                         </ng-template>
 
@@ -88,22 +88,135 @@
                                 <label for="name">Parameter Name</label>
                             </div>
                         </div>
-
                     </div>
                     <div class="row " style=" padding: 0px 10px 0px 10px;">
                         <div class="col-sm-6  col-md-6 ">
-                            <div class="app-dropdwon">
-                                <p-dropdown styleClass="app-dropdwon-field" [options]="dataType"
+                            <div class="app-dropdown">
+                                <p-dropdown styleClass="app-dropdown-field" [options]="dataType"
                                     formControlName="dataType" optionLabel="label" optionValue="value" appendTo="body"
-                                    placeholder="Select a filed type"
+                                    placeholder="Select a filed type" (onChange)="onDataTypeSeclect($event)"
                                     [ngClass]="{'is-invalid' :udfForm.controls.dataType.touched && udfForm.controls.dataType.errors}"></p-dropdown>
                                 <label for="dataType">Data Type<span style="color: red;">*</span></label>
                             </div>
                         </div>
+                    </div>
+                    <div *ngIf="type=='CHAR'|| type=='NUMBER'" class="row " style=" padding: 0px 10px 0px 10px;">
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field">
+                                <input type="text" id="minimumLength" placeholder=" " formControlName="minimumLength"
+                                    [ngClass]="{'is-invalid' :udfForm.controls.minimumLength?.touched &&
+                                                             udfForm.controls.minimumLength?.errors}">
+                                <label for="minimumLength"> Minimum {{type=='CHAR'?'Length':'Value' }} <span
+                                        style="color: red;">*</span></label>
+                                <div
+                                    *ngIf="udfForm.controls['minimumLength']?.errors && udfForm.controls['minimumLength']?.touched">
+                                    <div class="error-alert"
+                                        [hidden]="!udfForm.controls['minimumLength']?.errors?.required">
+                                        Minimum length required.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field">
+                                <input type="text" id="maximumLength" placeholder=" " formControlName="maximumLength"
+                                    [ngClass]="{'is-invalid' :udfForm.controls.maximumLength.touched &&
+                                                       udfForm.controls.maximumLength.errors}">
+                                <label for="maximumLength">Maximum {{type=='CHAR'?'Length':'Value' }}</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field">
+                                <input type="text" id="regularExpression" placeholder=" "
+                                    formControlName="regularExpression">
+                                <label for="regularExpression">Regular Expression</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="type=='DATE'" class="row " style=" padding: 0px 10px 0px 10px;">
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field">
+                                <input type="text" id="minimumDate" placeholder=" " formControlName="minimumDate">
+                                <label for="minimumDate">Minimum Date</label>
 
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field">
+                                <input type="text" id="miximumDate" placeholder=" " formControlName="miximumDate">
+                                <label for="miximumDate">Maximum Date</label>
+
+                            </div>
+                        </div>
 
                     </div>
+                    <div class="row " style=" padding: 0px 10px 0px 10px; ">
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field">
+                                <input type="text" id="fieldGroup" placeholder=" " formControlName="fieldGroup">
+                                <label for="fieldGroup">Filed Group</label>
 
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field">
+                                <input type="text" id="orderNo" placeholder=" " formControlName="orderNo">
+                                <label for="orderNo">Order</label>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row " style=" padding: 0px 10px 0px 10px;">
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field-checkbox">
+                                <input type="checkbox" id="mandatory" placeholder=" " formControlName="mandatory">
+                                <label for="mandatory">Requird</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="type=='DROP_DOWN'" class="row " style=" padding: 0px 10px 0px 10px;">
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field-checkbox">
+                                <input type="checkbox" id="isServiceEndpoint" placeholder=" "
+                                    formControlName="isServiceEndpoint">
+                                <label for="isServiceEndpoint">Servie Endpoint</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field">
+                                <input type="text" id="serviceEndpoint" placeholder=" "
+                                    formControlName="serviceEndpoint">
+                                <label for="serviceEndpoint">Service Endpoint Name</label>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field">
+                                <input type="text" id="labelOfServiceEndpoint" placeholder=" "
+                                    formControlName="labelOfServiceEndpoint">
+                                <label for="labelOfServiceEndpoint">Label Key</label>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field">
+                                <input type="text" id="valueOfServiceEndpoint" placeholder=" "
+                                    formControlName="valueOfServiceEndpoint">
+                                <label for="valueOfServiceEndpoint">Value Key</label>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row " style=" padding: 0px 10px 0px 10px;">
+                        <div class="col-sm-6  col-md-6 ">
+                            <div class="app-input-field-checkbox">
+                                <input type="checkbox" id="conditionallyAppearance" placeholder=" "
+                                    formControlName="conditionallyAppearance">
+                                <label for="conditionallyAppearance">Appear Conditionally</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

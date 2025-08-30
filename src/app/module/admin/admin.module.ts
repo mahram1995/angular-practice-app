@@ -16,13 +16,15 @@ import { CommandListComponent } from './command/list/command-list.componemt';
 import { RouterStateSnapshot } from '@angular/router';
 import { CreateUdfFormComponent } from './udf/form/create-udf-form';
 import { UdfListComponent } from './udf/list/udf-list.componemt';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [
         AppShareModule,
         CommonModule,
         AdminRoutesModule,
-        PanelMenuModule
+        PanelMenuModule,
+        FormsModule
 
     ],
 

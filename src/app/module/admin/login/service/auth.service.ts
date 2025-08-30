@@ -10,6 +10,8 @@ import { map } from 'rxjs/operators';
 export class AuthService {
   private readonly STORAGE_KEY = 'user';
   private userSubject = new BehaviorSubject<any>(null);
+  private activityEvents = ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'];
+
   private logoutTimeout: any;
   private readonly TIMEOUT_MINUTES = 20;
 
@@ -18,9 +20,27 @@ export class AuthService {
     private router: Router,
     private loginService: LoginService,
     private zone: NgZone) {
+    this.registerActivityListeners();
+    this.setAutoLogout();
+
     this.initFromLocalStorage();   // 👈 hydrate session on app start / new tab
     this.setupActivityListeners();
     this.setupStorageSync();       // 👈 cross-tab sync for login/logout if desired
+  }
+  private registerActivityListeners(): void {
+    this.activityEvents.forEach(event =>
+      window.addEventListener(event, () => this.resetTimer())
+    );
+  }
+
+  private resetTimer(): void {
+    this.setAutoLogout(); // reset timeout whenever user is active
+  }
+
+  ngOnDestroy(): void {
+    this.activityEvents.forEach(event =>
+      window.removeEventListener(event, () => this.resetTimer())
+    );
   }
 
   login(data: any): Observable<any> {

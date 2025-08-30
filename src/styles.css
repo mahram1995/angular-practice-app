@@ -191,9 +191,17 @@
     }
 }
 
+.app-input-field-checkbox label {
+
+    padding-left: 5px !important;
+    margin-top: 2px;
+    padding-bottom: 8px !important;
+    border: none;
+}
+
 
 @supports (not (-ms-ime-align:auto)) {
-    .app-dropdwon label {
+    .app-dropdown label {
         font-size: 13px;
         font-weight: 500;
         padding-left: 0px !important;
@@ -203,7 +211,7 @@
     }
 }
 
-.app-dropdwon-field {
+.app-dropdown-field {
     border: none;
     width: 100%;
     margin-top: 5px;
@@ -220,19 +228,19 @@
     padding-bottom: 0px !important;
 }
 
-/* user for set dropdwon filed position */
+/* user for set dropdown filed position */
 @supports (not (-ms-ime-align:auto)) {
-    .app-dropdwon .app-dropdwon-field {
+    .app-dropdown .app-dropdown-field {
         transform: translate(1px, -mbvnvb1px);
     }
 }
 
-.app-dropdwon-field ol,
+.app-dropdown-field ol,
 ul {
     padding: 0px !important;
 }
 
-.app-dropdwon .error-message {
+.app-dropdown .error-message {
     color: red;
     font-size: 12px;
     height: 10px;
@@ -241,9 +249,9 @@ ul {
     transform: translate(0, -2rem);
 }
 
-/* user for set dropdwon icon position */
+/* user for set dropdown icon position */
 @supports (not (-ms-ime-align:auto)) {
-    .app-dropdwon .select {
+    .app-dropdown .select {
         transform: translate(1px, 8px);
         font-size: 5px;
         border: none;
@@ -327,7 +335,7 @@ ul {
     transform: translate(0, -1.3rem);
 }
 
-.app-dropdwon .error-alert {
+.app-dropdown .error-alert {
     color: red;
     font-size: 12px;
     height: 10px;
@@ -608,7 +616,7 @@ body {
     left: 0;
 }
 
-/* remove box shado on dropdwon focus and set border line green  */
+/* remove box shado on dropdown focus and set border line green  */
 .p-dropdown:not(.p-disabled).p-focus {
     box-shadow: none;
     border-bottom: 2px solid green !important;
@@ -638,7 +646,7 @@ body {
     background-color: #b9bdc0;
 }
 
-.app-dropdwon-field ol,
+.app-dropdown-field ol,
 ul {
     padding: 0px !important;
 }
