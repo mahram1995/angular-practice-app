@@ -11,7 +11,7 @@ export class AuthService {
   private readonly STORAGE_KEY = 'user';
   private userSubject = new BehaviorSubject<any>(null);
   private logoutTimeout: any;
-  private readonly TIMEOUT_MINUTES = 1;
+  private readonly TIMEOUT_MINUTES = 20;
 
   constructor(
     private http: HttpClient,
