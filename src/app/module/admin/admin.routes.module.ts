@@ -25,7 +25,7 @@ export const routes: Routes = [
     component: AdminHomeComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: '', component: AdminHomePageComponent },
+      { path: 'deshbord', component: AdminHomePageComponent },
       { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard] },
       { path: 'create-user', component: UserRegistrationComponent, canActivate: [AuthGuard] },
       { path: 'my-task', component: ApprovalFlowTaskComponent, canActivate: [AuthGuard], },
@@ -35,6 +35,7 @@ export const routes: Routes = [
       { path: 'command', component: CommandListComponent, canActivate: [AuthGuard], },
       { path: 'udf-list', component: UdfListComponent, canActivate: [AuthGuard], },
       { path: 'create-udf', component: CreateUdfFormComponent, canActivate: [AuthGuard], },
+      { path: '', redirectTo: "deshbord", pathMatch: 'full' },
     ]
   },
 

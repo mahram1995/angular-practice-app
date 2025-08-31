@@ -9,6 +9,7 @@ import { NotificationService } from './notification.service';
     providedIn: 'root',
 })
 export class CommonService {
+    isSumbitted: boolean = false;
 
     constructor(
         private notificationService: NotificationService,
@@ -18,6 +19,7 @@ export class CommonService {
     }
 
     isFormInvalid(form: any, required_field: any) {
+        this.isSumbitted = true
         form.markAllAsTouched();
 
         let requiredErrorMessage: any
@@ -33,9 +35,10 @@ export class CommonService {
             }
         }
         if (requiredErrorMessage) {
-            requiredErrorMessage = 'Following field should not be blank :\n----------------------------------------------\n' + requiredErrorMessage;
+            requiredErrorMessage = 'Following field should not be blank :\n ' + requiredErrorMessage;
             this.notificationService.sendError(requiredErrorMessage);
         }
+        this.isSumbitted = false
         return form.invalid;
     }
 

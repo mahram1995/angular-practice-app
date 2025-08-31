@@ -9,7 +9,7 @@ import { NotificationService } from '../../../../app-configuration/app.service/n
 import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApprovalflowService } from '../../../../admin/approval-flow/service/approval-flow-service';
-import { UDFDomain, UserDefinedFields } from '../service/udf.domain';
+import { FieldAppearanceLogics, UDFDomain, UserDefinedFieldDomainDataList, UserDefinedFields } from '../service/udf.domain';
 import { UDFService } from '../service/udf.service';
 
 const DETAILS_UI = 'admin/user-details';
@@ -26,15 +26,37 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         email: 'Email',
         lastName: 'Last Name',
     };
+
+    domainListRequiredFiled: any = {
+        label: 'label',
+        value: 'value',
+        order: 'order',
+
+    };
+    fieldAppLogicRequiredFiled: any = {
+        logicType: 'Logic type',
+        userDefinedFieldId: 'Dependet Field',
+        paramKeyword: 'Param Kyword',
+
+    };
     udfForm: FormGroup;
+    domainListForm: FormGroup;
+    fieldAppLogicForm: FormGroup;
+    userDefinedFieldDomainDataList: UserDefinedFieldDomainDataList[] = [];
+    filedAppLogicList: FieldAppearanceLogics[] = [];
     message: string = '';
     isEdit = false;
+
+    submitted = false;
+
     header: string = 'Create New User';
     selectedCustomer: any;
     data: UDFDomain;
     userDefinedField: UserDefinedFields[];
     urlSearchMap: Map<string, any> = new Map();
     profileId: number;
+    isServiceEndpoint: boolean = true;
+    isFieldAppearnceLogic: boolean = false;
     type: string;
     dataType = [
         { label: "CHAR", value: 'CHAR' },
@@ -43,6 +65,8 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         { label: "BOOLEAN", value: 'BOOLEAN' },
         { label: "DROP_DOWN", value: 'DROP_DOWN' }
     ];
+
+    logicType = []
 
     constructor(private fb: FormBuilder,
         protected override location: Location,
@@ -59,10 +83,18 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
             this.profileId = params.udfProfileId;
             this.fetchUdfs(this.profileId);
 
-
-
         });
         this.prepareForm(new UserDefinedFields)
+        this.prepareDomainListForm(new UserDefinedFieldDomainDataList);
+        this.prapareFieldappearnceLogicListForm(new FieldAppearanceLogics);
+
+        this.logicType = [
+            { label: "Empty", value: 'EMPTY' },
+            { label: "Equal", value: 'EQUAL' },
+            { label: "Non-Empty", value: 'NON_EMPTY' },
+            { label: "In", value: 'IN' },
+            { label: "Between", value: 'BETWEEN' }
+        ];
     }
 
 
@@ -79,7 +111,11 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
     onRowSelect(event: any) {
         console.log(event.data);
         this.type = event.data.dataType;
+        this.isFieldAppearnceLogic = false;
         this.prepareForm(event.data)
+        this.prepareDomainListForm(new UserDefinedFieldDomainDataList)
+        this.prapareFieldappearnceLogicListForm(new FieldAppearanceLogics);
+
         if (this.type == 'DROP_DOWN') {
             this.udfForm.get('isServiceEndpoint')?.setValue(1);
         } else {
@@ -87,10 +123,54 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         }
     }
 
+    onServiceEndpointCheck(event: any) {
+        this.isServiceEndpoint = event.target.checked
+        if (!this.isServiceEndpoint) {
+            this.prepareDomainListForm(new UserDefinedFieldDomainDataList);
+        }
+    }
+    onFieldApearnceCheck(event: any) {
+        this.isFieldAppearnceLogic = event.target.checked
+        if (!this.isFieldAppearnceLogic) {
+            this.prapareFieldappearnceLogicListForm(new FieldAppearanceLogics);
+        }
+    }
+
+    addDomain() {
+        if (this.commonService.isFormInvalid(this.domainListForm, this.domainListRequiredFiled)) {
+            return;
+        }
+        this.userDefinedFieldDomainDataList.push(this.domainListForm.value)
+        this.prepareDomainListForm(new UserDefinedFieldDomainDataList)
+    }
+
+    addAppearanceLogic() {
+        if (this.commonService.isFormInvalid(this.fieldAppLogicForm, this.fieldAppLogicRequiredFiled)) {
+            return;
+        }
+        this.filedAppLogicList.push(this.domainListForm.value)
+        this.prapareFieldappearnceLogicListForm(new FieldAppearanceLogics)
+    }
+
+    isInvalid(formName: any, controlName: string): boolean {
+        const form = this[formName];
+        const control = form?.get(controlName);
+
+        // show error if (submitted) OR (touched), and control has errors
+        return !!(control && control.errors && (control.touched || this.commonService.isSumbitted));
+    }
+    isRequired(formName: any, controlName: string): boolean {
+        const form = this[formName];
+        const control = form?.get(controlName);
+        // show error if (submitted) OR (touched), and control has errors
+        return !!(control && control.errors?.required && this.commonService.isSumbitted);
+    }
     refresh() {
 
         this.fetchUdfs(this.profileId)
         this.prepareForm(new UserDefinedFields)
+        this.prepareDomainListForm(new UserDefinedFieldDomainDataList);
+        this.prapareFieldappearnceLogicListForm(new FieldAppearanceLogics);
     }
     prepareForm(data: UserDefinedFields) {
         this.udfForm = this.fb.group({
@@ -119,6 +199,30 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
             labelOfServiceEndpoint: [data.labelOfServiceEndpoint],
             valueOfServiceEndpoint: [data.valueOfServiceEndpoint],
             validationExpression: [data.validationExpression]
+        });
+    }
+
+    prepareDomainListForm(data: UserDefinedFieldDomainDataList) {
+        this.domainListForm = this.fb.group({
+            id: [data.id],
+            value: [data.value, Validators.required],
+            label: [data.label, Validators.required],
+            order: [data.order, Validators.required],
+            dependentData: [data.dependentData],
+
+        });
+    }
+
+    prapareFieldappearnceLogicListForm(data: FieldAppearanceLogics) {
+        this.fieldAppLogicForm = this.fb.group({
+            id: [data.id],
+            logicType: [data.logicType, Validators.required],
+            dependentFieldId: [data.dependentFieldId, Validators.required],
+            dependentFieldName: [data.dependentFieldId],
+            paramKeyword: [data.paramKeyword, Validators.required],
+            userDefinedFieldId: [data.userDefinedFieldId],
+            value: [data.value],
+
         });
     }
 
@@ -166,5 +270,7 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
 
         this.location.back()
     }
+
+
 
 }

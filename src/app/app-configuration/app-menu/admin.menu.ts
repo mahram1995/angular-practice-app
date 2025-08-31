@@ -46,10 +46,16 @@ export const AdminMenuList = [
         icon: 'pi pi-qrcode',
         active: false,
         submenu: [
-            { name: 'UDF', url: '#', routerLink: "/admin/udf-list" },
             { name: 'Employee Configuration', url: '#', routerLink: "/admin/document-lodge" },
             { name: 'User Configuration', url: '#', routerLink: "/admin/document-lodge" },
         ]
+    },
+    {
+        name: 'User Defined Filed',
+        icon: 'pi pi-bars',
+        active: false,
+        routerLink: "/admin/udf-list"
+
     },
 
     {

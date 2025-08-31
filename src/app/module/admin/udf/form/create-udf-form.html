@@ -48,7 +48,7 @@
                         <ng-template pTemplate="header">
                             <tr style="font-size: 12px;">
                                 <th style="width: 30px;">Order</th>
-                                <th style="width: 150px;">Lebel</th>
+                                <th style="width: 150px;">Label</th>
                                 <th style="min-width: 150px;">Param Name</th>
                                 <th style="width: 100px;">Data Type</th>
                             </tr>
@@ -179,11 +179,11 @@
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-input-field-checkbox">
                                 <input type="checkbox" id="isServiceEndpoint" placeholder=" "
-                                    formControlName="isServiceEndpoint">
+                                    formControlName="isServiceEndpoint" (change)="onServiceEndpointCheck($event)">
                                 <label for="isServiceEndpoint">Servie Endpoint</label>
                             </div>
                         </div>
-                        <div class="col-sm-6  col-md-6 ">
+                        <div *ngIf="isServiceEndpoint" class="col-sm-6  col-md-6 ">
                             <div class="app-input-field">
                                 <input type="text" id="serviceEndpoint" placeholder=" "
                                     formControlName="serviceEndpoint">
@@ -191,7 +191,7 @@
 
                             </div>
                         </div>
-                        <div class="col-sm-6  col-md-6 ">
+                        <div *ngIf="isServiceEndpoint" class="col-sm-6  col-md-6 ">
                             <div class="app-input-field">
                                 <input type="text" id="labelOfServiceEndpoint" placeholder=" "
                                     formControlName="labelOfServiceEndpoint">
@@ -199,7 +199,7 @@
 
                             </div>
                         </div>
-                        <div class="col-sm-6  col-md-6 ">
+                        <div *ngIf="isServiceEndpoint" class="col-sm-6  col-md-6 ">
                             <div class="app-input-field">
                                 <input type="text" id="valueOfServiceEndpoint" placeholder=" "
                                     formControlName="valueOfServiceEndpoint">
@@ -208,15 +208,183 @@
                             </div>
                         </div>
                     </div>
+                    <div *ngIf="!isServiceEndpoint" class="row app-card "
+                        style=" padding: 0px 10px 0px 10px; margin: 0px 10px 0px 10px;">
+                        <span>Domain Form:</span>
+                        <form [formGroup]="domainListForm">
+                            <div style="padding: 0x 15px 10px 15px">
+                                <div class="row app-row">
+                                    <div class="col-sm-6  col-md-6 ">
+                                        <div class="app-input-field">
+                                            <input type="text" id="label2" placeholder=" " formControlName="label"
+                                                [ngClass]="{'is-invalid' : isInvalid('domainListForm', 'label')}">
+                                            <label for="label2">Label</label>
+                                            <div *ngIf="isInvalid('domainListForm', 'label')">
+                                                <div class="error-alert"
+                                                    [hidden]="isRequired('domainListForm', 'label')">
+                                                    Label is requird</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6  col-md-6 ">
+                                        <div class="app-input-field">
+                                            <input type="text" id="value" placeholder=" " formControlName="value"
+                                                [ngClass]="{'is-invalid': isInvalid('domainListForm', 'value')}">
+                                            <label for="value">value</label>
+                                            <div *ngIf="isInvalid('domainListForm', 'value')">
+                                                <div class="error-alert"
+                                                    [hidden]="isRequired('domainListForm', 'value')">
+                                                    value is requird</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6  col-md-6 ">
+                                        <div class="app-input-field">
+                                            <input type="number" id="order1" placeholder=" " formControlName="order"
+                                                [ngClass]="{'is-invalid': isInvalid('domainListForm', 'order')}">
+                                            <label for="order1">Order No</label>
+                                            <div *ngIf="isInvalid('domainListForm', 'order')">
+                                                <div class="error-alert"
+                                                    [hidden]="isRequired('domainListForm', 'order')">
+                                                    Rrder No is requird</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6  col-md-6 ">
+                                        <div class="app-input-field">
+                                            <input type="text" id="dependentData" placeholder=" "
+                                                formControlName="dependentData">
+                                            <label for="dependentData">Dependent Data</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="text-align: center;">
+                                    <button class="app-button" style="width: 60px; text-align: center;"
+                                        (click)="addDomain()">Add</button>
+                                </div>
+
+                                <div class="row">
+                                    <p-table class=" table-hover table-responsive" #dataTable
+                                        [value]="userDefinedFieldDomainDataList" dataKey="id" editMode="row"
+                                        [(selection)]="selectedCustomer" styleClass="p-datatable-sm"
+                                        (onRowSelect)="onRowSelect($event)" selectionMode="single">
+                                        <ng-template pTemplate="header">
+                                            <tr style="font-size: 12px;">
+                                                <th style="width: 30px;">Order</th>
+                                                <th style="width: 150px;">Label</th>
+                                                <th style="min-width: 150px;">Value</th>
+                                                <th style="width: 150px;">Dependent Data </th>
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="body" let-data let-editing="editing" let-ri="rowIndex">
+                                            <tr [pSelectableRow]="data" style="font-size: 12px;">
+                                                <td style=" text-align: center;">{{ data.order }}</td>
+                                                <td>{{ data.label }}</td>
+                                                <td>{{ data.value }}</td>
+                                                <td>{{ data.dependentData }}</td>
+                                            </tr>
+                                        </ng-template>
+
+                                    </p-table>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
                     <div class="row " style=" padding: 0px 10px 0px 10px;">
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-input-field-checkbox">
                                 <input type="checkbox" id="conditionallyAppearance" placeholder=" "
-                                    formControlName="conditionallyAppearance">
+                                    formControlName="conditionallyAppearance" (change)="onFieldApearnceCheck($event)">
                                 <label for="conditionallyAppearance">Appear Conditionally</label>
                             </div>
                         </div>
                     </div>
+                    <div *ngIf="isFieldAppearnceLogic" class="row app-card "
+                        style=" padding: 0px 10px 0px 10px; margin: 0px 10px 0px 10px;">
+                        <span style="font-weight: 300;">Field Appearnce Logic Form:</span>
+                        <form [formGroup]="fieldAppLogicForm">
+                            <div style="padding: 0x 15px 10px 15px">
+                                <div class="row app-row">
+                                    <div class="col-sm-6  col-md-6 ">
+                                        <div class="app-dropdown">
+                                            <p-dropdown styleClass="app-dropdown-field" [options]="logicType"
+                                                formControlName="logicType" optionLabel="label" optionValue="value"
+                                                appendTo="body" placeholder="Select a logic type"
+                                                (onChange)="onDataTypeSeclect($event)"></p-dropdown>
+                                            <label for="logicType">Logic Type<span style="color: red;">*</span></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6  col-md-6 ">
+                                        <div class="app-input-field" style="margin-top: 17px;">
+                                            <input type="text" id="value" placeholder=" " formControlName="value"
+                                                [ngClass]="{'is-invalid': isInvalid('domainListForm', 'value')}">
+                                            <label for="value">value</label>
+                                            <div *ngIf="isInvalid('domainListForm', 'value')">
+                                                <div class="error-alert"
+                                                    [hidden]="isRequired('domainListForm', 'value')">
+                                                    value is requird</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6  col-md-6 ">
+                                        <div class="app-input-field">
+                                            <input type="number" id="order1" placeholder=" " formControlName="order"
+                                                [ngClass]="{'is-invalid': isInvalid('domainListForm', 'order')}">
+                                            <label for="order1">Order No</label>
+                                            <div *ngIf="isInvalid('domainListForm', 'order')">
+                                                <div class="error-alert"
+                                                    [hidden]="isRequired('domainListForm', 'order')">
+                                                    Rrder No is requird</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6  col-md-6 ">
+                                        <div class="app-input-field">
+                                            <input type="text" id="dependentData" placeholder=" "
+                                                formControlName="dependentData">
+                                            <label for="dependentData">Dependent Data</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="text-align: center;">
+                                    <button class="app-button" style="width: 60px; text-align: center;"
+                                        (click)="addDomain()">Add</button>
+                                </div>
+
+                                <div class="row">
+                                    <p-table class=" table-hover table-responsive" #dataTable
+                                        [value]="filedAppLogicList" dataKey="id" editMode="row"
+                                        [(selection)]="selectedCustomer" styleClass="p-datatable-sm"
+                                        (onRowSelect)="onRowSelect($event)" selectionMode="single">
+                                        <ng-template pTemplate="header">
+                                            <tr style="font-size: 12px;">
+                                                <th style="width: 30px;">logicType</th>
+                                                <th style="width: 150px;">value</th>
+                                                <th style="min-width: 150px;">userDefinedFieldName</th>
+                                                <th style="min-width: 150px;">paramKeyword</th>
+
+                                            </tr>
+                                        </ng-template>
+
+                                        <ng-template pTemplate="body" let-data let-editing="editing" let-ri="rowIndex">
+                                            <tr [pSelectableRow]="data" style="font-size: 12px;">
+                                                <td style=" text-align: center;">{{ data.logicType }}</td>
+                                                <td>{{ data.value }}</td>
+                                                <td>{{ data.userDefinedFieldName }}</td>
+                                                <td>{{ data.paramKeyword }}</td>
+                                            </tr>
+                                        </ng-template>
+
+                                    </p-table>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
 
