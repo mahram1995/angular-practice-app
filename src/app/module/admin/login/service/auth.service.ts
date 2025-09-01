@@ -52,6 +52,7 @@ export class AuthService {
     } else {
       this.finishLogout(logoutType);
     }
+    this.finishLogout(logoutType);
   }
 
   private finishLogout(logoutType) {

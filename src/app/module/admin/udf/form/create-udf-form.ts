@@ -56,7 +56,8 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
     urlSearchMap: Map<string, any> = new Map();
     profileId: number;
     isServiceEndpoint: boolean = true;
-    isFieldAppearnceLogic: boolean = false;
+    isFieldAppearnceLogic: boolean = true;
+    dependentDataList: any[] = []
     type: string;
     dataType = [
         { label: "CHAR", value: 'CHAR' },
@@ -87,13 +88,18 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         this.prepareForm(new UserDefinedFields)
         this.prepareDomainListForm(new UserDefinedFieldDomainDataList);
         this.prapareFieldappearnceLogicListForm(new FieldAppearanceLogics);
-
         this.logicType = [
-            { label: "Empty", value: 'EMPTY' },
-            { label: "Equal", value: 'EQUAL' },
-            { label: "Non-Empty", value: 'NON_EMPTY' },
-            { label: "In", value: 'IN' },
-            { label: "Between", value: 'BETWEEN' }
+            { label: "Select a logic type", value: "" },
+            { label: "EMPTY", value: "EMPTY" },
+            { label: "NON_EMPTY", value: "NON_EMPTY" },
+            { label: "EQUAL", value: "EQUAL" },
+            { label: "NOT_EQUAL", value: "NOT_EQUAL" },
+            { label: "LESS_THAN", value: "LESS_THAN" },
+            { label: "GREATER_THAN", value: "GREATER_THAN" },
+            { label: "LESS_THAN_OR_EQUAL", value: "LESS_THAN_OR_EQUAL" },
+            { label: "GREATER_THAN_OR_EQUAL", value: "GREATER_THAN_OR_EQUAL" },
+            { label: "IN", value: "IN" },
+            { label: "BETWEEN", value: "BETWEEN" }
         ];
     }
 
@@ -105,6 +111,7 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         this.udfService.getUdfById(this.urlSearchMap).subscribe(data => {
             this.data = data
             this.userDefinedField = this.commonService.sortByKeyAsc(data.userDefinedFields, 'orderNo')
+            this.createDependantDropdownList();
         })
     }
 
@@ -119,7 +126,9 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         if (this.type == 'DROP_DOWN') {
             this.udfForm.get('isServiceEndpoint')?.setValue(1);
         } else {
+            this.isServiceEndpoint = true
             this.udfForm.get('isServiceEndpoint')?.setValue(0);
+
         }
     }
 
@@ -129,11 +138,23 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
             this.prepareDomainListForm(new UserDefinedFieldDomainDataList);
         }
     }
+
     onFieldApearnceCheck(event: any) {
         this.isFieldAppearnceLogic = event.target.checked
         if (!this.isFieldAppearnceLogic) {
             this.prapareFieldappearnceLogicListForm(new FieldAppearanceLogics);
         }
+    }
+
+
+    createDependantDropdownList() {
+        this.dependentDataList = []
+        this.userDefinedField.forEach(field => {
+            this.dependentDataList.push({
+                value: field.id,
+                label: field.name
+            });
+        });
     }
 
     addDomain() {

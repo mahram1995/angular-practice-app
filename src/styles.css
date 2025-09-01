@@ -2,7 +2,6 @@
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 @import "bootstrap/dist/css/bootstrap.css";
-@import url(https://fonts.googleapis.com/css?family=Open+Sans);
 @import url(https://use.fontawesome.com/releases/v5.3.1/css/all.css);
 
 /* You can add global styles to this file, and also import other style files */
@@ -46,7 +45,7 @@
 }
 
 .row>* {
-    padding: 5px !important;
+    padding: 0px 5px 0px 5px !important;
 
 }
 
@@ -100,7 +99,7 @@
     border: none;
     border-bottom: 1px solid #737272;
     transition: border-color 0.2s ease;
-    margin-top: 0px;
+    margin-top: 9px;
 }
 
 .app-input-field input:focus {
@@ -121,7 +120,7 @@
         font-size: 13px;
         color: #1aa89c;
         font-weight: 500;
-        transform: translate(1px, -45px);
+        transform: translate(1px, -41px);
     }
 }
 
@@ -199,26 +198,32 @@
     border: none;
 }
 
+.app-dropdown {
+    max-height: 60px;
+}
+
+
 
 @supports (not (-ms-ime-align:auto)) {
     .app-dropdown label {
         font-size: 13px;
         font-weight: 500;
         padding-left: 0px !important;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
         color: #1aa89c;
-        transform: translate(0.25rem, -3.2rem);
+        transform: translate(0.25rem, -2.9rem);
     }
 }
 
 .app-dropdown-field {
     border: none;
     width: 100%;
-    margin-top: 5px;
-    height: 35px;
+    height: 32px;
     padding: 0px !important;
     border-bottom: 1px solid gray;
     border-radius: 0px;
+    margin-bottom: 5px;
+
 }
 
 .p-inputtext {
@@ -231,7 +236,7 @@
 /* user for set dropdown filed position */
 @supports (not (-ms-ime-align:auto)) {
     .app-dropdown .app-dropdown-field {
-        transform: translate(1px, -mbvnvb1px);
+        transform: translate(1px, px);
     }
 }
 
@@ -246,7 +251,7 @@ ul {
     height: 10px;
     padding-left: 5px;
     margin-top: 3px;
-    transform: translate(0, -2rem);
+    transform: translate(0, -5rem);
 }
 
 /* user for set dropdown icon position */
@@ -304,13 +309,12 @@ ul {
     font-size: 12px;
     text-align: right;
     background-color: #108a7d;
-    margin-left: 2px;
+    margin: 2px;
     border: none;
     border-radius: 5px;
     color: white;
-    padding-left: 10px;
-    padding-bottom: 3px;
-    padding-right: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .app-button:hover {
@@ -345,6 +349,7 @@ ul {
 
 .p-toast {
     margin-top: 75px !important;
+    min-width: 400px;
     margin-right: 12px !important;
 }
 

@@ -30,27 +30,28 @@ export class NotificationService {
     transform(value: string | null | undefined, max = 40): string {
         if (!value) return '';
 
-        const words = value.split(/\s+/); // split normal text by spaces
+        const words = value.split(' ');
         const lines: string[] = [];
         let line = '';
 
-        for (const w of words) {
-            if (w.length > max) {
-                // word itself is longer than max → force break every max chars
+        for (const word of words) {
+            // If adding this word would exceed the max length
+            if ((line + ' ' + word).trim().length > max) {
                 if (line) {
-                    lines.push(line);
+                    lines.push(line); // push current line
                     line = '';
                 }
-                for (let i = 0; i < w.length; i += max) {
-                    lines.push(w.slice(i, i + max));
+
+                // If word itself is longer than max, break it into chunks
+                if (word.length > max) {
+                    for (let i = 0; i < word.length; i += max) {
+                        lines.push(word.substring(i, i + max));
+                    }
+                } else {
+                    line = word;
                 }
-            } else if (line.length === 0) {
-                line = w;
-            } else if ((line.length + 1 + w.length) <= max) {
-                line += ' ' + w;
             } else {
-                lines.push(line);
-                line = w;
+                line = line ? line + ' ' + word : word;
             }
         }
 
@@ -58,6 +59,7 @@ export class NotificationService {
 
         return lines.join('\n');
     }
+
 
 
 }

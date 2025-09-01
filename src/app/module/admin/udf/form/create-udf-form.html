@@ -69,7 +69,7 @@
                     style="margin: 0px 10px 10px 2px; padding: 15px 10px 15px 10px !important;">
                     <h3 style="font-weight: 500;">UDF Form:</h3>
 
-                    <div class="row app-row" style=" padding: 0px 10px 0px 10px;">
+                    <div class="row " style=" padding: 0px 10px 0px 10px;">
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-input-field">
                                 <input type="text" id="label" placeholder=" " formControlName="label" [ngClass]="{'is-invalid' :udfForm.controls.label?.touched &&
@@ -208,9 +208,8 @@
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="!isServiceEndpoint" class="row app-card "
-                        style=" padding: 0px 10px 0px 10px; margin: 0px 10px 0px 10px;">
-                        <span>Domain Form:</span>
+                    <div *ngIf="!isServiceEndpoint" class="row "
+                        style=" padding: 0px 10px 0px 10px; margin: 0px 10px 0px 10px; border: 1px solid rgb(207, 199, 199); border-radius: 4px;">
                         <form [formGroup]="domainListForm">
                             <div style="padding: 0x 15px 10px 15px">
                                 <div class="row app-row">
@@ -259,9 +258,10 @@
                                     </div>
                                 </div>
 
-                                <div style="text-align: center;">
-                                    <button class="app-button" style="width: 60px; text-align: center;"
-                                        (click)="addDomain()">Add</button>
+                                <div style="text-align: right;">
+                                    <button class="app-button" style="width: 80px; text-align: center;"
+                                        (click)="addDomain()"><i class="pi pi-plus"
+                                            style="font-size:11px; padding-right: 5px;"></i>Add</button>
                                 </div>
 
                                 <div class="row">
@@ -302,9 +302,8 @@
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="isFieldAppearnceLogic" class="row app-card "
-                        style=" padding: 0px 10px 0px 10px; margin: 0px 10px 0px 10px;">
-                        <span style="font-weight: 300;">Field Appearnce Logic Form:</span>
+                    <div *ngIf="isFieldAppearnceLogic" class="row"
+                        style=" padding: 0px 10px 0px 10px; margin: 0px 5px 0px 5px; border: 1px solid rgb(207, 199, 199); border-radius: 4px;">
                         <form [formGroup]="fieldAppLogicForm">
                             <div style="padding: 0x 15px 10px 15px">
                                 <div class="row app-row">
@@ -313,12 +312,18 @@
                                             <p-dropdown styleClass="app-dropdown-field" [options]="logicType"
                                                 formControlName="logicType" optionLabel="label" optionValue="value"
                                                 appendTo="body" placeholder="Select a logic type"
-                                                (onChange)="onDataTypeSeclect($event)"></p-dropdown>
+                                                (onChange)="onDataTypeSeclect($event)"
+                                                [ngClass]="{'is-invalid' : isInvalid('fieldAppLogicForm', 'logicType')}"></p-dropdown>
                                             <label for="logicType">Logic Type<span style="color: red;">*</span></label>
+                                            <div *ngIf="isInvalid('fieldAppLogicForm', 'logicType')">
+                                                <div class="error-alert"
+                                                    [hidden]="isRequired('fieldAppLogicForm', 'logicType')">
+                                                    Label is requird</div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-6  col-md-6 ">
-                                        <div class="app-input-field" style="margin-top: 17px;">
+                                        <div class="app-input-field">
                                             <input type="text" id="value" placeholder=" " formControlName="value"
                                                 [ngClass]="{'is-invalid': isInvalid('domainListForm', 'value')}">
                                             <label for="value">value</label>
@@ -329,58 +334,60 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-sm-6  col-md-6 ">
-                                        <div class="app-input-field">
-                                            <input type="number" id="order1" placeholder=" " formControlName="order"
-                                                [ngClass]="{'is-invalid': isInvalid('domainListForm', 'order')}">
-                                            <label for="order1">Order No</label>
-                                            <div *ngIf="isInvalid('domainListForm', 'order')">
+
+                                        <div class="app-dropdown">
+                                            <p-dropdown styleClass="app-dropdown-field" [options]="dependentDataList"
+                                                formControlName="dependentFieldId" optionLabel="label"
+                                                optionValue="value" appendTo="body" placeholder="Select a logic type"
+                                                (onChange)="onDataTypeSeclect($event)"
+                                                [ngClass]="{'is-invalid' : isInvalid('fieldAppLogicForm', 'dependentFieldId')}"></p-dropdown>
+                                            <label for="dependentFieldId">Dependent Filed<span
+                                                    style="color: red;">*</span></label>
+                                            <div *ngIf="isInvalid('fieldAppLogicForm', 'dependentFieldId')">
                                                 <div class="error-alert"
-                                                    [hidden]="isRequired('domainListForm', 'order')">
-                                                    Rrder No is requird</div>
+                                                    [hidden]="isRequired('fieldAppLogicForm', 'dependentFieldId')">
+                                                    Label is requird</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6  col-md-6 ">
-                                        <div class="app-input-field">
-                                            <input type="text" id="dependentData" placeholder=" "
-                                                formControlName="dependentData">
-                                            <label for="dependentData">Dependent Data</label>
-                                        </div>
-                                    </div>
                                 </div>
 
-                                <div style="text-align: center;">
-                                    <button class="app-button" style="width: 60px; text-align: center;"
-                                        (click)="addDomain()">Add</button>
+                                <div style="text-align: right;">
+                                    <button class="app-button" style="width: 80px; text-align: center;"
+                                        (click)="addDomain()"><i class="pi pi-plus"
+                                            style="font-size:11px; padding-right: 5px;"></i>
+                                        Add</button>
                                 </div>
 
-                                <div class="row">
-                                    <p-table class=" table-hover table-responsive" #dataTable
-                                        [value]="filedAppLogicList" dataKey="id" editMode="row"
-                                        [(selection)]="selectedCustomer" styleClass="p-datatable-sm"
-                                        (onRowSelect)="onRowSelect($event)" selectionMode="single">
-                                        <ng-template pTemplate="header">
-                                            <tr style="font-size: 12px;">
-                                                <th style="width: 30px;">logicType</th>
-                                                <th style="width: 150px;">value</th>
-                                                <th style="min-width: 150px;">userDefinedFieldName</th>
-                                                <th style="min-width: 150px;">paramKeyword</th>
 
-                                            </tr>
-                                        </ng-template>
+                            </div>
+                            <div class="row">
+                                <p-table class=" table-hover table-responsive" #dataTable [value]="filedAppLogicList"
+                                    dataKey="id" editMode="row" [(selection)]="selectedCustomer"
+                                    styleClass="p-datatable-sm" (onRowSelect)="onRowSelect($event)"
+                                    selectionMode="single">
+                                    <ng-template pTemplate="header">
+                                        <tr style="font-size: 12px;">
+                                            <th>Logic Type</th>
+                                            <th>Value</th>
+                                            <th>Dependent Filed</th>
+                                            <th>Param Keyword</th>
 
-                                        <ng-template pTemplate="body" let-data let-editing="editing" let-ri="rowIndex">
-                                            <tr [pSelectableRow]="data" style="font-size: 12px;">
-                                                <td style=" text-align: center;">{{ data.logicType }}</td>
-                                                <td>{{ data.value }}</td>
-                                                <td>{{ data.userDefinedFieldName }}</td>
-                                                <td>{{ data.paramKeyword }}</td>
-                                            </tr>
-                                        </ng-template>
+                                        </tr>
+                                    </ng-template>
 
-                                    </p-table>
-                                </div>
+                                    <ng-template pTemplate="body" let-data let-editing="editing" let-ri="rowIndex">
+                                        <tr [pSelectableRow]="data" style="font-size: 12px;">
+                                            <td style=" text-align: center;">{{ data.logicType }}</td>
+                                            <td>{{ data.value }}</td>
+                                            <td>{{ data.userDefinedFieldName }}</td>
+                                            <td>{{ data.paramKeyword }}</td>
+                                        </tr>
+                                    </ng-template>
+
+                                </p-table>
                             </div>
                         </form>
                     </div>

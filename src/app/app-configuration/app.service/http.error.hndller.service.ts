@@ -52,7 +52,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                             errorMsg = 'Forbidden.';
                             break;
                         case 404:
-                            errorMsg = 'Resource not found.';
+                            errorMsg = error.url ? 'API not found ' + error.url : 'Resource not found';
                             break;
                         case 500:
                             errorMsg = 'An unexpected server error occurred. Please try again later.';
