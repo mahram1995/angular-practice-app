@@ -8,8 +8,9 @@ export class UDFDomain {
 
 export class UserDefinedFields {
 
-    id: string;
+    id: number;
     name: string;
+    label: string;
     styleClass: string;
     maximumLength: number;
     minimumLength: number;
@@ -21,27 +22,27 @@ export class UserDefinedFields {
     multipleSelection: boolean;
     mandatory: boolean;
     orderNo: number;
-    userDefinedFieldDomainDataList: UserDefinedFieldDomainDataList[];
-    serviceEndpoint: string;
-    dataDetailsEndpoint: string;
-    userDefinedFieldProfileId: 102631;
-    label: string;
-    conditionallyAppearance: boolean;
-    fieldAppearanceLogics: FieldAppearanceLogics[];
+    userDefinedFieldDomainDataList: UserDefinedFieldDomainData[];
+    serviceEndpointName: string;
+    isServiceEndpoint: boolean;
+    udfProfileId: number;
+    isConditionallyAppearance: boolean;
+    fieldAppearanceLogics: FieldAppearanceLogic[];
     fieldGroup: string;
     labelOfServiceEndpoint: string;
     valueOfServiceEndpoint: string;
     validationExpression: string;
 }
-export class UserDefinedFieldDomainDataList {
+export class UserDefinedFieldDomainData {
     id: number;
     value: string;
     label: string;
     order: number;
+    userDefinedFieldId: number;
     dependentData: string;
 }
 
-export class FieldAppearanceLogics {
+export class FieldAppearanceLogic {
     id: number;
     dependentFieldId: number;
     userDefinedFieldId: number;

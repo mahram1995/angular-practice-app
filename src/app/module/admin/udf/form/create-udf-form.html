@@ -22,10 +22,10 @@
                     <tr style="background-color: rgb(226, 224, 222); height: 40px;">
                         <th style="width: 100px; padding-left: 5px;">Name</th>
                         <th style="width: 10px;">:</th>
-                        <td style="text-align: left; width: 350px;">{{data?.name}} </td>
+                        <td style="text-align: left; width: 350px;">{{udfData?.name}} </td>
                         <th style="width: 100px;">Code</th>
                         <th style="width: 10px;">:</th>
-                        <td style="text-align: left;">{{data?.code}} </td>
+                        <td style="text-align: left;">{{udfData?.code}} </td>
                     </tr>
 
                 </table>
@@ -42,7 +42,7 @@
                         <button class="app-button" style="width: 60px; text-align: center;">+ New</button>
                     </div>
 
-                    <p-table class=" table-hover table-responsive" #dataTable [value]="userDefinedField" dataKey="id"
+                    <p-table class=" table-hover table-responsive" #dataTable [value]="userDefinedFields" dataKey="id"
                         editMode="row" [(selection)]="selectedCustomer" styleClass="p-datatable-sm"
                         (onRowSelect)="onRowSelect($event)" selectionMode="single">
                         <ng-template pTemplate="header">
@@ -185,9 +185,9 @@
                         </div>
                         <div *ngIf="isServiceEndpoint" class="col-sm-6  col-md-6 ">
                             <div class="app-input-field">
-                                <input type="text" id="serviceEndpoint" placeholder=" "
-                                    formControlName="serviceEndpoint">
-                                <label for="serviceEndpoint">Service Endpoint Name</label>
+                                <input type="text" id="serviceEndpointName" placeholder=" "
+                                    formControlName="serviceEndpointName">
+                                <label for="serviceEndpointName">Service Endpoint Name</label>
 
                             </div>
                         </div>
@@ -265,8 +265,8 @@
                                 </div>
 
                                 <div class="row">
-                                    <p-table class=" table-hover table-responsive" #dataTable
-                                        [value]="userDefinedFieldDomainDataList" dataKey="id" editMode="row"
+                                    <p-table [style]="{'margin-bottom': '5px'}" class=" table-hover table-responsive"
+                                        #dataTable [value]="userDefinedFieldDomainDataList" dataKey="id" editMode="row"
                                         [(selection)]="selectedCustomer" styleClass="p-datatable-sm"
                                         (onRowSelect)="onRowSelect($event)" selectionMode="single">
                                         <ng-template pTemplate="header">
@@ -296,9 +296,9 @@
                     <div class="row " style=" padding: 0px 10px 0px 10px;">
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-input-field-checkbox">
-                                <input type="checkbox" id="conditionallyAppearance" placeholder=" "
-                                    formControlName="conditionallyAppearance" (change)="onFieldApearnceCheck($event)">
-                                <label for="conditionallyAppearance">Appear Conditionally</label>
+                                <input type="checkbox" id="isConditionallyAppearance" placeholder=" "
+                                    formControlName="isConditionallyAppearance" (change)="onFieldApearnceCheck($event)">
+                                <label for="isConditionallyAppearance">Appear Conditionally</label>
                             </div>
                         </div>
                     </div>
@@ -324,9 +324,9 @@
                                     </div>
                                     <div class="col-sm-6  col-md-6 ">
                                         <div class="app-input-field">
-                                            <input type="text" id="value" placeholder=" " formControlName="value"
+                                            <input type="text" id="value3" placeholder=" " formControlName="value"
                                                 [ngClass]="{'is-invalid': isInvalid('domainListForm', 'value')}">
-                                            <label for="value">value</label>
+                                            <label for="value3">value</label>
                                             <div *ngIf="isInvalid('domainListForm', 'value')">
                                                 <div class="error-alert"
                                                     [hidden]="isRequired('domainListForm', 'value')">
@@ -348,7 +348,7 @@
                                             <div *ngIf="isInvalid('fieldAppLogicForm', 'dependentFieldId')">
                                                 <div class="error-alert"
                                                     [hidden]="isRequired('fieldAppLogicForm', 'dependentFieldId')">
-                                                    Label is requird</div>
+                                                    Dependent field requird</div>
                                             </div>
                                         </div>
                                     </div>
@@ -356,7 +356,7 @@
 
                                 <div style="text-align: right;">
                                     <button class="app-button" style="width: 80px; text-align: center;"
-                                        (click)="addDomain()"><i class="pi pi-plus"
+                                        (click)="addAppearanceLogic()"><i class="pi pi-plus"
                                             style="font-size:11px; padding-right: 5px;"></i>
                                         Add</button>
                                 </div>
@@ -364,10 +364,10 @@
 
                             </div>
                             <div class="row">
-                                <p-table class=" table-hover table-responsive" #dataTable [value]="filedAppLogicList"
-                                    dataKey="id" editMode="row" [(selection)]="selectedCustomer"
-                                    styleClass="p-datatable-sm" (onRowSelect)="onRowSelect($event)"
-                                    selectionMode="single">
+                                <p-table [style]="{'margin-bottom': '5px'}" class=" table-hover table-responsive"
+                                    #dataTable [value]="fieldAppLogicList" dataKey="id" editMode="row"
+                                    [(selection)]="selectedCustomer" styleClass="p-datatable-sm"
+                                    (onRowSelect)="onRowSelect($event)" selectionMode="single">
                                     <ng-template pTemplate="header">
                                         <tr style="font-size: 12px;">
                                             <th>Logic Type</th>

@@ -22,7 +22,7 @@
                 [(selection)]="selectedCustomer" (onLazyLoad)="onLazyLoad($event)" styleClass="p-datatable-sm"
                 (onRowSelect)="onRowSelect($event)" selectionMode="single">
                 <ng-template pTemplate="header">
-                    <tr>
+                    <tr style="font-size: 14px;">
                         <th style="width: 100px;">Code</th>
                         <th style="min-width: 200px;">Report Name</th>
                         <th style="width: 150px;">Module</th>
@@ -30,7 +30,7 @@
                 </ng-template>
 
                 <ng-template pTemplate="body" let-data let-editing="editing" let-ri="rowIndex">
-                    <tr [pSelectableRow]="data">
+                    <tr [pSelectableRow]="data" style="font-size: 14px;">
                         <td>{{ data.code }}</td>
                         <td>{{ data.name }}</td>
                         <td>{{ data.module }}</td>

@@ -24,7 +24,7 @@ export class UserDefinedFields {
     userDefinedFieldProfileId: 102631;
     label: string;
     conditionallyAppearance: boolean;
-    fieldAppearanceLogics: FieldAppearanceLogics[];
+    fieldAppearanceLogics: FieldAppearanceLogic[];
     fieldGroup: string;
     labelOfServiceEndpoint: string;
     valueOfServiceEndpoint: string;
@@ -38,7 +38,7 @@ export class UserDefinedFieldDomainDataList {
     dependentData: string;
 }
 
-export class FieldAppearanceLogics {
+export class FieldAppearanceLogic {
     id: number;
     dependentFieldId: number;
     userDefinedFieldId: number;
