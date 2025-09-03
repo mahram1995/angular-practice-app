@@ -40,8 +40,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                             if (error.error.message) {
                                 errorMsg = error.error.message
                             } else {
-                                errorMsg = error.error.error;
-                                console.log(error.error.error);
+                                errorMsg = error.error;
 
                             }
 

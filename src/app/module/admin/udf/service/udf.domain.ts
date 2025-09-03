@@ -3,10 +3,10 @@ export class UDFDomain {
     name: String;
     code: number;
     module: string;
-    userDefinedFields: UserDefinedFields[]
+    userDefinedFields: UserDefinedField[]
 }
 
-export class UserDefinedFields {
+export class UserDefinedField {
 
     id: number;
     name: string;
@@ -37,7 +37,7 @@ export class UserDefinedFieldDomainData {
     id: number;
     value: string;
     label: string;
-    order: number;
+    orderNo: number;
     userDefinedFieldId: number;
     dependentData: string;
 }

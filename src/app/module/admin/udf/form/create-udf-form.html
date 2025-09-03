@@ -208,8 +208,8 @@
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="!isServiceEndpoint" class="row "
-                        style=" padding: 0px 10px 0px 10px; margin: 0px 10px 0px 10px; border: 1px solid rgb(207, 199, 199); border-radius: 4px;">
+                    <div *ngIf="!isServiceEndpoint && type=='DROP_DOWN'" class="row "
+                        style=" padding: 0px 10px 0px 10px; margin: 0px 10px 10px 10px; border: 1px solid rgb(207, 199, 199); border-radius: 4px; ">
                         <form [formGroup]="domainListForm">
                             <div style="padding: 0x 15px 10px 15px">
                                 <div class="row app-row">
@@ -239,13 +239,13 @@
                                     </div>
                                     <div class="col-sm-6  col-md-6 ">
                                         <div class="app-input-field">
-                                            <input type="number" id="order1" placeholder=" " formControlName="order"
+                                            <input type="number" id="order1" placeholder=" " formControlName="orderNo"
                                                 [ngClass]="{'is-invalid': isInvalid('domainListForm', 'order')}">
                                             <label for="order1">Order No</label>
-                                            <div *ngIf="isInvalid('domainListForm', 'order')">
+                                            <div *ngIf="isInvalid('domainListForm', 'orderNo')">
                                                 <div class="error-alert"
-                                                    [hidden]="isRequired('domainListForm', 'order')">
-                                                    Rrder No is requird</div>
+                                                    [hidden]="isRequired('domainListForm', 'orderNo')">
+                                                    Order no is requird</div>
                                             </div>
                                         </div>
                                     </div>
@@ -280,7 +280,7 @@
 
                                         <ng-template pTemplate="body" let-data let-editing="editing" let-ri="rowIndex">
                                             <tr [pSelectableRow]="data" style="font-size: 12px;">
-                                                <td style=" text-align: center;">{{ data.order }}</td>
+                                                <td style=" text-align: center;">{{ data.orderNo }}</td>
                                                 <td>{{ data.label }}</td>
                                                 <td>{{ data.value }}</td>
                                                 <td>{{ data.dependentData }}</td>
