@@ -6,7 +6,7 @@
             </div>
             <div class="app-button-group">
                 <button (click)="save()"><i class="pi pi-save" style="font-size:12px"></i>
-                    {{isEdit==true?'Update':'Save'}}</button>
+                    Save</button>
                 <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
                 <button (click)="refresh()"><i class="pi pi-refresh" style="font-size:12px"></i> Refresh</button>
             </div>
@@ -39,11 +39,12 @@
                     <h3 style="font-weight: 500; padding-bottom: 0px; padding-bottom: 0px;">Defiled Fileds:</h3>
 
                     <div style="text-align:right; margin-bottom: 2px; ">
-                        <button class="app-button" style="width: 60px; text-align: center;">+ New</button>
+                        <button class="app-button" style="width: 60px; text-align: center;" (click)="addNew()">+
+                            New</button>
                     </div>
 
                     <p-table class=" table-hover table-responsive" #dataTable [value]="userDefinedFields" dataKey="id"
-                        editMode="row" [(selection)]="selectedCustomer" styleClass="p-datatable-sm"
+                        editMode="row" [(selection)]="selectedUdf" styleClass="p-datatable-sm"
                         (onRowSelect)="onRowSelect($event)" selectionMode="single">
                         <ng-template pTemplate="header">
                             <tr style="font-size: 12px;">
@@ -266,8 +267,8 @@
 
                                 <div class="row">
                                     <p-table [style]="{'margin-bottom': '5px'}" class=" table-hover table-responsive"
-                                        #dataTable [value]="userDefinedFieldDomainDataList" dataKey="id" editMode="row"
-                                        [(selection)]="selectedCustomer" styleClass="p-datatable-sm"
+                                        [value]="userDefinedFieldDomainDataList" dataKey="id" editMode="row"
+                                        [(selection)]="selectedDependentData" styleClass="p-datatable-sm"
                                         (onRowSelect)="onRowSelect($event)" selectionMode="single">
                                         <ng-template pTemplate="header">
                                             <tr style="font-size: 12px;">
@@ -365,8 +366,8 @@
                             </div>
                             <div class="row">
                                 <p-table [style]="{'margin-bottom': '5px'}" class=" table-hover table-responsive"
-                                    #dataTable [value]="fieldAppLogicList" dataKey="id" editMode="row"
-                                    [(selection)]="selectedCustomer" styleClass="p-datatable-sm"
+                                    [value]="fieldAppLogicList" dataKey="id" editMode="row"
+                                    [(selection)]="selectedDoaminData" styleClass="p-datatable-sm"
                                     (onRowSelect)="onRowSelect($event)" selectionMode="single">
                                     <ng-template pTemplate="header">
                                         <tr style="font-size: 12px;">
