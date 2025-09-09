@@ -36,8 +36,8 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
         private adminService: AdminService,
         protected override router: Router,
         private route: ActivatedRoute,
-        private commonService: CommonService) {
-        super(location);
+        protected override commonService: CommonService,) {
+        super(location, commonService);
 
     }
     ngOnInit(): void {

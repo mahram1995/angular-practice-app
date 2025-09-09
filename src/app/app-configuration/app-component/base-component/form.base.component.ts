@@ -12,6 +12,7 @@ import { ApprovalflowServiceInterface } from '../../../admin/approval-flow/servi
 
 import { Injectable } from '@angular/core';
 import { APPROVAL_FLOW_SERVICE } from '../../../admin/approval-flow/service/approval-flow.token';
+import { CommonService } from '../../app.service/common.service';
 
 @Injectable()
 export class FormBaseComponent extends BaseComponent implements AfterViewInit {
@@ -35,6 +36,7 @@ export class FormBaseComponent extends BaseComponent implements AfterViewInit {
 
     constructor(
         protected location: Location,
+        protected commonService: CommonService
     ) {
         super();
     }
@@ -83,6 +85,37 @@ export class FormBaseComponent extends BaseComponent implements AfterViewInit {
         params.set('detailsUI', detailsUI != null ? detailsUI : null);
         params.set('correctionUI', correctionUI != null ? correctionUI : null);
         return params;
+    }
+
+    isValidPattern(formName: string, controlName: string): boolean {
+        const form = this[formName];
+        const control = form?.get(controlName);
+
+        return !!(
+            control &&
+            control.errors?.['pattern'] &&
+            !control.errors?.['required'] && // prevent overlap with required
+            (control.touched || control.dirty)
+        );
+    }
+
+    isInvalid(formName: any, controlName: string): boolean {
+        const form = this[formName];
+        const control = form?.get(controlName);
+
+        // show error if (submitted) OR (touched), and control has errors
+        return !!(control && control.errors && (control.touched || this.commonService.isSumbitted));
+    }
+
+    isRequired(formName: string, controlName: string): boolean {
+        const form = this[formName];
+        const control = form?.get(controlName);
+
+        return !!(
+            control &&
+            control.errors?.['required'] &&
+            (control.touched || control.dirty || this.commonService.isSumbitted)
+        );
     }
 
 

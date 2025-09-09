@@ -46,7 +46,7 @@ export class FieldAppearanceLogic {
     id: number;
     dependentFieldId: number;
     userDefinedFieldId: number;
-    userDefinedFieldName: number;
+    dependentFieldName: string;
     logicType: string;
     value: string;
     paramKeyword: string

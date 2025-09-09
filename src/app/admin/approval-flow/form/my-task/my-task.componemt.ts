@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 import { ApprovalflowService } from '../../service/approval-flow-service';
 import { ApprovalFlowTask } from '../../service/task.domain';
 import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
+import { CommonService } from '../../../../app-configuration/app.service/common.service';
 
 @Component({
     selector: 'approval-flow-task',
@@ -19,10 +20,11 @@ export class ApprovalFlowTaskComponent extends FormBaseComponent implements OnIn
     constructor(
         private approvalFlowService: ApprovalflowService,
         protected override router: Router,
+        protected override commonService: CommonService,
         protected override location: Location,
 
     ) {
-        super(location);
+        super(location, commonService);
     }
 
     ngOnInit() {

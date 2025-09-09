@@ -45,7 +45,7 @@
 
                     <p-table class=" table-hover table-responsive" #dataTable [value]="userDefinedFields" dataKey="id"
                         editMode="row" [(selection)]="selectedUdf" styleClass="p-datatable-sm"
-                        (onRowSelect)="onRowSelect($event)" selectionMode="single">
+                        (onRowSelect)="onRowSelect($event)" selectionMode="single" dataKey="id">
                         <ng-template pTemplate="header">
                             <tr style="font-size: 12px;">
                                 <th style="width: 30px;">Order</th>
@@ -73,20 +73,29 @@
                     <div class="row " style=" padding: 0px 10px 0px 10px;">
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-input-field">
-                                <input type="text" id="label" placeholder=" " formControlName="label" [ngClass]="{'is-invalid' :udfForm.controls.label?.touched &&
-                                         udfForm.controls.label?.errors}">
+                                <input type="text" id="label" placeholder=" " formControlName="label"
+                                    [ngClass]="{'is-invalid' : isInvalid('udfForm', 'label')}">
                                 <label for="label">Label Name<span style="color: red;">*</span></label>
-                                <div *ngIf="udfForm.controls['label']?.errors && udfForm.controls['label']?.touched">
-                                    <div class="error-alert" [hidden]="!udfForm.controls['label']?.errors?.required">
-                                        Label name is required.</div>
+                                <div *ngIf="isInvalid('udfForm', 'label')">
+                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'label')">
+                                        Label is requird</div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-input-field">
-                                <input type="text" id="name" placeholder=" " formControlName="name" [ngClass]="{'is-invalid' :udfForm.controls.name.touched &&
-                                   udfForm.controls.name.errors}">
-                                <label for="name">Parameter Name</label>
+                                <input type="text" id="name" placeholder=" " formControlName="name"
+                                    [ngClass]="{'is-invalid' : isInvalid('udfForm', 'name')}">
+                                <label for="name">Parameter Name<span style="color: red;">*</span></label>
+                                <div *ngIf="isInvalid('udfForm', 'name')">
+                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'name')">
+                                        Parameter Name is requird</div>
+
+                                </div>
+                                <div class="error-alert" *ngIf="isValidPattern('udfForm', 'name')">
+                                    Only letters, numbers, and underscore are allowed
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -96,8 +105,12 @@
                                 <p-dropdown styleClass="app-dropdown-field" [options]="dataType"
                                     formControlName="dataType" optionLabel="label" optionValue="value" appendTo="body"
                                     placeholder="Select a filed type" (onChange)="onDataTypeSeclect($event)"
-                                    [ngClass]="{'is-invalid' :udfForm.controls.dataType.touched && udfForm.controls.dataType.errors}"></p-dropdown>
+                                    [ngClass]="{'is-invalid' : isInvalid('udfForm', 'dataType')}"></p-dropdown>
                                 <label for="dataType">Data Type<span style="color: red;">*</span></label>
+                                <div *ngIf="isInvalid('udfForm', 'dataType')">
+                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'dataType')">
+                                        Data Type is requird</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -105,24 +118,27 @@
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-input-field">
                                 <input type="text" id="minimumLength" placeholder=" " formControlName="minimumLength"
-                                    [ngClass]="{'is-invalid' :udfForm.controls.minimumLength?.touched &&
-                                                             udfForm.controls.minimumLength?.errors}">
+                                    [ngClass]="{'is-invalid' : isInvalid('udfForm', 'minimumLength')}">
+
                                 <label for="minimumLength"> Minimum {{type=='CHAR'?'Length':'Value' }} <span
-                                        style="color: red;">*</span></label>
-                                <div
-                                    *ngIf="udfForm.controls['minimumLength']?.errors && udfForm.controls['minimumLength']?.touched">
-                                    <div class="error-alert"
-                                        [hidden]="!udfForm.controls['minimumLength']?.errors?.required">
-                                        Minimum length required.</div>
+                                        style="color: red;"> {{type=='CHAR'?'*':'' }}</span></label>
+                                <div *ngIf="isInvalid('udfForm', 'minimumLength')">
+                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'minimumLength')">
+                                        Minimum length is requird</div>
                                 </div>
+
                             </div>
                         </div>
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-input-field">
                                 <input type="text" id="maximumLength" placeholder=" " formControlName="maximumLength"
-                                    [ngClass]="{'is-invalid' :udfForm.controls.maximumLength.touched &&
-                                                       udfForm.controls.maximumLength.errors}">
-                                <label for="maximumLength">Maximum {{type=='CHAR'?'Length':'Value' }}</label>
+                                    [ngClass]="{'is-invalid' : isInvalid('udfForm', 'maximumLength')}">
+                                <label for="maximumLength">Maximum {{type=='CHAR'?'Length':'Value' }} <span
+                                        style="color: red;"> {{type=='CHAR'?'*':'' }}</span></label>
+                                <div *ngIf="isInvalid('udfForm', 'maximumLength')">
+                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'maximumLength')">
+                                        Maximum length is requird</div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-6  col-md-6 ">
@@ -160,8 +176,13 @@
                         </div>
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-input-field">
-                                <input type="text" id="orderNo" placeholder=" " formControlName="orderNo">
-                                <label for="orderNo">Order</label>
+                                <input type="text" id="orderNo" placeholder=" " formControlName="orderNo"
+                                    [ngClass]="{'is-invalid' : isInvalid('udfForm', 'orderNo')}">
+                                <label for="orderNo">Order<span style="color: red;">*</span></label>
+                                <div *ngIf="isInvalid('udfForm', 'orderNo')">
+                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'orderNo')">
+                                        Order is requird</div>
+                                </div>
 
                             </div>
                         </div>
@@ -187,8 +208,13 @@
                         <div *ngIf="isServiceEndpoint" class="col-sm-6  col-md-6 ">
                             <div class="app-input-field">
                                 <input type="text" id="serviceEndpointName" placeholder=" "
-                                    formControlName="serviceEndpointName">
+                                    formControlName="serviceEndpointName"
+                                    [ngClass]="{'is-invalid' : isInvalid('udfForm', 'serviceEndpointName')}">
                                 <label for="serviceEndpointName">Service Endpoint Name</label>
+                                <div *ngIf="isInvalid('udfForm', 'serviceEndpointName')">
+                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'serviceEndpointName')">
+                                        Service endpoint is requird</div>
+                                </div>
 
                             </div>
                         </div>
@@ -220,8 +246,7 @@
                                                 [ngClass]="{'is-invalid' : isInvalid('domainListForm', 'label')}">
                                             <label for="label2">Label</label>
                                             <div *ngIf="isInvalid('domainListForm', 'label')">
-                                                <div class="error-alert"
-                                                    [hidden]="isRequired('domainListForm', 'label')">
+                                                <div class="error-alert" *ngIf="isRequired('domainListForm', 'label')">
                                                     Label is requird</div>
                                             </div>
                                         </div>
@@ -232,8 +257,7 @@
                                                 [ngClass]="{'is-invalid': isInvalid('domainListForm', 'value')}">
                                             <label for="value">value</label>
                                             <div *ngIf="isInvalid('domainListForm', 'value')">
-                                                <div class="error-alert"
-                                                    [hidden]="isRequired('domainListForm', 'value')">
+                                                <div class="error-alert" *ngIf="isRequired('domainListForm', 'value')">
                                                     value is requird</div>
                                             </div>
                                         </div>
@@ -245,7 +269,7 @@
                                             <label for="order1">Order No</label>
                                             <div *ngIf="isInvalid('domainListForm', 'orderNo')">
                                                 <div class="error-alert"
-                                                    [hidden]="isRequired('domainListForm', 'orderNo')">
+                                                    *ngIf="isRequired('domainListForm', 'orderNo')">
                                                     Order no is requird</div>
                                             </div>
                                         </div>
@@ -303,7 +327,7 @@
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="isFieldAppearnceLogic" class="row"
+                    <div *ngIf="isFieldAppearanceLogic" class="row"
                         style=" padding: 0px 10px 0px 10px; margin: 0px 5px 0px 5px; border: 1px solid rgb(207, 199, 199); border-radius: 4px;">
                         <form [formGroup]="fieldAppLogicForm">
                             <div style="padding: 0x 15px 10px 15px">
@@ -313,12 +337,11 @@
                                             <p-dropdown styleClass="app-dropdown-field" [options]="logicType"
                                                 formControlName="logicType" optionLabel="label" optionValue="value"
                                                 appendTo="body" placeholder="Select a logic type"
-                                                (onChange)="onDataTypeSeclect($event)"
                                                 [ngClass]="{'is-invalid' : isInvalid('fieldAppLogicForm', 'logicType')}"></p-dropdown>
                                             <label for="logicType">Logic Type<span style="color: red;">*</span></label>
                                             <div *ngIf="isInvalid('fieldAppLogicForm', 'logicType')">
                                                 <div class="error-alert"
-                                                    [hidden]="isRequired('fieldAppLogicForm', 'logicType')">
+                                                    *ngIf="isRequired('fieldAppLogicForm', 'logicType')">
                                                     Label is requird</div>
                                             </div>
                                         </div>
@@ -329,8 +352,7 @@
                                                 [ngClass]="{'is-invalid': isInvalid('domainListForm', 'value')}">
                                             <label for="value3">value</label>
                                             <div *ngIf="isInvalid('domainListForm', 'value')">
-                                                <div class="error-alert"
-                                                    [hidden]="isRequired('domainListForm', 'value')">
+                                                <div class="error-alert" *ngIf="isRequired('domainListForm', 'value')">
                                                     value is requird</div>
                                             </div>
                                         </div>
@@ -342,13 +364,12 @@
                                             <p-dropdown styleClass="app-dropdown-field" [options]="dependentDataList"
                                                 formControlName="dependentFieldId" optionLabel="label"
                                                 optionValue="value" appendTo="body" placeholder="Select a logic type"
-                                                (onChange)="onDataTypeSeclect($event)"
                                                 [ngClass]="{'is-invalid' : isInvalid('fieldAppLogicForm', 'dependentFieldId')}"></p-dropdown>
                                             <label for="dependentFieldId">Dependent Filed<span
                                                     style="color: red;">*</span></label>
                                             <div *ngIf="isInvalid('fieldAppLogicForm', 'dependentFieldId')">
                                                 <div class="error-alert"
-                                                    [hidden]="isRequired('fieldAppLogicForm', 'dependentFieldId')">
+                                                    *ngIf="isRequired('fieldAppLogicForm', 'dependentFieldId')">
                                                     Dependent field requird</div>
                                             </div>
                                         </div>
@@ -383,7 +404,7 @@
                                         <tr [pSelectableRow]="data" style="font-size: 12px;">
                                             <td style=" text-align: center;">{{ data.logicType }}</td>
                                             <td>{{ data.value }}</td>
-                                            <td>{{ data.userDefinedFieldName }}</td>
+                                            <td>{{ data.dependentFieldName }}</td>
                                             <td>{{ data.paramKeyword }}</td>
                                         </tr>
                                     </ng-template>

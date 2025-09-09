@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApprovalflowService } from '../../../../admin/approval-flow/service/approval-flow-service';
 import { AdminService } from '../../service/admin.service';
 import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
+import { CommonService } from '../../../../app-configuration/app.service/common.service';
 
 const DETAILS_UI = 'admin/user-details';
 const CORRECTION_UI = 'admin/create-user';
@@ -21,12 +22,14 @@ export class UserRegistrationViewComponent extends FormBaseComponent implements 
     message: string = '';
     constructor(
         protected override location: Location,
+        protected override commonService: CommonService,
         protected override router: Router,
         private approvalFlowService: ApprovalflowService,
         private notificationService: NotificationService,
+
         private adminService: AdminService,
         private route: ActivatedRoute,) {
-        super(location);
+        super(location, commonService);
 
     }
     ngOnInit(): void {
