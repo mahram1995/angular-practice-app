@@ -226,6 +226,7 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         this.dataTable.reset();
         this.selectedUdf = null
         this.isServiceEndpoint = true
+        this.isRowSelected = false
         this.isFieldAppearanceLogic = false
         this.fetchUdfs(this.profileId)
         this.prepareForm(new UserDefinedField)
@@ -309,7 +310,7 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         let isListDataFound = true
 
         const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, CORRECTION_UI);
-        if (!this.isServiceEndpoint && this.userDefinedFieldDomainDataList.length == 0) {
+        if (!this.isServiceEndpoint && this.type == 'DROPDOWN' && this.userDefinedFieldDomainDataList.length == 0) {
             this.notificationService.sendError('Please add Domain data')
             isListDataFound = false
         }
@@ -328,31 +329,36 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
 
         let formData = new UserDefinedField()
         formData = this.udfForm.getRawValue()
+        formData.udfProfileId = this.udfData.id
+        formData.styleClass = 'col-md-6'
         formData.fieldAppearanceLogics = this.fieldAppLogicList
         formData.userDefinedFieldDomainDataList = this.userDefinedFieldDomainDataList
 
         if (this.isRowSelected) {
-            let useDefileFileds = this.udfData.userDefinedFields.filter(item => item.id !== formData.id);
-            useDefileFileds.push(formData)
-            this.udfData.userDefinedFields = useDefileFileds
+            this.udfService.updateUdf(formData, urlSearchParams).subscribe(
+                (response) => {
+                    this.notificationService.sendSuccess(response.message);
+                    this.isServiceEndpoint = true;
+                    this.isRowSelected = false
+                    this.isFieldAppearanceLogic = false
+                    this.refresh()
+
+                }
+            )
         } else {
-            this.udfData.userDefinedFields.push(formData)
+            this.udfService.saveUdf(formData, urlSearchParams).subscribe(
+                (response) => {
+                    this.notificationService.sendSuccess(response.message);
+                    this.isServiceEndpoint = true;
+                    this.isRowSelected = false
+                    this.isFieldAppearanceLogic = false
+                    this.refresh()
+
+                }
+            )
         }
 
 
-
-
-
-        this.udfService.updateUdf(this.udfData, urlSearchParams).subscribe(
-            (response) => {
-                this.notificationService.sendSuccess(response.message);
-                this.isServiceEndpoint = true;
-                this.isRowSelected = false
-                this.isFieldAppearanceLogic = false
-                this.refresh()
-
-            }
-        )
 
 
     }

@@ -68,7 +68,7 @@ export const AdminMenuList = [
     {
         name: 'Report',
         icon: 'pi pi-bars',
-        routerLink: "/admin/run-report",
+        routerLink: "/admin/report-list",
         active: false,
     }
 ];

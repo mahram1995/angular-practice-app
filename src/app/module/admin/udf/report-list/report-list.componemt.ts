@@ -13,9 +13,9 @@ const DETAILS_UI = 'admin/udf-details';
 const CORRECTION_UI = 'admin/create-udf';
 @Component({
     selector: 'udf-list',
-    templateUrl: './udf-list.component.html',
+    templateUrl: './report-list.component.html',
 })
-export class UdfListComponent implements OnInit {
+export class ReportListComponent implements OnInit {
     required_field: any = {
         userName: 'code',
         password: 'name',
@@ -122,7 +122,7 @@ export class UdfListComponent implements OnInit {
     }
     onRowSelect(event: any) {
         console.log(event.data);
-        this.router.navigate(['admin/create-udf'], {
+        this.router.navigate(['admin/run-report'], {
             queryParams: {
                 udfProfileId: event.data.id
             }

@@ -102,9 +102,11 @@
                     <div class="row " style=" padding: 0px 10px 0px 10px;">
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-dropdown">
-                                <p-dropdown styleClass="app-dropdown-field" [options]="dataType"
-                                    formControlName="dataType" optionLabel="label" optionValue="value" appendTo="body"
-                                    placeholder="Select a filed type" (onChange)="onDataTypeSeclect($event)"
+                                <p-dropdown
+                                    [styleClass]=" isInvalid('udfForm','dataType') ? 'is-invalid' : 'app-dropdown-field' "
+                                    [options]="dataType" formControlName="dataType" optionLabel="label"
+                                    optionValue="value" appendTo="body" placeholder="Select a filed type"
+                                    (onChange)="onDataTypeSeclect($event)"
                                     [ngClass]="{'is-invalid' : isInvalid('udfForm', 'dataType')}"></p-dropdown>
                                 <label for="dataType">Data Type<span style="color: red;">*</span></label>
                                 <div *ngIf="isInvalid('udfForm', 'dataType')">

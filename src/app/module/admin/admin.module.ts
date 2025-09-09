@@ -18,6 +18,7 @@ import { CreateUdfFormComponent } from './udf/form/create-udf-form';
 import { UdfListComponent } from './udf/list/udf-list.componemt';
 import { FormsModule } from '@angular/forms';
 import { GenerateReportUiFormComponent } from './udf/generate-report-ui/generate-report-ui.form';
+import { ReportListComponent } from './udf/report-list/report-list.componemt';
 
 @NgModule({
     imports: [
@@ -42,7 +43,8 @@ import { GenerateReportUiFormComponent } from './udf/generate-report-ui/generate
         CommandListComponent,
         CreateUdfFormComponent,
         UdfListComponent,
-        GenerateReportUiFormComponent
+        GenerateReportUiFormComponent,
+        ReportListComponent
 
 
     ],

@@ -16,6 +16,7 @@ import { UdfListComponent } from './udf/list/udf-list.componemt';
 import { UDFService } from './udf/service/udf.service';
 import { CreateUdfFormComponent } from './udf/form/create-udf-form';
 import { GenerateReportUiFormComponent } from './udf/generate-report-ui/generate-report-ui.form';
+import { ReportListComponent } from './udf/report-list/report-list.componemt';
 
 
 
@@ -37,6 +38,7 @@ export const routes: Routes = [
       { path: 'udf-list', component: UdfListComponent, canActivate: [AuthGuard], },
       { path: 'create-udf', component: CreateUdfFormComponent, canActivate: [AuthGuard] },
       { path: 'run-report', component: GenerateReportUiFormComponent, canActivate: [AuthGuard] },
+      { path: 'report-list', component: ReportListComponent, canActivate: [AuthGuard] },
       { path: '', redirectTo: "deshbord", pathMatch: 'full' },
     ]
   },

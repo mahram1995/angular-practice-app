@@ -8,6 +8,8 @@ import { CommonService } from '../../../../app-configuration/app.service/common.
 import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
 import { UDFService } from '../service/udf.service';
 import { UserDefinedField } from '../service/udf.domain';
+import { DropdownChangeEvent } from 'primeng/dropdown';
+import { ActivatedRoute } from '@angular/router';
 
 
 
@@ -27,23 +29,22 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
     reportName: any;
 
     udfDataList: any; // Paste your JSON here
+    profileId: number
 
     constructor(private fb: FormBuilder,
         protected override location: Location,
         protected override commonService: CommonService,
         private udfService: UDFService,
+        private route: ActivatedRoute,
     ) { super(location, commonService); }
 
     ngOnInit() {
-        this.fetchUdfs(23);
+        this.route.queryParams.subscribe(params => {
+            this.profileId = params.udfProfileId;
+            this.fetchUdfs(this.profileId);
 
+        });
 
-
-
-
-
-        // Handle conditional logic
-        this.setupConditionalFields();
     }
 
     fetchUdfs(profileId: any) {
@@ -53,36 +54,8 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             this.udfDataList = data
             this.fields = this.udfDataList.userDefinedFields.sort((a, b) => a.order - b.order);
             this.reportName = this.udfDataList.name
-            this.fields.forEach(field => {
-                const validators = [];
-                if (field.mandatory) {
-                    validators.push(Validators.required);
-                }
-                if (field.minimumLength > 0) {
-                    validators.push(Validators.minLength(field.minimumLength));
-                }
-                if (field.maximumLength > 0) {
-                    validators.push(Validators.maxLength(field.maximumLength));
-                }
-                if (field.regularExpression) {
-                    validators.push(Validators.pattern(field.regularExpression));
-                }
 
-                this.form.addControl(field.name, new FormControl('', validators));
-
-                if (field.dataType === 'DROP_DOWN') {
-                    if (field.isServiceEndpoint && field.fieldAppearanceLogics.length == 0) {
-                        this.loadDropdownFromService(field); // Load dynamic options
-                    } else if (field.userDefinedFieldDomainDataList?.length) {
-                        this.domainList = field.userDefinedFieldDomainDataList.map(d => ({
-                            label: d.label,
-                            value: d.value
-                        }));
-                    }
-                };
-
-            });
-
+            this.setValidation();
             this.fields
                 .filter(field => field.fieldAppearanceLogics?.length)
                 .forEach(field => {
@@ -99,7 +72,66 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
         })
     }
+    setFieldValidation(field: any) {
+        const validators = [];
+        if (field.mandatory) {
+            validators.push(Validators.required);
+        }
+        if (field.minimumLength > 0) {
+            validators.push(Validators.minLength(field.minimumLength));
+        }
+        if (field.maximumLength > 0) {
+            validators.push(Validators.maxLength(field.maximumLength));
+        }
+        if (field.regularExpression) {
+            validators.push(Validators.pattern(field.regularExpression));
+        }
 
+        this.form.addControl(field.name, new FormControl('', validators));
+
+        if (field.dataType === 'DROP_DOWN') {
+            if (field.isServiceEndpoint && field.fieldAppearanceLogics.length == 0) {
+                this.loadDropdownFromService(field); // Load dynamic options
+            } else if (field.userDefinedFieldDomainDataList?.length) {
+                this.domainList = field.userDefinedFieldDomainDataList.map(d => ({
+                    label: d.label,
+                    value: d.value
+                }));
+            }
+        };
+    }
+
+    setValidation() {
+        this.fields.forEach(field => {
+            const validators = [];
+            if (field.mandatory) {
+                validators.push(Validators.required);
+            }
+            if (field.minimumLength > 0) {
+                validators.push(Validators.minLength(field.minimumLength));
+            }
+            if (field.maximumLength > 0) {
+                validators.push(Validators.maxLength(field.maximumLength));
+            }
+            if (field.regularExpression) {
+                validators.push(Validators.pattern(field.regularExpression));
+            }
+
+            this.form.addControl(field.name, new FormControl('', validators));
+
+            if (field.dataType === 'DROP_DOWN') {
+                if (field.isServiceEndpoint && field.fieldAppearanceLogics.length == 0) {
+                    this.loadDropdownFromService(field); // Load dynamic options
+                } else if (field.userDefinedFieldDomainDataList?.length) {
+                    this.domainList = field.userDefinedFieldDomainDataList.map(d => ({
+                        label: d.label,
+                        value: d.value
+                    }));
+                }
+            };
+
+        });
+    }
 
     loadDependentFieldOptions(field: any) {
         let endpoint = field.serviceEndpoint;
@@ -140,6 +172,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
                             this.fieldVisibility[field.name] = shouldShow;
 
                             if (shouldShow) {
+
                                 this.form.get(field.name)?.enable();
                             } else {
                                 this.form.get(field.name)?.disable();
@@ -222,7 +255,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
     }
 
 
-    submitForm() {
+    showReport() {
         if (this.form.invalid) {
             this.form.markAllAsTouched();
             return;
@@ -232,8 +265,8 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
     }
 
-    onSelectChange(event: Event, fieldName: string): void {
-        const selectOptionValue = (event.target as HTMLSelectElement).value;
+    onSelectChange(event: DropdownChangeEvent, fieldName: string): void {
+        const selectOptionValue = (event.value as HTMLSelectElement).value;
 
         let dependedFiledId = this.getFieldIdByFiledName(fieldName)
         this.getUDFIdByDependedFiledId(dependedFiledId, selectOptionValue, fieldName);
@@ -265,7 +298,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         this.form.get(field.name)?.setValue(null);
         this.setupConditionalFields()
         let formValue = this.form.value;
-        let url = this.getPathParameterValue(field.serviceEndpoint, formValue);
+        let url = this.getPathParameterValue(field.serviceEndpointName, formValue);
         const matches = url.match(/{(.*?)}/g);
 
         if (matches == null) {
@@ -337,9 +370,11 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         return fullURL
     }
 
-    back() { }
+    back() { this.location.back() }
     refresh() {
-
+        this.form = this.fb.group({});
+        this.fields = []
+        this.fetchUdfs(this.profileId)
     }
 }
 

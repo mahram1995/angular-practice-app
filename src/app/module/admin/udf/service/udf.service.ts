@@ -4,13 +4,15 @@ import { BaseService } from '../../../../app-configuration/app.service/base-serv
 import { HttpService } from '../../../../app-configuration/app.service/http.service';
 import { Observable } from 'rxjs';
 import { BASE_URL } from '../../../../app-configuration/app.service/environment';
-import { UDFDomain } from './udf.domain';
+import { UDFDomain, UserDefinedField } from './udf.domain';
 
 const URL = BASE_URL
 
 const GET_UDFS = URL + 'admin/udf/get-udfs';
-const SAVE_UDF = URL + 'admin/udf/save-udf'
-const UPDATE_UDF = URL + 'admin/udf/update-udf'
+const SAVE_UDF_PROFILE = URL + 'admin/udf/save-udf-profile'
+const UPADTE_UDF_PROFILE = URL + 'admin/udf/update-udf-profile'
+const SAVE_UDF = URL + 'admin/udf/save-user-defiled-field'
+const UPDATE_UDF = URL + 'admin/udf/update-user-defiled-field'
 const GET_UDF_BY_ID = URL + 'admin/udf/getUdfById'
 
 @Injectable()
@@ -22,11 +24,18 @@ export class UDFService extends BaseService {
         super()
     }
 
-    public saveUdf(data: UDFDomain, urlSearchParams): Observable<any> {
+    public saveUdf(data: UserDefinedField, urlSearchParams): Observable<any> {
         return this.http.post(SAVE_UDF, data, urlSearchParams);
     }
-    public updateUdf(data: UDFDomain, urlSearchParams): Observable<any> {
+    public updateUdf(data: UserDefinedField, urlSearchParams): Observable<any> {
         return this.http.put(UPDATE_UDF, data, urlSearchParams);
+    }
+
+    public saveUdfProfile(data: UDFDomain, urlSearchParams): Observable<any> {
+        return this.http.post(SAVE_UDF_PROFILE, data, urlSearchParams);
+    }
+    public updateUdfProfile(data: UDFDomain, urlSearchParams): Observable<any> {
+        return this.http.put(UPADTE_UDF_PROFILE, data, urlSearchParams);
     }
     public getUdf(urlSearchParams): Observable<any> {
         return this.http.get(GET_UDFS, urlSearchParams);

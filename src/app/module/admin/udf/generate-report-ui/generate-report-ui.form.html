@@ -14,19 +14,20 @@
         <hr style="margin: 0px; padding: 0px; width: 100%;">
     </div>
 
-    <div class="app-card" style="margin-bottom: 10px;">
-        <form [formGroup]="form" (ngSubmit)="submitForm()" class=" mt-4">
-            <div class="row" *ngIf="form" style="padding: 0px 10px 0px 10px;">
+    <div style=" margin: 10px 20px 10px 20px;">
+        <form [formGroup]="form" class="app-card" style=" margin-bottom: 15px;">
+            <div class="row " *ngIf="form" style="padding: 0px 25px 0px 25px; ">
                 <ng-container *ngFor="let field of visibleFields(); let i = index">
-                    <div [class]="field.styleClass">
+                    <div [class]="field.styleClass" style="margin-bottom: 10px;">
                         <ng-container [ngSwitch]="field.dataType">
 
-                            <div *ngSwitchCase="'DATE'" class="form-group">
+                            <div *ngSwitchCase="'DATE'" class="form-group" style=" padding-left: 10;">
                                 <div class="app-input-field-date">
-                                    <input type="date" [id]="field.name" [formControlName]="field.name">
+                                    <input type="date" [id]="field.name" [formControlName]="field.name"
+                                        [ngClass]="{'is-invalid' : isInvalid('form', field.name)}">
                                     <label [for]="field.name">{{ field.label }}<span
                                             style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
-                                    <div class="error-message"
+                                    <div class="error-alert"
                                         *ngIf="form.get(field.name)?.hasError('required') && form.get(field.name)?.touched">
                                         {{ field.label }} is required.
                                     </div>
@@ -38,11 +39,12 @@
                             <div *ngSwitchCase="'CHAR'" class="form-group">
 
                                 <div class="app-input-field">
-                                    <input type="text" [id]="field.name" placeholder="" [formControlName]="field.name">
+                                    <input type="text" [id]="field.name" placeholder="" [formControlName]="field.name"
+                                        [ngClass]="{'is-invalid' : isInvalid('form', field.name)}">
                                     <label [for]="field.name">{{ field.label }}<span
                                             style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
 
-                                    <div class="error-message"
+                                    <div class="error-alert"
                                         *ngIf="form.get(field.name)?.hasError('required') && form.get(field.name)?.touched">
                                         {{ field.label }} is required.
                                     </div>
@@ -50,16 +52,22 @@
                             </div>
 
                             <!-- DROP_DOWN -->
-                            <div *ngSwitchCase="'DROP_DOWN'">
+                            <div *ngSwitchCase="'DROP_DOWN'" style=" padding-left: 10;">
 
                                 <div class="app-dropdown">
-                                    <p-dropdown styleClass="app-dropdown-field"
+                                    <p-dropdown
+                                        [styleClass]=" isInvalid('form',field.name) ? 'is-invalid' : 'app-dropdown-field' "
                                         [options]="field.userDefinedFieldDomainDataList" [formControlName]="field.name"
                                         optionLabel="label" optionValue="value" appendTo="body"
-                                        placeholder="Select a filed type"
-                                        (change)="onSelectChange($event, field.name)"></p-dropdown>
+                                        [placeholder]="'Select '+ field.label"
+                                        (onChange)="onSelectChange($event, field.name)"></p-dropdown>
                                     <label for="dataType">{{ field.label }}<span
                                             style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
+                                    <div class="error-alert"
+                                        *ngIf="form.get(field.name)?.hasError('required') && form.get(field.name)?.touched">
+                                        {{ field.label }} is required.
+                                    </div>
+
 
                                 </div>
                             </div>
@@ -69,7 +77,7 @@
                 </ng-container>
             </div>
             <div style="text-align: center; margin-bottom: 20px;">
-                <button type="submit" class="app-button">Show Report</button>
+                <button type="submit" class="app-button" (click)="showReport()">Show Report</button>
             </div>
 
         </form>
