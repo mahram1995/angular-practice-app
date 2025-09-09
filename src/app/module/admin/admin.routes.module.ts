@@ -15,6 +15,7 @@ import { AuthGuard } from './login/service/auth.guard';
 import { UdfListComponent } from './udf/list/udf-list.componemt';
 import { UDFService } from './udf/service/udf.service';
 import { CreateUdfFormComponent } from './udf/form/create-udf-form';
+import { GenerateReportUiFormComponent } from './udf/generate-report-ui/generate-report-ui.form';
 
 
 
@@ -34,7 +35,8 @@ export const routes: Routes = [
       { path: 'demo-panel-manue', component: PanelMenuControlledDemo, canActivate: [AuthGuard], },
       { path: 'command', component: CommandListComponent, canActivate: [AuthGuard], },
       { path: 'udf-list', component: UdfListComponent, canActivate: [AuthGuard], },
-      { path: 'create-udf', component: CreateUdfFormComponent, canActivate: [AuthGuard], },
+      { path: 'create-udf', component: CreateUdfFormComponent, canActivate: [AuthGuard] },
+      { path: 'run-report', component: GenerateReportUiFormComponent, canActivate: [AuthGuard] },
       { path: '', redirectTo: "deshbord", pathMatch: 'full' },
     ]
   },

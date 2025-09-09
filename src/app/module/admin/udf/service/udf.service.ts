@@ -35,5 +35,9 @@ export class UDFService extends BaseService {
     public getUdfById(urlSearchParams): Observable<any> {
         return this.http.get(GET_UDF_BY_ID, urlSearchParams);
     }
+    getDataFromServiceEndPoint(serviceEndpoint: string): Observable<any[]> {
+        return this.httpclient.get<any[]>(`${this.URL + serviceEndpoint}`);
+    }
+
 
 }

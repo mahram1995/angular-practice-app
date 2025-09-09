@@ -17,6 +17,7 @@ import { RouterStateSnapshot } from '@angular/router';
 import { CreateUdfFormComponent } from './udf/form/create-udf-form';
 import { UdfListComponent } from './udf/list/udf-list.componemt';
 import { FormsModule } from '@angular/forms';
+import { GenerateReportUiFormComponent } from './udf/generate-report-ui/generate-report-ui.form';
 
 @NgModule({
     imports: [
@@ -40,7 +41,8 @@ import { FormsModule } from '@angular/forms';
         PanelMenuControlledDemo,
         CommandListComponent,
         CreateUdfFormComponent,
-        UdfListComponent
+        UdfListComponent,
+        GenerateReportUiFormComponent
 
 
     ],

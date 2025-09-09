@@ -13,6 +13,7 @@ import { ApprovalflowServiceInterface } from '../../../admin/approval-flow/servi
 import { Injectable } from '@angular/core';
 import { APPROVAL_FLOW_SERVICE } from '../../../admin/approval-flow/service/approval-flow.token';
 import { CommonService } from '../../app.service/common.service';
+import { PathParameters } from '../../app.service/base-service';
 
 @Injectable()
 export class FormBaseComponent extends BaseComponent implements AfterViewInit {
@@ -164,4 +165,6 @@ export class FormBaseComponent extends BaseComponent implements AfterViewInit {
             return null;
         }
     }
+
+
 }

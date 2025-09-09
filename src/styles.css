@@ -161,7 +161,7 @@
 .app-input-field-date input {
     width: 100%;
     padding-left: 2px;
-    margin-top: 2px;
+    margin-top: 11px;
     border: none;
     border-bottom: 1px solid #737272;
     transition: border-color 0.2s ease;
@@ -177,16 +177,16 @@
 @supports (not (-ms-ime-align:auto)) {
     .app-input-field-date label {
         color: #999;
-        transform: translate(0.25rem, -1.5rem);
+        transform: translate(0.25rem, -0.5rem);
         /* transition: all 0.2s ease-out; */
     }
 
     .app-input-field-date input:focus+label,
     .app-input-field-date input:not(:placeholder-shown)+label {
-        font-size: 15px;
+        font-size: 13px;
         color: #1aa89c;
         font-weight: 500;
-        transform: translate(1px, -45px);
+        transform: translate(1px, -40px);
     }
 }
 
@@ -496,9 +496,24 @@ ul {
 
 }
 
-.p-dropdown .p-dropdown-trigger {
-    color: white;
+.app-list .p-dropdown-trigger {
+    color: rgb(252, 252, 252);
+
+
 }
+
+.app-dropdown .p-dropdown-trigger {
+    color: rgb(0, 0, 0);
+
+}
+
+.app-dropdown .p-icon {
+    width: .9rem;
+    margin-top: 12px !important;
+    height: .9rem;
+}
+
+
 
 .p-dropdown-panel .p-dropdown-items .p-dropdown-item:first-child {
     text-align: center;

@@ -77,11 +77,11 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
 
     constructor(private fb: FormBuilder,
         protected override location: Location,
+        protected override commonService: CommonService,
         private notificationService: NotificationService,
         private udfService: UDFService,
         protected override router: Router,
-        private route: ActivatedRoute,
-        protected override commonService: CommonService) {
+        private route: ActivatedRoute,) {
         super(location, commonService);
 
     }
@@ -225,6 +225,8 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
     refresh() {
         this.dataTable.reset();
         this.selectedUdf = null
+        this.isServiceEndpoint = true
+        this.isFieldAppearanceLogic = false
         this.fetchUdfs(this.profileId)
         this.prepareForm(new UserDefinedField)
         this.prepareDomainListForm(new UserDefinedFieldDomainData);
@@ -299,6 +301,7 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         }
     }
     addNew() {
+        this.userDefinedFieldDomainDataList = []
         this.refresh()
     }
 
