@@ -40,6 +40,21 @@ export class UserDefinedFieldDomainData {
     orderNo: number;
     userDefinedFieldId: number;
     dependentData: string;
+    constructor(
+        id?: number,
+        value?: string,
+        label?: string,
+        orderNo?: number,
+        userDefinedFieldId?: number,
+        dependentData?: string
+    ) {
+        this.id = id ?? null;
+        this.value = value ?? '';
+        this.label = label ?? '';
+        this.orderNo = orderNo ?? null;
+        this.userDefinedFieldId = userDefinedFieldId ?? null;
+        this.dependentData = dependentData ?? '';
+    }
 }
 
 export class FieldAppearanceLogic {

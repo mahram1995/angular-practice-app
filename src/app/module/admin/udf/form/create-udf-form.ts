@@ -86,6 +86,7 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
 
     }
     ngOnInit(): void {
+        this.fieldAppLogicList = []
         this.route.queryParams.subscribe(params => {
             this.profileId = params.udfProfileId;
             this.fetchUdfs(this.profileId);
@@ -98,14 +99,15 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
             { label: "Select a logic type", value: "" },
             { label: "EMPTY", value: "EMPTY" },
             { label: "NON_EMPTY", value: "NON_EMPTY" },
-            { label: "EQUAL", value: "EQUAL" },
-            { label: "NOT_EQUAL", value: "NOT_EQUAL" },
-            { label: "LESS_THAN", value: "LESS_THAN" },
-            { label: "GREATER_THAN", value: "GREATER_THAN" },
-            { label: "LESS_THAN_OR_EQUAL", value: "LESS_THAN_OR_EQUAL" },
-            { label: "GREATER_THAN_OR_EQUAL", value: "GREATER_THAN_OR_EQUAL" },
-            { label: "IN", value: "IN" },
-            { label: "BETWEEN", value: "BETWEEN" }
+            { label: "EQUAL", value: "EQUAL" }, // number and char
+            { label: "NOT_EQUAL", value: "NOT_EQUAL" }, // only for number
+            { label: "LESS_THAN", value: "LESS_THAN" }, // only for number
+            { label: "GREATER_THAN", value: "GREATER_THAN" }, // only for number
+            { label: "LESS_THAN_OR_EQUAL", value: "LESS_THAN_OR_EQUAL" }, // only for number
+            { label: "GREATER_THAN_OR_EQUAL", value: "GREATER_THAN_OR_EQUAL" }, // only for number
+            { label: "IN", value: "IN" }, // number and char
+            { label: "NOT_IN", value: "NOT_IN" }, // number and char
+            { label: "BETWEEN", value: "BETWEEN" } // number and date
         ];
     }
 
@@ -124,14 +126,14 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
     }
 
     onRowSelect(event: any) {
-
+        this.fieldAppLogicList = []
         this.isRowSelected = true;
         this.type = event.data.dataType;
 
         this.selectUserDefinedField = event.data;
 
         this.preareFiledAppLogictList(this.selectUserDefinedField.fieldAppearanceLogics)
-        this.userDefinedFieldDomainDataList = this.selectUserDefinedField.userDefinedFieldDomainDataList
+        this.userDefinedFieldDomainDataList = this.commonService.sortByKeyAsc(this.selectUserDefinedField.userDefinedFieldDomainDataList, 'orderNo')
         console.log(this.selectUserDefinedField);
 
         this.prepareForm(event.data)
@@ -145,7 +147,7 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
     preareFiledAppLogictList(data: any) {
         this.fieldAppLogicList = []
         data.forEach(logic => {
-            logic.dependentFieldName = this.userDefinedFields.find(field => field.id = logic.dependentFieldId)?.label
+            logic.dependentFieldName = this.userDefinedFields.find(field => field.id == logic.dependentFieldId)?.label
             this.fieldAppLogicList.push(logic)
         });
     }
@@ -196,7 +198,6 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         customDomainData = this.domainListForm.value;
         customDomainData.userDefinedFieldId = this.selectUserDefinedField.id
         this.userDefinedFieldDomainDataList.push(customDomainData)
-        console.log(this.userDefinedFieldDomainDataList);
 
         this.selectUserDefinedField.userDefinedFieldDomainDataList = this.userDefinedFieldDomainDataList
         this.prepareDomainListForm(new UserDefinedFieldDomainData)
@@ -212,7 +213,7 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         apperanceLogic = this.fieldAppLogicForm.value;
         console.log(apperanceLogic);
         apperanceLogic.userDefinedFieldId = this.selectUserDefinedField.id
-        apperanceLogic.dependentFieldName = this.userDefinedFields.find(field => field.id = apperanceLogic.dependentFieldId)?.label
+        apperanceLogic.dependentFieldName = this.userDefinedFields.find(field => field.id == apperanceLogic.dependentFieldId)?.label
         this.fieldAppLogicList.push(apperanceLogic)
         this.selectUserDefinedField.fieldAppearanceLogics = this.fieldAppLogicList
 
@@ -220,9 +221,22 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         this.prapareFieldappearnceLogicListForm(new FieldAppearanceLogic)
     }
 
+    deleteAppearanceLogic(item: FieldAppearanceLogic) {
+        // remove from the local list
+        this.fieldAppLogicList = this.fieldAppLogicList.filter(f => f.id !== item.id);
 
+    }
+    deleteUserDefinedFiled(data: any) {
+        this.udfService.deleteUserDifinedFieldById({ id: data.id }).subscribe(data => {
+            this.refresh()
+            this.notificationService.sendSuccess(data.message);
+
+        })
+    }
 
     refresh() {
+        this.fieldAppLogicList = []
+        this.userDefinedFieldDomainDataList = []
         this.dataTable.reset();
         this.selectedUdf = null
         this.isServiceEndpoint = true
@@ -302,7 +316,7 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         }
     }
     addNew() {
-        this.userDefinedFieldDomainDataList = []
+
         this.refresh()
     }
 

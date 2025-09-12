@@ -14,6 +14,7 @@ import { Injectable } from '@angular/core';
 import { APPROVAL_FLOW_SERVICE } from '../../../admin/approval-flow/service/approval-flow.token';
 import { CommonService } from '../../app.service/common.service';
 import { PathParameters } from '../../app.service/base-service';
+import { Validators } from '@angular/forms';
 
 @Injectable()
 export class FormBaseComponent extends BaseComponent implements AfterViewInit {
@@ -100,24 +101,39 @@ export class FormBaseComponent extends BaseComponent implements AfterViewInit {
         );
     }
 
-    isInvalid(formName: any, controlName: string): boolean {
-        const form = this[formName];
-        const control = form?.get(controlName);
-
-        // show error if (submitted) OR (touched), and control has errors
-        return !!(control && control.errors && (control.touched || this.commonService.isSumbitted));
-    }
-
     isRequired(formName: string, controlName: string): boolean {
-        const form = this[formName];
-        const control = form?.get(controlName);
-
-        return !!(
-            control &&
-            control.errors?.['required'] &&
-            (control.touched || control.dirty || this.commonService.isSumbitted)
-        );
+        const control = this[formName]?.get(controlName);
+        return !!(control && control.errors?.['required'] && (control.touched || control.dirty || this.commonService.isSumbitted));
     }
+
+    isMinLength(formName: string, controlName: string): boolean {
+        const control = this[formName]?.get(controlName);
+        return !!(control && control.errors?.['minlength'] && (control.touched || control.dirty || this.commonService.isSumbitted));
+    }
+
+    isMaxLength(formName: string, controlName: string): boolean {
+        const control = this[formName]?.get(controlName);
+        return !!(control && control.errors?.['maxlength'] && (control.touched || control.dirty || this.commonService.isSumbitted));
+    }
+
+    isInvalid(formName: string, controlName: string): boolean {
+        const control = this[formName]?.get(controlName);
+        return !!(control && control.invalid && (control.touched || control.dirty || this.commonService.isSumbitted));
+    }
+
+    isMaxValue(formName: string, controlName: string): boolean {
+        const control = this[formName]?.get(controlName);
+        return !!(control && control.errors?.['max'] && (control.touched || control.dirty || this.commonService.isSumbitted));
+    }
+
+    isMinValue(formName: string, controlName: string): boolean {
+        const control = this[formName]?.get(controlName);
+        return !!(control && control.errors?.['min'] && (control.touched || control.dirty || this.commonService.isSumbitted));
+    }
+
+
+
+
 
 
     protected getQueryParamMapForDetailAndCorrectionUI(

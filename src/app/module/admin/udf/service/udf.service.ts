@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BaseService } from '../../../../app-configuration/app.service/base-service';
+import { BaseService, PathParameters } from '../../../../app-configuration/app.service/base-service';
 import { HttpService } from '../../../../app-configuration/app.service/http.service';
 import { Observable } from 'rxjs';
 import { BASE_URL } from '../../../../app-configuration/app.service/environment';
@@ -11,9 +11,10 @@ const URL = BASE_URL
 const GET_UDFS = URL + 'admin/udf/get-udfs';
 const SAVE_UDF_PROFILE = URL + 'admin/udf/save-udf-profile'
 const UPADTE_UDF_PROFILE = URL + 'admin/udf/update-udf-profile'
-const SAVE_UDF = URL + 'admin/udf/save-user-defiled-field'
-const UPDATE_UDF = URL + 'admin/udf/update-user-defiled-field'
+const SAVE_UDF = URL + 'admin/udf/save-user-defined-field'
+const UPDATE_UDF = URL + 'admin/udf/update-user-defined-field'
 const GET_UDF_BY_ID = URL + 'admin/udf/getUdfById'
+const DELETE_USER_DIFINE_FIELD = URL + 'admin/udf/delete-user-defined-filed-byId/{id}'
 
 @Injectable()
 export class UDFService extends BaseService {
@@ -46,6 +47,12 @@ export class UDFService extends BaseService {
     }
     getDataFromServiceEndPoint(serviceEndpoint: string): Observable<any[]> {
         return this.httpclient.get<any[]>(`${this.URL + serviceEndpoint}`);
+    }
+
+
+    public deleteUserDifinedFieldById(pathParameters: PathParameters): Observable<any> {
+        let option = this.create(DELETE_USER_DIFINE_FIELD, pathParameters)
+        return this.http.delete(option);
     }
 
 

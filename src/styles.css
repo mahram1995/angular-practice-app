@@ -701,3 +701,16 @@ ul {
     border-radius: 4px;
     /* optional */
 }
+
+.app-delete-button {
+    background-color: rgb(218, 12, 12);
+    border-radius: 20px;
+    height: 22px !important;
+    border: none;
+    padding-bottom: 0px;
+    text-align: center;
+
+    width: 24px;
+
+    color: white;
+}

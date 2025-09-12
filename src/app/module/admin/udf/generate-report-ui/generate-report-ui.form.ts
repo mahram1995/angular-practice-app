@@ -7,9 +7,11 @@ import { BaseComponent } from '../../../../app-configuration/app-component/base-
 import { CommonService } from '../../../../app-configuration/app.service/common.service';
 import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
 import { UDFService } from '../service/udf.service';
-import { UserDefinedField } from '../service/udf.domain';
+import { UserDefinedField, UserDefinedFieldDomainData } from '../service/udf.domain';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { ActivatedRoute } from '@angular/router';
+import { UserDefinedFields } from '../../../../dynamic-form/json-data/domain';
+import { filter } from 'rxjs';
 
 
 
@@ -72,34 +74,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
         })
     }
-    setFieldValidation(field: any) {
-        const validators = [];
-        if (field.mandatory) {
-            validators.push(Validators.required);
-        }
-        if (field.minimumLength > 0) {
-            validators.push(Validators.minLength(field.minimumLength));
-        }
-        if (field.maximumLength > 0) {
-            validators.push(Validators.maxLength(field.maximumLength));
-        }
-        if (field.regularExpression) {
-            validators.push(Validators.pattern(field.regularExpression));
-        }
 
-        this.form.addControl(field.name, new FormControl('', validators));
-
-        if (field.dataType === 'DROP_DOWN') {
-            if (field.isServiceEndpoint && field.fieldAppearanceLogics.length == 0) {
-                this.loadDropdownFromService(field); // Load dynamic options
-            } else if (field.userDefinedFieldDomainDataList?.length) {
-                this.domainList = field.userDefinedFieldDomainDataList.map(d => ({
-                    label: d.label,
-                    value: d.value
-                }));
-            }
-        };
-    }
 
     setValidation() {
         this.fields.forEach(field => {
@@ -107,11 +82,24 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             if (field.mandatory) {
                 validators.push(Validators.required);
             }
-            if (field.minimumLength > 0) {
-                validators.push(Validators.minLength(field.minimumLength));
+            if (field.dataType == 'CHAR') {
+                if (field.minimumLength > 0) {
+                    validators.push(Validators.minLength(field.minimumLength));
+                }
+                if (field.maximumLength > 0) {
+                    validators.push(Validators.maxLength(field.maximumLength));
+                }
             }
-            if (field.maximumLength > 0) {
-                validators.push(Validators.maxLength(field.maximumLength));
+            if (field.dataType == 'NUMBER') {
+                // Use maximumLength / minimumLength for numeric value in NUMBER field
+                if (field.minimumLength !== undefined && field.minimumLength !== null) {
+                    validators.push(Validators.min(field.minimumLength));
+                }
+
+                if (field.maximumLength !== undefined && field.maximumLength !== null) {
+                    validators.push(Validators.max(field.maximumLength));
+                }
+
             }
             if (field.regularExpression) {
                 validators.push(Validators.pattern(field.regularExpression));
@@ -214,32 +202,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         })
     }
 
-    evaluateLogic(value: any, logic: any): boolean {
-        switch (logic.logicType) {
-            case 'EQUAL':
-                return value === logic.value;
-            case 'NON_EMPTY':
-                return value !== null && value !== undefined && value !== '';
-            case 'IN':
-                if (!logic.value) return false;
 
-                // Step 1: Remove curly braces
-                const trimmed = logic.value.replace(/[{}]/g, '');
-
-                // Step 2: Split by commas
-                const rawList = trimmed.split(',');
-
-                // Step 3: Clean each item (remove quotes and trim)
-                const allowedValues = rawList.map(v =>
-                    v.trim().replace(/^['"]|['"]$/g, '')
-                );
-
-                // Step 4: Check if fieldValue is in the cleaned list
-                return allowedValues.includes(String(value));
-            default:
-                return false;
-        }
-    }
     visibleFields(): any[] {
         return this.fields
             .filter(field => this.fieldVisibility[field.name])
@@ -253,6 +216,69 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             return this.evaluateLogic(depValue, logic);
         });
     }
+    evaluateLogic(value: any, logic: any): boolean {
+        switch (logic.logicType) {
+            case 'EQUAL':
+                return String(value).trim() === String(logic.value).trim();
+
+            case 'NOT_EQUAL':
+                return String(value).trim() !== String(logic.value).trim();
+
+            case 'EMPTY':
+                return value === null || value === undefined || String(value).trim() === '';
+
+            case 'NON_EMPTY':
+                return value !== null && value !== undefined && String(value).trim() !== '';
+
+            case 'LESS_THAN':
+                return value !== null && value !== '' && Number(value) < Number(logic.value);
+
+            case 'GREATER_THAN':
+                return value !== null && value !== '' && Number(value) > Number(logic.value);
+
+            case 'LESS_THAN_OR_EQUAL':
+                if (value === null || value === undefined || value === '') {
+                    return false; // don't evaluate until there's a real value
+                }
+                return Number(value) <= Number(logic.value);
+
+            case 'GREATER_THAN_OR_EQUAL':
+                return Number(value) >= Number(logic.value);
+
+            case 'BETWEEN': {
+                if (!logic.value) return false;
+                // format: "min,max" or "{min,max}"
+                const parts = logic.value.replace(/[{}]/g, '').split(',');
+                if (parts.length < 2) return false;
+
+                const min = Number(parts[0].trim());
+                const max = Number(parts[1].trim());
+
+                return Number(value) >= min && Number(value) <= max;
+            }
+
+            case 'IN':
+                if (!logic.value) return false;
+                const trimmed = logic.value.replace(/[{}]/g, '');
+                const rawList = trimmed.split(',');
+                const allowedValues = rawList.map(v =>
+                    v.trim().replace(/^['"]|['"]$/g, '')
+                );
+                return allowedValues.includes(String(value).trim());
+            case 'NOT_IN': {
+                if (!logic.value) return true;
+                const trimmed = logic.value.replace(/[{}]/g, '');
+                const rawList = trimmed.split(',');
+                const disallowedValues = rawList.map(v =>
+                    v.trim().replace(/^['"]|['"]$/g, '')
+                );
+                return !disallowedValues.includes(String(value).trim());
+            }
+
+            default:
+                return false;
+        }
+    }
 
 
     showReport() {
@@ -260,13 +286,23 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             this.form.markAllAsTouched();
             return;
         }
-        this.formValue = JSON.stringify(this.form.value, null, 2);
-        console.log(this.form.value);
+        const raw = this.form.getRawValue();
+        const fixed = {
+            ...raw,
+            myDate: raw.myDate ? raw.myDate.toISOString() : null
+        };
+        const filtered = Object.fromEntries(
+            Object.entries(fixed).filter(([_, v]) => v !== null && v !== '')
+        );
+
+        this.formValue = JSON.stringify(filtered, null, 2);
+        console.log(filtered);
+
 
     }
 
     onSelectChange(event: DropdownChangeEvent, fieldName: string): void {
-        const selectOptionValue = (event.value as HTMLSelectElement).value;
+        const selectOptionValue = event.value
 
         let dependedFiledId = this.getFieldIdByFiledName(fieldName)
         this.getUDFIdByDependedFiledId(dependedFiledId, selectOptionValue, fieldName);
@@ -294,40 +330,52 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         });
     }
 
-    loadDependedDropdownFromService(field: any, selectOptionValue: any, fieldName: string): void {
+    loadDependedDropdownFromService(field: UserDefinedField, selectOptionValue: any, fieldName: string): void {
         this.form.get(field.name)?.setValue(null);
         this.setupConditionalFields()
         let formValue = this.form.value;
-        let url = this.getPathParameterValue(field.serviceEndpointName, formValue);
-        const matches = url.match(/{(.*?)}/g);
+        if (field.serviceEndpointName) {
 
-        if (matches == null) {
+            let url = this.getPathParameterValue(field.serviceEndpointName, formValue);
+            let matches
+            if (url) {
+                matches = url.match(/{(.*?)}/g);
+            }
 
-            this.udfService.getDataFromServiceEndPoint(url).subscribe({
-                next: (response: any) => {
-                    let data = response.content;
-                    field.userDefinedFieldDomainDataList = data.map(item => ({
-                        label: item[field.labelOfServiceEndpoint || 'label'],
-                        value: item[field.valueOfServiceEndpoint || 'value']
-                    }));
-                },
-                error: err => {
-                    console.error(`Failed to load  ${field.label} using service endpoind ${field.serviceEndpoint}`, err);
-                    field.userDefinedFieldDomainDataList = [];
-                }
-            })
+
+            if (matches == null) {
+
+                this.udfService.getDataFromServiceEndPoint(url).subscribe({
+                    next: (response: any) => {
+                        let data = response.content;
+
+                        field.userDefinedFieldDomainDataList = data.map(item => ({
+                            label: item[field.labelOfServiceEndpoint],
+                            value: item[field.valueOfServiceEndpoint]
+                        }));
+                        field.userDefinedFieldDomainDataList.unshift(new UserDefinedFieldDomainData(null, null, ' Select ' + field.label, null, null, null))
+                    },
+                    error: err => {
+                        console.error(`Failed to load  ${field.label} using service endpoind ${field.serviceEndpointName}`, err);
+                        field.userDefinedFieldDomainDataList = [];
+                    }
+                })
+
+            }
 
         }
 
-        console.log(this.form.value);
 
     }
 
     getPathParameterValue(url: string, parameters: PathParameters): string {
-
+        let matches
         let fullURL = url;
         // Use regular expression to find all matches within curly braces
-        const matches = fullURL.match(/{(.*?)}/g);
+        if (fullURL) {
+            matches = fullURL.match(/{(.*?)}/g);
+        }
+
         // Check if there are matches and extract the content
         if (matches && matches.length > 0) {
             const params = matches.map(match => match.substring(1, match.length - 1));
