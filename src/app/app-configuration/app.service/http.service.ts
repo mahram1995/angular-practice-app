@@ -86,12 +86,19 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
         return {
             headers: headers,
             params: httpParams,
-            responseType: 'json'
+            //   responseType: 'json'
         };
     }
 
     public override get(url: string, options?: any): Observable<any> {
-        return super.get(url, this.getHttpHeader(options, null));
+        const mergedOptions = this.getHttpHeader(options?.params, null);
+
+        return super.get(url, {
+            ...mergedOptions,
+            ...options, // keep responseType, etc.
+            headers: mergedOptions.headers, // overwrite headers properly
+            params: mergedOptions.params    // overwrite params properly
+        });
     }
 
     public override post(url: string, data: any, options?: any): Observable<any> {

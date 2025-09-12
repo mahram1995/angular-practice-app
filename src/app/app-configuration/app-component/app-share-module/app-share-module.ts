@@ -22,6 +22,7 @@ import { PasswordChangeComponent } from '../password-change/password.change.comp
 import { BranchSwitchComponent } from '../branch-switch/branch.change.component';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { RouterModule } from '@angular/router';
+import { SafeUrlPipe } from '../../app-security/safe-url.pipe';
 
 
 @NgModule({
@@ -53,6 +54,7 @@ import { RouterModule } from '@angular/router';
         PasswordChangeComponent,
         BranchSwitchComponent,
         AppRightMenuComponent,
+        SafeUrlPipe,
 
 
 
@@ -61,6 +63,7 @@ import { RouterModule } from '@angular/router';
         AppTopbarComponent,
         RouterModule,
         TaskProcessingDialogComponent,
+        SafeUrlPipe,
         FormsModule,
         ReactiveFormsModule,
         MatCardModule,

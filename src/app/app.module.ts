@@ -58,7 +58,6 @@ import { CommonModule } from '@angular/common';
     FloatingLabelDynamicFormComponent,
     AppHomePageComponent,
     LoginFormComponent,
-    SafeUrlPipe,
     AppHeaderComponent,
 
 

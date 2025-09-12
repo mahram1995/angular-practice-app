@@ -21,7 +21,7 @@ import { filter } from 'rxjs';
 })
 export class GenerateReportUiFormComponent extends FormBaseComponent {
     title = 'agular dynamic form';
-
+    reportUrl: string;
     form: FormGroup = this.fb.group({});
     urlSearchMap: Map<string, any> = new Map();
     formValue: any;
@@ -29,6 +29,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
     fields: UserDefinedField[] = [];
     domainList: { label: string; value: any }[] = [];
     reportName: any;
+    isShowParaForm: boolean = true
 
     udfDataList: any; // Paste your JSON here
     profileId: number
@@ -50,7 +51,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
     }
 
     fetchUdfs(profileId: any) {
-
+        this.urlSearchMap = new Map
         this.urlSearchMap.set('id', profileId)
         this.udfService.getUdfById(this.urlSearchMap).subscribe(data => {
             this.udfDataList = data
@@ -296,9 +297,49 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         );
 
         this.formValue = JSON.stringify(filtered, null, 2);
-        console.log(filtered);
+        this.isShowParaForm = false
 
 
+    }
+
+    downloadedReport() {
+        if (this.form.invalid) {
+            this.form.markAllAsTouched();
+            return;
+        }
+        console.log(this.form.value);
+        const queryString = (Object.entries(this.form.value) as [string, any][])
+            .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+            .join("&");
+
+        console.log(queryString);
+        const reportName = 'ACCOUNT_BALANCE_REPORT';
+        const reportType = 'pdf'; // or 'html', 'txt'
+        const parameter = queryString + '&j_username=jasperadmin&j_password=jasperadmin';
+
+        this.urlSearchMap = new Map()
+        this.urlSearchMap.set('reportName', reportName)
+        this.urlSearchMap.set('reportType', reportType)
+        this.urlSearchMap.set('parameter', parameter)
+        this.udfService.getReportFromJasperServer(this.urlSearchMap).subscribe(blob => {
+            const mimeType = this.getMimeType(reportType); // e.g., 'application/pdf'
+            const file = new Blob([blob], { type: mimeType });
+            this.reportUrl = URL.createObjectURL(file);
+            this.isShowParaForm = false
+        });
+
+
+    }
+
+    getMimeType(type: string): string {
+        switch (type.toLowerCase()) {
+            case 'pdf': return 'application/pdf';
+            case 'html': return 'text/html';
+            case 'txt': return 'text/plain';
+            case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+            case 'xls': return 'application/vnd.ms-excel';
+            default: return 'application/octet-stream';
+        }
     }
 
     onSelectChange(event: DropdownChangeEvent, fieldName: string): void {
@@ -416,6 +457,13 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             throw new Error(`Please provide paremeter name in the end of API within in curly braces.`);
         }
         return fullURL
+    }
+    showParaForm() {
+        if (this.isShowParaForm) {
+            this.isShowParaForm = false
+        } else {
+            this.isShowParaForm = true
+        }
     }
 
     back() { this.location.back() }

@@ -108,11 +108,10 @@
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-dropdown">
                                 <p-dropdown
-                                    [styleClass]=" isInvalid('udfForm','dataType') ? 'is-invalid' : 'app-dropdown-field' "
+                                    [styleClass]="'app-dropdown-field ' + (isInvalid('udfForm','name') ? 'is-invalid' : '')"
                                     [options]="dataType" formControlName="dataType" optionLabel="label"
                                     optionValue="value" appendTo="body" placeholder="Select a filed type"
-                                    (onChange)="onDataTypeSeclect($event)"
-                                    [ngClass]="{'is-invalid' : isInvalid('udfForm', 'dataType')}"></p-dropdown>
+                                    (onChange)="onDataTypeSeclect($event)"></p-dropdown>
                                 <label for="dataType">Data Type<span style="color: red;">*</span></label>
                                 <div *ngIf="isInvalid('udfForm', 'dataType')">
                                     <div class="error-alert" *ngIf="isRequired('udfForm', 'dataType')">
@@ -307,6 +306,7 @@
                                                 <th style="width: 150px;">Label</th>
                                                 <th style="min-width: 150px;">Value</th>
                                                 <th style="width: 150px;">Dependent Data </th>
+                                                <th style="width:50px;">Action</th>
                                             </tr>
                                         </ng-template>
 
@@ -316,6 +316,10 @@
                                                 <td>{{ data.label }}</td>
                                                 <td>{{ data.value }}</td>
                                                 <td>{{ data.dependentData }}</td>
+                                                <td style="text-align: center;"><button
+                                                        (click)="deleteDomainListData(data)" class="app-delete-button">
+                                                        <i class="pi pi-times-circle" style="font-size:12px"></i>
+                                                    </button></td>
                                             </tr>
                                         </ng-template>
 
@@ -344,7 +348,7 @@
                                             <p-dropdown styleClass="app-dropdown-field" [options]="logicType"
                                                 formControlName="logicType" optionLabel="label" optionValue="value"
                                                 appendTo="body" placeholder="Select a logic type"
-                                                [ngClass]="{'is-invalid' : isInvalid('fieldAppLogicForm', 'logicType')}"></p-dropdown>
+                                                [styleClass]="'app-dropdown-field ' + (isInvalid('fieldAppLogicForm','logicType') ? 'is-invalid' : '')"></p-dropdown>
                                             <label for="logicType">Logic Type<span style="color: red;">*</span></label>
                                             <div *ngIf="isInvalid('fieldAppLogicForm', 'logicType')">
                                                 <div class="error-alert"
@@ -368,10 +372,11 @@
                                     <div class="col-sm-6  col-md-6 ">
 
                                         <div class="app-dropdown">
-                                            <p-dropdown styleClass="app-dropdown-field" [options]="dependentDataList"
-                                                formControlName="dependentFieldId" optionLabel="label"
-                                                optionValue="value" appendTo="body" placeholder="Select a logic type"
-                                                [ngClass]="{'is-invalid' : isInvalid('fieldAppLogicForm', 'dependentFieldId')}"></p-dropdown>
+                                            <p-dropdown
+                                                [styleClass]="'app-dropdown-field ' + (isInvalid('fieldAppLogicForm','dependentFieldId') ? 'is-invalid' : '')"
+                                                [options]="dependentDataList" formControlName="dependentFieldId"
+                                                optionLabel="label" optionValue="value" appendTo="body"
+                                                placeholder="Select a logic type"></p-dropdown>
                                             <label for="dependentFieldId">Dependent Filed<span
                                                     style="color: red;">*</span></label>
                                             <div *ngIf="isInvalid('fieldAppLogicForm', 'dependentFieldId')">

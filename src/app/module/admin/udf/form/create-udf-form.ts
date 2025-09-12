@@ -108,6 +108,7 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
             { label: "IN", value: "IN" }, // number and char
             { label: "NOT_IN", value: "NOT_IN" }, // number and char
             { label: "BETWEEN", value: "BETWEEN" } // number and date
+
         ];
     }
 
@@ -219,6 +220,12 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
 
 
         this.prapareFieldappearnceLogicListForm(new FieldAppearanceLogic)
+    }
+
+    deleteDomainListData(item: UserDefinedFieldDomainData) {
+        // remove from the local list
+        this.userDefinedFieldDomainDataList = this.userDefinedFieldDomainDataList.filter(f => f.id !== item.id);
+
     }
 
     deleteAppearanceLogic(item: FieldAppearanceLogic) {

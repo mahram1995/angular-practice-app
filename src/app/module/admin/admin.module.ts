@@ -19,6 +19,7 @@ import { UdfListComponent } from './udf/list/udf-list.componemt';
 import { FormsModule } from '@angular/forms';
 import { GenerateReportUiFormComponent } from './udf/generate-report-ui/generate-report-ui.form';
 import { ReportListComponent } from './udf/report-list/report-list.componemt';
+import { SafeUrlPipe } from '../../app-configuration/app-security/safe-url.pipe';
 
 @NgModule({
     imports: [
@@ -26,7 +27,8 @@ import { ReportListComponent } from './udf/report-list/report-list.componemt';
         CommonModule,
         AdminRoutesModule,
         PanelMenuModule,
-        FormsModule
+        FormsModule,
+
 
     ],
 
@@ -44,7 +46,8 @@ import { ReportListComponent } from './udf/report-list/report-list.componemt';
         CreateUdfFormComponent,
         UdfListComponent,
         GenerateReportUiFormComponent,
-        ReportListComponent
+        ReportListComponent,
+
 
 
     ],

@@ -6,6 +6,7 @@
             </div>
             <div class="app-button-group">
 
+                <button (click)="showParaForm()"> {{!isShowParaForm? 'Show':'Hide' }} Para Form</button>
                 <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
                 <button (click)="refresh()"><i class="pi pi-refresh" style="font-size:12px"></i> Refresh</button>
             </div>
@@ -14,7 +15,7 @@
         <hr style="margin: 0px; padding: 0px; width: 100%;">
     </div>
 
-    <div style=" margin: 10px 20px 10px 20px; ">
+    <div *ngIf="isShowParaForm" style=" margin: 10px 20px 10px 20px; ">
         <form [formGroup]="form" class="app-card" style=" margin-bottom: 15px;">
             <div class="row " *ngIf="form" style="padding: 10px 25px 0px 25px; ">
                 <ng-container *ngFor="let field of visibleFields(); let i = index">
@@ -85,7 +86,7 @@
 
                                 <div class="app-dropdown" style="padding: 0px 10px 0px 10px">
                                     <p-dropdown
-                                        [styleClass]=" isInvalid('form', field.name) ? 'is-invalid' : 'app-dropdown-field' "
+                                        [styleClass]="'app-dropdown-field ' + (isInvalid('form','value') ? 'is-invalid' : '')"
                                         [options]="field.userDefinedFieldDomainDataList" [formControlName]="field.name"
                                         optionLabel="label" optionValue="value" appendTo="body"
                                         [placeholder]="'Select '+ field.label"
@@ -107,15 +108,17 @@
                 </ng-container>
             </div>
             <div style="text-align: center; margin-bottom: 20px;">
-                <button type="submit" class="app-button" (click)="showReport()">Show Report</button>
+                <button type="submit" class="app-button" (click)="downloadedReport()">Show Report</button>
             </div>
 
         </form>
-        <div class="app-card" style="margin-bottom: 10px;">
-            <textarea name="" id="" style="width: 100%; height: 200px;">{{formValue}}</textarea>
 
-        </div>
     </div>
 
+    <div class="app-card" style=" margin: 10px 20px 10px 20px; ">
+        <iframe *ngIf="reportUrl" [src]="reportUrl | safeUrl" width="100%" height="800px"
+            style="border: 1px solid #ccc;">
+        </iframe>
 
+    </div>
 </div>
