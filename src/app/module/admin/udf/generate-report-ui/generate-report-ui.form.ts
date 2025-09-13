@@ -32,6 +32,15 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
     reportName: any;
     isShowParaForm: boolean = true
     isShowReport: boolean = false
+    reportTypeList = [
+        { label: "PDF", value: 'pdf' },
+        { label: "DOCX", value: 'docx' },
+        { label: "XLS", value: 'xls' },
+        { label: "XLSX", value: 'xlsx' },
+        { label: "CSV", value: 'csv' },
+        { label: "HTML", value: 'html' },
+
+    ];
 
     udfProfileData: UDFDomain; // Paste your JSON here
     profileId: number
@@ -81,6 +90,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
 
     setValidation() {
+        this.form.addControl('reportType', new FormControl('pdf', Validators.required));
         this.fields.forEach(field => {
             const validators = [];
             if (field.mandatory) {
@@ -139,10 +149,6 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         const allDependenciesFilled = field.dependsOn.every(dep => !!this.form.get(dep)?.value);
         if (!allDependenciesFilled) return;
 
-        // Call the API
-        // this.http.get<any[]>(endpoint).subscribe(data => {
-        //      field.options = data;
-        //});
     }
 
 
@@ -311,32 +317,13 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             return;
         }
 
-
         const queryString = (Object.entries(this.form.value) as [string, any][])
             .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
             .join("&");
 
-
         let data = this.form.value;
-        let expression = this.udfProfileData.reportFileName
-        // Step 1: Convert Java '.equals' to JS '==='
-        const jsExpression = expression.replace(/\.equals\((['"])(.*?)\1\)/g, " === '$2'");
-
-        // Step 2: Replace 'data' with the object variable name
-        // In this example, 'data' in the expression refers to 'dataObj' in JS
-        const finalExpression = jsExpression.replace(/\bdata\b/g, 'data');
-        // Step 3: Evaluate safely
-        let reportFileName: string;
-        try {
-            reportFileName = Function('data', `return ${finalExpression}`)(data);
-        } catch (e) {
-            console.error('Failed to evaluate expression', e);
-        }
-
-        console.log(reportFileName);
-
-
-        const reportType = 'pdf'; // or 'html', 'txt'
+        let reportFileName = this.getReportFIleName(data)
+        const reportType = data.reportType; // or 'html', 'txt'
         const parameter = queryString + '&j_username=jasperadmin&j_password=jasperadmin';
 
         this.urlSearchMap = new Map()
@@ -347,6 +334,20 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             (blob: Blob) => {
                 // Success → PDF (or other file)
                 const file = new Blob([blob], { type: this.getMimeType(reportType) });
+
+                // ✅ Only for XLS/XLSX → trigger download
+                if (reportType.toLowerCase() === 'xls' || reportType.toLowerCase() === 'xlsx'
+                    || reportType.toLowerCase() === 'docx' || reportType.toLowerCase() === 'csv') {
+                    const fileName = this.udfProfileData.reportFileName + '.' + reportType;
+                    const url = window.URL.createObjectURL(file);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    return; // exit to avoid showing PDF preview
+                }
+
                 this.reportUrl = URL.createObjectURL(file);
                 this.isShowReport = true;
                 this.isShowParaForm = false;
@@ -373,22 +374,49 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             }
         )
 
+    }
 
+    getReportFIleName(data: any) {
+        let expression = this.udfProfileData.reportFileName; // could be a string or an expression
 
+        let reportFileName: string;
 
+        try {
+            // Check if the expression contains ".equals" → treat as expression
+            if (expression.includes('.equals')) {
+                // Step 1: Convert Java '.equals' to JS '==='
+                const jsExpression = expression.replace(/\.equals\((['"])(.*?)\1\)/g, " === '$2'");
 
+                // Step 2: Replace 'data' with the object variable (here 'data' itself)
+                const finalExpression = jsExpression.replace(/\bdata\b/g, 'data');
 
-
+                // Step 3: Evaluate safely
+                reportFileName = Function('data', `return ${finalExpression}`)(data);
+            } else {
+                // User provided a single report name → use directly
+                reportFileName = expression;
+            }
+        } catch (e) {
+            console.error('Failed to evaluate expression', e);
+            reportFileName = ''; // fallback
+        }
+        return reportFileName;
     }
 
     getMimeType(type: string): string {
         switch (type.toLowerCase()) {
-            case 'pdf': return 'application/pdf';
-            case 'html': return 'text/html';
-            case 'txt': return 'text/plain';
-            case 'docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-            case 'xls': return 'application/vnd.ms-excel';
-            default: return 'application/octet-stream';
+            case "pdf": return "application/pdf";
+            case "xls": return "application/vnd.ms-excel";
+            case "xlsx": return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            case "csv": return "text/csv";
+            case "html": return "text/html";
+            case "rtf": return "application/rtf";
+            case "xml": return "application/xml";
+            case "docx": return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            case "odt": return "application/vnd.oasis.opendocument.text";
+            case "pptx": return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+            case "json": return "application/json";
+            default: return "application/octet-stream";
         }
     }
 

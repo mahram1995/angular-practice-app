@@ -106,6 +106,23 @@
                         </ng-container>
                     </div>
                 </ng-container>
+                <div class="col-md-6">
+                    <div class=" app-dropdown" style="padding: 0px 10px 0px 10px">
+                        <p-dropdown
+                            [styleClass]="'app-dropdown-field ' + (isInvalid('form','reportType') ? 'is-invalid' : '')"
+                            [options]="reportTypeList" formControlName="reportType" optionLabel="label"
+                            optionValue="value" appendTo="body" (onChange)="onSelectChange($event, 'reportType')">
+                        </p-dropdown>
+                        <label for="dataType">Reprot Type<span style="color: red;">*</span></label>
+
+                        <div *ngIf="isInvalid('form', 'reportType')">
+                            <div class="error-alert" *ngIf="isRequired('form', 'reportType')">
+                                Report type is required.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <div style="text-align: center; margin-bottom: 20px;">
                 <button type="submit" class="app-button" (click)="downloadedReport()">Show Report</button>
