@@ -2,7 +2,8 @@ export class UDFDomain {
     id: number;
     name: String;
     code: number;
-    module: string;
+    reportFileName: string
+    moduleName: string;
     userDefinedFields: UserDefinedField[]
 }
 

@@ -361,7 +361,10 @@ ul {
 .toast-error-style {
     background-color: rgb(187, 21, 21);
     border-radius: 5px;
-
+    max-width: 100%;
+    word-wrap: break-word !important;
+    /* Break long words/URLs */
+    overflow-wrap: break-word !important;
     padding-bottom: 12px !important;
     color: white;
 }

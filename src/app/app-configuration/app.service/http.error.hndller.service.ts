@@ -34,7 +34,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                             errorMsg = 'Server not reachable.\n' + error.url;
                             break;
                         case 400:
-                            errorMsg = error.error.message || 'Bad Request';
+                            errorMsg = error.error?.message ? error.error?.message : error.message;
                             break;
                         case 401:
                             if (error.error.message) {
@@ -51,7 +51,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                             errorMsg = 'Forbidden.';
                             break;
                         case 404:
-                            errorMsg = error.url ? 'API not found ' + error.url : 'Resource not found';
+                            errorMsg = error.message ? 'API not found ' + error.message : 'Resource not found';
                             break;
                         case 500:
                             errorMsg = 'An unexpected server error occurred. Please try again later.';

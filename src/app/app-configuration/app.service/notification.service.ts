@@ -27,7 +27,7 @@ export class NotificationService {
         this.messageService.add({ severity: 'error', summary: 'Error !!', detail: this.transform(message), styleClass: 'toast-error-style', icon: 'abc', sticky: true });
     }
 
-    transform(value: string | null | undefined, max = 40): string {
+    transform(value: string | null | undefined, max = 35): string {
         if (!value) return '';
 
         const words = value.split(' ');

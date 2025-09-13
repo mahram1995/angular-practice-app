@@ -1,8 +1,8 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BaseService, PathParameters } from '../../../../app-configuration/app.service/base-service';
 import { HttpService } from '../../../../app-configuration/app.service/http.service';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { BASE_URL } from '../../../../app-configuration/app.service/environment';
 import { UDFDomain, UserDefinedField } from './udf.domain';
 
@@ -42,11 +42,12 @@ export class UDFService extends BaseService {
     public getUdf(urlSearchParams): Observable<any> {
         return this.http.get(GET_UDFS, urlSearchParams);
     }
+
     public getReportFromJasperServer(urlSearchParams: any): Observable<Blob> {
         return this.http.get(GET_REPORT, {
             params: urlSearchParams,
             responseType: 'blob' // important
-        });
+        })
     }
 
     public getUdfById(urlSearchParams): Observable<any> {

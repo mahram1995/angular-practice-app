@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BaseService, PathParameters } from '../../../../app-configuration/app.service/base-service';
 import { BaseComponent } from '../../../../app-configuration/app-component/base-component/base.component';
 import { CommonService } from '../../../../app-configuration/app.service/common.service';
 import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
 import { UDFService } from '../service/udf.service';
-import { UserDefinedField, UserDefinedFieldDomainData } from '../service/udf.domain';
+import { UDFDomain, UserDefinedField, UserDefinedFieldDomainData } from '../service/udf.domain';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { ActivatedRoute } from '@angular/router';
 import { UserDefinedFields } from '../../../../dynamic-form/json-data/domain';
 import { filter } from 'rxjs';
+import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
 
 
 
@@ -30,13 +31,15 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
     domainList: { label: string; value: any }[] = [];
     reportName: any;
     isShowParaForm: boolean = true
+    isShowReport: boolean = false
 
-    udfDataList: any; // Paste your JSON here
+    udfProfileData: UDFDomain; // Paste your JSON here
     profileId: number
 
     constructor(private fb: FormBuilder,
         protected override location: Location,
         protected override commonService: CommonService,
+        private notificationService: NotificationService,
         private udfService: UDFService,
         private route: ActivatedRoute,
     ) { super(location, commonService); }
@@ -54,9 +57,9 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         this.urlSearchMap = new Map
         this.urlSearchMap.set('id', profileId)
         this.udfService.getUdfById(this.urlSearchMap).subscribe(data => {
-            this.udfDataList = data
-            this.fields = this.udfDataList.userDefinedFields.sort((a, b) => a.order - b.order);
-            this.reportName = this.udfDataList.name
+            this.udfProfileData = data
+            this.fields = this.udfProfileData.userDefinedFields.sort((a, b) => a.orderNo - b.orderNo);
+            this.reportName = this.udfProfileData.name
 
             this.setValidation();
             this.fields
@@ -307,26 +310,73 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             this.form.markAllAsTouched();
             return;
         }
-        console.log(this.form.value);
+
+
         const queryString = (Object.entries(this.form.value) as [string, any][])
             .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
             .join("&");
 
-        console.log(queryString);
-        const reportName = 'ACCOUNT_BALANCE_REPORT';
+
+        let data = this.form.value;
+        let expression = this.udfProfileData.reportFileName
+        // Step 1: Convert Java '.equals' to JS '==='
+        const jsExpression = expression.replace(/\.equals\((['"])(.*?)\1\)/g, " === '$2'");
+
+        // Step 2: Replace 'data' with the object variable name
+        // In this example, 'data' in the expression refers to 'dataObj' in JS
+        const finalExpression = jsExpression.replace(/\bdata\b/g, 'data');
+        // Step 3: Evaluate safely
+        let reportFileName: string;
+        try {
+            reportFileName = Function('data', `return ${finalExpression}`)(data);
+        } catch (e) {
+            console.error('Failed to evaluate expression', e);
+        }
+
+        console.log(reportFileName);
+
+
         const reportType = 'pdf'; // or 'html', 'txt'
         const parameter = queryString + '&j_username=jasperadmin&j_password=jasperadmin';
 
         this.urlSearchMap = new Map()
-        this.urlSearchMap.set('reportName', reportName)
+        this.urlSearchMap.set('reportName', reportFileName)
         this.urlSearchMap.set('reportType', reportType)
         this.urlSearchMap.set('parameter', parameter)
-        this.udfService.getReportFromJasperServer(this.urlSearchMap).subscribe(blob => {
-            const mimeType = this.getMimeType(reportType); // e.g., 'application/pdf'
-            const file = new Blob([blob], { type: mimeType });
-            this.reportUrl = URL.createObjectURL(file);
-            this.isShowParaForm = false
-        });
+        this.udfService.getReportFromJasperServer(this.urlSearchMap).subscribe(
+            (blob: Blob) => {
+                // Success → PDF (or other file)
+                const file = new Blob([blob], { type: this.getMimeType(reportType) });
+                this.reportUrl = URL.createObjectURL(file);
+                this.isShowReport = true;
+                this.isShowParaForm = false;
+            },
+            (error: HttpErrorResponse) => {
+                // Failure → Angular wraps it in HttpErrorResponse
+                if (error.error instanceof Blob && error.error.type === 'text/plain') {
+                    error.error.text().then((msg: string) => {
+                        this.isShowReport = false;
+                        this.isShowParaForm = true;
+                        if (error.status == 500) {
+                            this.notificationService.sendError('There has report design error')
+                        } else {
+                            this.notificationService.sendError(msg); // toast}
+                        }
+
+                    });
+                } else {
+                    // fallback
+                    this.notificationService.sendError(
+                        error.message || 'Unexpected error occurred'
+                    );
+                }
+            }
+        )
+
+
+
+
+
 
 
     }

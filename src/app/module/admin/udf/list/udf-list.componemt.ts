@@ -17,9 +17,9 @@ const CORRECTION_UI = 'admin/create-udf';
 })
 export class UdfListComponent implements OnInit {
     required_field: any = {
-        userName: 'code',
-        password: 'name',
-        email: 'module',
+        code: 'code',
+        name: 'name',
+        moduleName: 'module',
     };
     data: UDFDomain[];
     urlSearchMap: Map<string, any> = new Map();
@@ -66,7 +66,7 @@ export class UdfListComponent implements OnInit {
         this.udfForm = this.formBuilder.group({
             code: ['', Validators.required],
             name: ['', Validators.required],
-            module: ['', Validators.required]
+            moduleName: ['', Validators.required]
         });
     }
 

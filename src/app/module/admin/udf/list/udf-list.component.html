@@ -101,11 +101,12 @@
                     </div>
                     <div class="col-sm-6  col-md-3 ">
                         <div class="app-input-field">
-                            <input type="text" id="module" placeholder=" " formControlName="module" [ngClass]="{'is-invalid' :udfForm.controls.module?.touched &&
-                                         udfForm.controls.module?.errors}">
-                            <label for="module">Module Name</label>
-                            <div *ngIf="udfForm.controls['module']?.errors && udfForm.controls['module']?.touched">
-                                <div class="error-alert" [hidden]="!udfForm.controls['module']?.errors?.required">
+                            <input type="text" id="moduleName" placeholder=" " formControlName="moduleName" [ngClass]="{'is-invalid' :udfForm.controls.moduleName?.touched &&
+                                         udfForm.controls.moduleName?.errors}">
+                            <label for="moduleName">Module Name</label>
+                            <div
+                                *ngIf="udfForm.controls['moduleName']?.errors && udfForm.controls['moduleName']?.touched">
+                                <div class="error-alert" [hidden]="!udfForm.controls['moduleName']?.errors?.required">
                                     Module is required.</div>
                             </div>
                         </div>
