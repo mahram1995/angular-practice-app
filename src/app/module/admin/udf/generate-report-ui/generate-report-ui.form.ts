@@ -9,7 +9,7 @@ import { FormBaseComponent } from '../../../../app-configuration/app-component/b
 import { UDFService } from '../service/udf.service';
 import { UDFDomain, UserDefinedField, UserDefinedFieldDomainData } from '../service/udf.domain';
 import { DropdownChangeEvent } from 'primeng/dropdown';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserDefinedFields } from '../../../../dynamic-form/json-data/domain';
 import { filter } from 'rxjs';
 import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
@@ -49,6 +49,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         protected override location: Location,
         protected override commonService: CommonService,
         private notificationService: NotificationService,
+        protected override router: Router,
         private udfService: UDFService,
         private route: ActivatedRoute,
     ) { super(location, commonService); }
@@ -58,6 +59,9 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             this.profileId = params.udfProfileId;
             this.fetchUdfs(this.profileId);
 
+        });
+        this.form = this.fb.group({
+            reportExtension: ['pdf', Validators.required]
         });
 
     }
@@ -90,7 +94,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
 
     setValidation() {
-        this.form.addControl('reportType', new FormControl('pdf', Validators.required));
+        this.form.addControl('reportExtension', new FormControl('pdf', Validators.required));
         this.fields.forEach(field => {
             const validators = [];
             if (field.mandatory) {
@@ -323,22 +327,26 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
         let data = this.form.value;
         let reportFileName = this.getReportFIleName(data)
-        const reportType = data.reportType; // or 'html', 'txt'
+        const reportExtension = data.reportExtension; // or 'html', 'txt'
         const parameter = queryString + '&j_username=jasperadmin&j_password=jasperadmin';
+        if (reportFileName === "") {
+            this.notificationService.sendError('Report file name is not found, Please check the report file name or expresion')
+            return;
+        }
 
         this.urlSearchMap = new Map()
         this.urlSearchMap.set('reportName', reportFileName)
-        this.urlSearchMap.set('reportType', reportType)
+        this.urlSearchMap.set('reportType', reportExtension)
         this.urlSearchMap.set('parameter', parameter)
         this.udfService.getReportFromJasperServer(this.urlSearchMap).subscribe(
             (blob: Blob) => {
                 // Success → PDF (or other file)
-                const file = new Blob([blob], { type: this.getMimeType(reportType) });
+                const file = new Blob([blob], { type: this.getMimeType(reportExtension) });
 
                 // ✅ Only for XLS/XLSX → trigger download
-                if (reportType.toLowerCase() === 'xls' || reportType.toLowerCase() === 'xlsx'
-                    || reportType.toLowerCase() === 'docx' || reportType.toLowerCase() === 'csv') {
-                    const fileName = this.udfProfileData.reportFileName + '.' + reportType;
+                if (reportExtension.toLowerCase() === 'xls' || reportExtension.toLowerCase() === 'xlsx'
+                    || reportExtension.toLowerCase() === 'docx' || reportExtension.toLowerCase() === 'csv') {
+                    const fileName = this.udfProfileData.reportFileName + '.' + reportExtension;
                     const url = window.URL.createObjectURL(file);
                     const a = document.createElement('a');
                     a.href = url;
@@ -383,12 +391,10 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
         try {
             // Check if the expression contains ".equals" → treat as expression
-            if (expression.includes('.equals')) {
-                // Step 1: Convert Java '.equals' to JS '==='
-                const jsExpression = expression.replace(/\.equals\((['"])(.*?)\1\)/g, " === '$2'");
+            if (expression.includes('===')) {
 
                 // Step 2: Replace 'data' with the object variable (here 'data' itself)
-                const finalExpression = jsExpression.replace(/\bdata\b/g, 'data');
+                const finalExpression = expression.replace(/\bdata\b/g, 'data');
 
                 // Step 3: Evaluate safely
                 reportFileName = Function('data', `return ${finalExpression}`)(data);
@@ -544,7 +550,11 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         }
     }
 
-    back() { this.location.back() }
+    back() {
+        this.router.navigate(['admin/report-list'], {
+
+        })
+    }
     refresh() {
         this.form = this.fb.group({});
         this.fields = []

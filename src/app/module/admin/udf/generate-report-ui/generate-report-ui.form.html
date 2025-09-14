@@ -109,14 +109,14 @@
                 <div class="col-md-6">
                     <div class=" app-dropdown" style="padding: 0px 10px 0px 10px">
                         <p-dropdown
-                            [styleClass]="'app-dropdown-field ' + (isInvalid('form','reportType') ? 'is-invalid' : '')"
-                            [options]="reportTypeList" formControlName="reportType" optionLabel="label"
-                            optionValue="value" appendTo="body" (onChange)="onSelectChange($event, 'reportType')">
+                            [styleClass]="'app-dropdown-field ' + (isInvalid('form','reportExtension') ? 'is-invalid' : '')"
+                            [options]="reportTypeList" formControlName="reportExtension" optionLabel="label"
+                            optionValue="value" appendTo="body" (onChange)="onSelectChange($event, 'reportExtension')">
                         </p-dropdown>
-                        <label for="dataType">Reprot Type<span style="color: red;">*</span></label>
+                        <label for="reportExtension">Reprot Type<span style="color: red;">*</span></label>
 
-                        <div *ngIf="isInvalid('form', 'reportType')">
-                            <div class="error-alert" *ngIf="isRequired('form', 'reportType')">
+                        <div *ngIf="isInvalid('form', 'reportExtension')">
+                            <div class="error-alert" *ngIf="isRequired('form', 'reportExtension')">
                                 Report type is required.
                             </div>
                         </div>

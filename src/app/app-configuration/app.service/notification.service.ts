@@ -29,8 +29,10 @@ export class NotificationService {
 
     transform(value: string | null | undefined, max = 35): string {
         if (!value) return '';
+        let values = value.replace(/%26/g, '&');
 
-        const words = value.split(' ');
+        const words = values.split(' ');
+
         const lines: string[] = [];
         let line = '';
 
