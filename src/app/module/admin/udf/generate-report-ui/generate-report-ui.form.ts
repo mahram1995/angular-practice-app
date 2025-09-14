@@ -441,7 +441,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         const rawUrl = field.serviceEndpointName; ""
         this.udfService.getDataFromServiceEndPoint(rawUrl).subscribe({
             next: (response: any) => {
-                let data = response.content;
+                let data = response;
 
                 field.userDefinedFieldDomainDataList = data.map(item => ({
                     label: item[field.labelOfServiceEndpoint || 'label'],
@@ -472,7 +472,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
                 this.udfService.getDataFromServiceEndPoint(url).subscribe({
                     next: (response: any) => {
-                        let data = response.content;
+                        let data = response;
 
                         field.userDefinedFieldDomainDataList = data.map(item => ({
                             label: item[field.labelOfServiceEndpoint],
