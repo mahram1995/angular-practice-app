@@ -245,6 +245,7 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
         this.fieldAppLogicList = []
         this.userDefinedFieldDomainDataList = []
         this.dataTable.reset();
+        this.type = null
         this.selectedUdf = null
         this.isServiceEndpoint = true
         this.isRowSelected = false

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Location } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BaseService, PathParameters } from '../../../../app-configuration/app.service/base-service';
 import { BaseComponent } from '../../../../app-configuration/app-component/base-component/base.component';
@@ -50,6 +50,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         protected override commonService: CommonService,
         private notificationService: NotificationService,
         protected override router: Router,
+        private datePipe: DatePipe,
         private udfService: UDFService,
         private route: ActivatedRoute,
     ) { super(location, commonService); }
@@ -117,13 +118,13 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
                 if (field.maximumLength !== undefined && field.maximumLength !== null) {
                     validators.push(Validators.max(field.maximumLength));
                 }
-
             }
             if (field.regularExpression) {
                 validators.push(Validators.pattern(field.regularExpression));
             }
 
             this.form.addControl(field.name, new FormControl('', validators));
+
 
             if (field.dataType === 'DROP_DOWN') {
                 if (field.isServiceEndpoint && field.fieldAppearanceLogics.length == 0) {
@@ -137,6 +138,63 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             };
 
         });
+
+    }
+
+    setMinimumDateValidation(field) {
+        const control = this.form.get(field.name);
+        let dependentfield = this.fields.find(f => f.name === field.minimumLength)
+        let formValue = this.form.value
+        control.setValidators([
+            (c) => {
+                let minDate = this.datePipe.transform(formValue[field.minimumLength], 'dd-MM-yyyy')
+
+                const value = c.value;
+
+                if (minDate) {
+                    return value && new Date(value) < new Date(formValue[field.minimumLength])
+                        ? { minDate: { required: dependentfield?.label + ' ' + minDate, actual: value } }
+                        : null;
+
+                }
+            }
+        ]);
+
+        control.updateValueAndValidity();
+    }
+
+    setMaximumDateValidation(field) {
+        const control = this.form.get(field.name);
+        let dependentFiled = this.fields.find(f => f.name === field.maximumLength)
+        let formValue = this.form.value
+        control.addValidators([
+            (c) => {
+                let maxDate = this.datePipe.transform(formValue[field.maximumLength], 'dd-MM-yyyy')
+
+                const value = c.value;
+                if (maxDate) {
+                    return value && new Date(value) > new Date(formValue[field.maximumLength])
+                        ? { maxDate: { required: dependentFiled?.label + ' ' + maxDate, actual: value } }
+                        : null;
+                }
+            }
+        ]);
+        control.updateValueAndValidity();
+
+    }
+
+    onDateSelect(field) {
+        if (field.dataType === 'DATE') {
+            // Example: ensure selected date >= minimumDate
+            if (field.minimumLength) {
+                this.setMinimumDateValidation(field)
+            }
+
+            if (field.maximumLength) {
+                this.setMaximumDateValidation(field)
+            }
+
+        }
     }
 
     loadDependentFieldOptions(field: any) {
@@ -198,6 +256,10 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
     getFieldNameById(id: number): string {
         const field = this.fields.find(f => f.id === id);
         return field?.name || '';
+    }
+    getFieldLabelNameByParamName(paramName: string): string {
+        const field = this.fields.find(f => f.name === paramName);
+        return field?.label || '';
     }
     getFieldIdByFiledName(name: string): number {
         const field = this.fields.find(f => f.name === name);
@@ -444,8 +506,8 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
                 let data = response;
 
                 field.userDefinedFieldDomainDataList = data.map(item => ({
-                    label: item[field.labelOfServiceEndpoint || 'label'],
-                    value: item[field.valueOfServiceEndpoint || 'value']
+                    label: item[field.labelOfServiceEndpoint ? field.labelOfServiceEndpoint : 'name'],
+                    value: item[field.valueOfServiceEndpoint ? field.valueOfServiceEndpoint : 'id']
                 }));
             },
             error: err => {
@@ -475,8 +537,8 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
                         let data = response;
 
                         field.userDefinedFieldDomainDataList = data.map(item => ({
-                            label: item[field.labelOfServiceEndpoint],
-                            value: item[field.valueOfServiceEndpoint]
+                            label: item[field.labelOfServiceEndpoint ? field.labelOfServiceEndpoint : 'name'],
+                            value: item[field.valueOfServiceEndpoint ? field.valueOfServiceEndpoint : 'id']
                         }));
                         field.userDefinedFieldDomainDataList.unshift(new UserDefinedFieldDomainData(null, null, ' Select ' + field.label, null, null, null))
                     },

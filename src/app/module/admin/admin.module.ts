@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { AdminHomeComponent } from './admin.component';
 import { AppShareModule } from '../../app-configuration/app-component/app-share-module/app-share-module';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { AdminRoutesModule } from './admin.routes.module';
 import { AdminHomePageComponent } from './admin-home-page/admin.home.page';
 import { UserRegistrationComponent } from './user/form/create-user.form.component';
@@ -53,7 +53,7 @@ import { SafeUrlPipe } from '../../app-configuration/app-security/safe-url.pipe'
     ],
 
     providers: [
-
+        DatePipe
     ],
 
 })
