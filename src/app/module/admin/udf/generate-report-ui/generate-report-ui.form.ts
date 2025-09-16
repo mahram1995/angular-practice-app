@@ -102,21 +102,21 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
                 validators.push(Validators.required);
             }
             if (field.dataType == 'CHAR') {
-                if (field.minimumLength > 0) {
-                    validators.push(Validators.minLength(field.minimumLength));
+                if (field.minimumLength) {
+                    validators.push(Validators.minLength(+field.minimumLength));
                 }
-                if (field.maximumLength > 0) {
-                    validators.push(Validators.maxLength(field.maximumLength));
+                if (field.maximumLength) {
+                    validators.push(Validators.maxLength(+field.maximumLength));
                 }
             }
             if (field.dataType == 'NUMBER') {
                 // Use maximumLength / minimumLength for numeric value in NUMBER field
                 if (field.minimumLength !== undefined && field.minimumLength !== null) {
-                    validators.push(Validators.min(field.minimumLength));
+                    validators.push(Validators.min(+field.minimumLength));
                 }
 
                 if (field.maximumLength !== undefined && field.maximumLength !== null) {
-                    validators.push(Validators.max(field.maximumLength));
+                    validators.push(Validators.max(+field.maximumLength));
                 }
             }
             if (field.regularExpression) {
@@ -160,7 +160,24 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             }
         ]);
 
+        //update dependent filed maxDate Validation  
+        const control3= this.form.get(dependentfield.name);
+        let dependentFiled2 = this.fields.find(f => f.name === dependentfield.maximumLength)
+        control3.addValidators([
+            (c) => {
+                let maxDate = this.datePipe.transform(formValue[dependentfield.maximumLength], 'dd-MM-yyyy')
+
+                const value = c.value;
+                if (maxDate) {
+                    return value && new Date(value) > new Date(formValue[dependentfield.maximumLength])
+                        ? { maxDate: { required: dependentFiled2?.label + ' ' + maxDate, actual: value } }
+                        : null;
+                }
+            }
+        ]);
+        control3.updateValueAndValidity();
         control.updateValueAndValidity();
+       
     }
 
     setMaximumDateValidation(field) {
@@ -179,6 +196,26 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
                 }
             }
         ]);
+
+         //update dependent filed maxDate Validation   
+        const control2 = this.form.get(dependentFiled.name);
+        let dependentfield2 = this.fields.find(f => f.name === dependentFiled.minimumLength)
+        control2.setValidators([
+            (c) => {
+                let minDate = this.datePipe.transform(formValue[dependentFiled.minimumLength], 'dd-MM-yyyy')
+
+                const value = c.value;
+
+                if (minDate) {
+                    return value && new Date(value) < new Date(formValue[dependentFiled.minimumLength])
+                        ? { minDate: { required: dependentfield2?.label + ' ' + minDate, actual: value } }
+                        : null;
+
+                }
+            }
+        ]);
+
+        control2.updateValueAndValidity();
         control.updateValueAndValidity();
 
     }

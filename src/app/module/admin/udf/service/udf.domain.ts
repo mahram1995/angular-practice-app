@@ -13,8 +13,8 @@ export class UserDefinedField {
     name: string;
     label: string;
     styleClass: string;
-    maximumLength: number;
-    minimumLength: number;
+    maximumLength: string;
+    minimumLength: string;
     minimumDate: string;
     miximumDate: string;
     regularExpression: string;
