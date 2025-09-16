@@ -68,6 +68,8 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
     dataType = [
         { label: "CHAR", value: 'CHAR' },
         { label: "DATE", value: 'DATE' },
+        { label: "MONTH", value: 'MONTH' },
+        { label: "YEAR", value: 'YEAR' },
         { label: "NUMBER", value: 'NUMBER' },
         { label: "BOOLEAN", value: 'BOOLEAN' },
         { label: "DROP_DOWN", value: 'DROP_DOWN' }

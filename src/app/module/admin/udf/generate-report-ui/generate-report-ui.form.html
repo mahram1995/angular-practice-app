@@ -22,25 +22,30 @@
                     <div [class]="field.styleClass" style="margin-bottom: 10px;">
                         <ng-container [ngSwitch]="field.dataType">
 
-                            <div *ngSwitchCase="'DATE'" class="form-group">
-                                <div class="app-input-field-date" style="padding: 0px 10px 0px 10px">
-                                    <input type="date" [id]="field.name" [formControlName]="field.name"
-                                        (change)="onDateSelect(field)"
-                                        [ngClass]="{'is-invalid' : isInvalid('form', field.name)}">
+                            <div *ngIf="field.dataType=='DATE' ||field.dataType=='MONTH' || field.dataType=='YEAR'  ">
+                                <div class="app-input-field-date" style="padding: 0px 10px 25px 10px">
                                     <label [for]="field.name">{{ field.label }}<span
                                             style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
-                                    <div class="error-alert"
+                                    <p-calendar [id]="field.name" [formControlName]="field.name"
+                                        [dateFormat]="field.dataType==='MONTH'?'MM': (field.dataType==='YEAR'? 'yy' :'dd/mm/yy')"
+                                        (change)="onDateSelect(field)"
+                                        [placeholder]="field.dataType==='MONTH'?'mm': (field.dataType==='YEAR'? 'yyyy' :'dd/mm/yyyy')"
+                                        [view]="field.dataType==='MONTH'?'month': (field.dataType==='YEAR'? 'year' :'date')"
+                                        [styleClass]="'app-date-field  ' + (isInvalid('form',field.name) ? 'is-invalid' : '')"></p-calendar>
+
+
+                                    <div class="error-message"
                                         *ngIf="form.get(field.name)?.hasError('required') && form.get(field.name)?.touched">
                                         {{ field.label }} is required.
                                     </div>
                                     <!-- Min Date -->
-                                    <div class="error-alert" *ngIf="form.get(field.name)?.errors?.minDate">
+                                    <div class="error-message" *ngIf="form.get(field.name)?.errors?.minDate">
                                         {{ field.label }} must be after {{
                                         form.get(field.name)?.errors?.minDate.required }}
                                     </div>
 
                                     <!-- Max Date -->
-                                    <div class="error-alert" *ngIf="form.get(field.name)?.errors?.maxDate">
+                                    <div class="error-message" *ngIf="form.get(field.name)?.errors?.maxDate">
                                         {{ field.label }} must be before {{
                                         form.get(field.name)?.errors?.maxDate.required }}
                                     </div>
@@ -50,23 +55,23 @@
 
                             </div>
 
+
                             <!-- CHAR -->
                             <div *ngSwitchCase="'CHAR'" class="form-group">
-
                                 <div class="app-input-field" style="padding: 0px 10px 0px 10px">
                                     <input type="text" [id]="field.name" placeholder="" [formControlName]="field.name"
                                         [ngClass]="{'is-invalid' : isInvalid('form', field.name)}">
                                     <label [for]="field.name">{{ field.label }}<span
                                             style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
                                     <div *ngIf="isInvalid('form', field.name)">
-                                        <div class="error-alert" *ngIf="isRequired('form', field.name)">
+                                        <div class="error-message" *ngIf="isRequired('form', field.name)">
                                             {{ field.label }} is required.
                                         </div>
 
-                                        <div class="error-alert" *ngIf="isMaxLength('form', field.name)">
+                                        <div class="error-message" *ngIf="isMaxLength('form', field.name)">
                                             Maximum length is {{ field.maximumLength }} is required.
                                         </div>
-                                        <div class="error-alert" *ngIf="isMinLength('form', field.name)">
+                                        <div class="error-message" *ngIf="isMinLength('form', field.name)">
                                             Minimum length is {{ field.minimumLength }} is required.
                                         </div>
 
@@ -82,13 +87,13 @@
                                     <label [for]="field.name">{{ field.label }}<span
                                             style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
                                     <div *ngIf="isInvalid('form', field.name)">
-                                        <div class="error-alert" *ngIf="isRequired('form', field.name)">
+                                        <div class="error-message" *ngIf="isRequired('form', field.name)">
                                             {{ field.label }} is required.
                                         </div>
-                                        <div class="error-alert" *ngIf="isMaxValue('form', field.name)">
+                                        <div class="error-message" *ngIf="isMaxValue('form', field.name)">
                                             Maximum value is {{ field.maximumLength }}
                                         </div>
-                                        <div class="error-alert" *ngIf="isMinValue('form', field.name)">
+                                        <div class="error-message" *ngIf="isMinValue('form', field.name)">
                                             Minimum value is {{ field.minimumLength }}
                                         </div>
                                     </div>
@@ -96,11 +101,11 @@
                             </div>
 
                             <!-- DROP_DOWN -->
-                            <div *ngSwitchCase="'DROP_DOWN'" style=" padding-left: 10;">
+                            <div *ngSwitchCase="'DROP_DOWN'">
 
                                 <div class="app-dropdown" style="padding: 0px 10px 0px 10px">
                                     <p-dropdown
-                                        [styleClass]="'app-dropdown-field ' + (isInvalid('form','value') ? 'is-invalid' : '')"
+                                        [styleClass]="'app-dropdown-field ' + (isInvalid('form',field.name) ? 'is-invalid' : '')"
                                         [options]="field.userDefinedFieldDomainDataList" [formControlName]="field.name"
                                         optionLabel="label" optionValue="value" appendTo="body"
                                         [placeholder]="'Select '+ field.label" [filter]="true"
@@ -110,7 +115,7 @@
                                             style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
 
                                     <div *ngIf="isInvalid('form', field.name)">
-                                        <div class="error-alert" *ngIf="isRequired('form', field.name)">
+                                        <div class="error-message" *ngIf="isRequired('form', field.name)">
                                             {{ field.label }} is required.
                                         </div>
                                     </div>
@@ -130,7 +135,7 @@
                         <label for="reportExtension">Reprot Type<span style="color: red;">*</span></label>
 
                         <div *ngIf="isInvalid('form', 'reportExtension')">
-                            <div class="error-alert" *ngIf="isRequired('form', 'reportExtension')">
+                            <div class="error-message" *ngIf="isRequired('form', 'reportExtension')">
                                 Report type is required.
                             </div>
                         </div>

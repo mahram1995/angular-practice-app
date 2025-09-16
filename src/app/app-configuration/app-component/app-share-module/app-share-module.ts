@@ -22,7 +22,9 @@ import { PasswordChangeComponent } from '../password-change/password.change.comp
 import { BranchSwitchComponent } from '../branch-switch/branch.change.component';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { RouterModule } from '@angular/router';
+import { CalendarModule } from 'primeng/calendar';
 import { SafeUrlPipe } from '../../app-security/safe-url.pipe';
+
 
 
 @NgModule({
@@ -41,7 +43,8 @@ import { SafeUrlPipe } from '../../app-security/safe-url.pipe';
         TableModule,
         MatCardModule,
         TreeModule,
-        NgxSpinnerModule
+        NgxSpinnerModule,
+        CalendarModule
 
 
     ],
@@ -78,6 +81,7 @@ import { SafeUrlPipe } from '../../app-security/safe-url.pipe';
         TreeModule,
         MatCardModule,
         TableModule,
+        CalendarModule
     ],
 
     providers: [

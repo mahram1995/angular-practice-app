@@ -153,31 +153,14 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
                 if (minDate) {
                     return value && new Date(value) < new Date(formValue[field.minimumLength])
-                        ? { minDate: { required: dependentfield?.label + ' ' + minDate, actual: value } }
+                        ? { minDate: { required: minDate, actual: value } }
                         : null;
 
                 }
             }
         ]);
-
-        //update dependent filed maxDate Validation  
-        const control3= this.form.get(dependentfield.name);
-        let dependentFiled2 = this.fields.find(f => f.name === dependentfield.maximumLength)
-        control3.addValidators([
-            (c) => {
-                let maxDate = this.datePipe.transform(formValue[dependentfield.maximumLength], 'dd-MM-yyyy')
-
-                const value = c.value;
-                if (maxDate) {
-                    return value && new Date(value) > new Date(formValue[dependentfield.maximumLength])
-                        ? { maxDate: { required: dependentFiled2?.label + ' ' + maxDate, actual: value } }
-                        : null;
-                }
-            }
-        ]);
-        control3.updateValueAndValidity();
         control.updateValueAndValidity();
-       
+
     }
 
     setMaximumDateValidation(field) {
@@ -191,31 +174,11 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
                 const value = c.value;
                 if (maxDate) {
                     return value && new Date(value) > new Date(formValue[field.maximumLength])
-                        ? { maxDate: { required: dependentFiled?.label + ' ' + maxDate, actual: value } }
+                        ? { maxDate: { required: maxDate, actual: value } }
                         : null;
                 }
             }
         ]);
-
-         //update dependent filed maxDate Validation   
-        const control2 = this.form.get(dependentFiled.name);
-        let dependentfield2 = this.fields.find(f => f.name === dependentFiled.minimumLength)
-        control2.setValidators([
-            (c) => {
-                let minDate = this.datePipe.transform(formValue[dependentFiled.minimumLength], 'dd-MM-yyyy')
-
-                const value = c.value;
-
-                if (minDate) {
-                    return value && new Date(value) < new Date(formValue[dependentFiled.minimumLength])
-                        ? { minDate: { required: dependentfield2?.label + ' ' + minDate, actual: value } }
-                        : null;
-
-                }
-            }
-        ]);
-
-        control2.updateValueAndValidity();
         control.updateValueAndValidity();
 
     }

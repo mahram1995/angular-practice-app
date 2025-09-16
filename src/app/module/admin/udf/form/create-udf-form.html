@@ -82,7 +82,7 @@
                                     [ngClass]="{'is-invalid' : isInvalid('udfForm', 'label')}">
                                 <label for="label">Label Name<span style="color: red;">*</span></label>
                                 <div *ngIf="isInvalid('udfForm', 'label')">
-                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'label')">
+                                    <div class="error-message" *ngIf="isRequired('udfForm', 'label')">
                                         Label is requird</div>
                                 </div>
                             </div>
@@ -93,28 +93,28 @@
                                     [ngClass]="{'is-invalid' : isInvalid('udfForm', 'name')}">
                                 <label for="name">Parameter Name<span style="color: red;">*</span></label>
                                 <div *ngIf="isInvalid('udfForm', 'name')">
-                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'name')">
+                                    <div class="error-message" *ngIf="isRequired('udfForm', 'name')">
                                         Parameter Name is requird</div>
 
                                 </div>
-                                <div class="error-alert" *ngIf="isValidPattern('udfForm', 'name')">
+                                <div class="error-message" *ngIf="isValidPattern('udfForm', 'name')">
                                     Only letters, numbers, and underscore are allowed
                                 </div>
 
                             </div>
                         </div>
                     </div>
-                    <div class="row " style=" padding: 0px 10px 0px 10px;">
+                    <div class="row" style=" padding: 0px 10px 0px 10px;">
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-dropdown">
                                 <p-dropdown
-                                    [styleClass]="'app-dropdown-field ' + (isInvalid('udfForm','name') ? 'is-invalid' : '')"
+                                    [styleClass]="'app-dropdown-field ' + (isInvalid('udfForm','dataType') ? 'is-invalid' : '')"
                                     [options]="dataType" formControlName="dataType" optionLabel="label"
                                     optionValue="value" appendTo="body" placeholder="Select a filed type"
                                     (onChange)="onDataTypeSeclect($event)"></p-dropdown>
                                 <label for="dataType">Data Type<span style="color: red;">*</span></label>
                                 <div *ngIf="isInvalid('udfForm', 'dataType')">
-                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'dataType')">
+                                    <div class="error-message" *ngIf="isRequired('udfForm', 'dataType')">
                                         Data Type is requird</div>
                                 </div>
                             </div>
@@ -129,7 +129,7 @@
                                 <label for="minimumLength"> Minimum {{type=='CHAR'?'Length':'Value' }} <span
                                         style="color: red;"> {{type=='CHAR'?'*':'' }}</span></label>
                                 <div *ngIf="isInvalid('udfForm', 'minimumLength')">
-                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'minimumLength')">
+                                    <div class="error-message" *ngIf="isRequired('udfForm', 'minimumLength')">
                                         Minimum length is requird</div>
                                 </div>
 
@@ -142,7 +142,7 @@
                                 <label for="maximumLength">Maximum {{type=='CHAR'?'Length':'Value' }} <span
                                         style="color: red;"> {{type=='CHAR'?'*':'' }}</span></label>
                                 <div *ngIf="isInvalid('udfForm', 'maximumLength')">
-                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'maximumLength')">
+                                    <div class="error-message" *ngIf="isRequired('udfForm', 'maximumLength')">
                                         Maximum length is requird</div>
                                 </div>
                             </div>
@@ -186,7 +186,7 @@
                                     [ngClass]="{'is-invalid' : isInvalid('udfForm', 'orderNo')}">
                                 <label for="orderNo">Order<span style="color: red;">*</span></label>
                                 <div *ngIf="isInvalid('udfForm', 'orderNo')">
-                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'orderNo')">
+                                    <div class="error-message" *ngIf="isRequired('udfForm', 'orderNo')">
                                         Order is requird</div>
                                 </div>
 
@@ -218,7 +218,7 @@
                                     [ngClass]="{'is-invalid' : isInvalid('udfForm', 'serviceEndpointName')}">
                                 <label for="serviceEndpointName">Service Endpoint Name</label>
                                 <div *ngIf="isInvalid('udfForm', 'serviceEndpointName')">
-                                    <div class="error-alert" *ngIf="isRequired('udfForm', 'serviceEndpointName')">
+                                    <div class="error-message" *ngIf="isRequired('udfForm', 'serviceEndpointName')">
                                         Service endpoint is requird</div>
                                 </div>
 
@@ -252,7 +252,8 @@
                                                 [ngClass]="{'is-invalid' : isInvalid('domainListForm', 'label')}">
                                             <label for="label2">Label</label>
                                             <div *ngIf="isInvalid('domainListForm', 'label')">
-                                                <div class="error-alert" *ngIf="isRequired('domainListForm', 'label')">
+                                                <div class="error-message"
+                                                    *ngIf="isRequired('domainListForm', 'label')">
                                                     Label is requird</div>
                                             </div>
                                         </div>
@@ -263,7 +264,8 @@
                                                 [ngClass]="{'is-invalid': isInvalid('domainListForm', 'value')}">
                                             <label for="value">value</label>
                                             <div *ngIf="isInvalid('domainListForm', 'value')">
-                                                <div class="error-alert" *ngIf="isRequired('domainListForm', 'value')">
+                                                <div class="error-message"
+                                                    *ngIf="isRequired('domainListForm', 'value')">
                                                     value is requird</div>
                                             </div>
                                         </div>
@@ -274,7 +276,7 @@
                                                 [ngClass]="{'is-invalid': isInvalid('domainListForm', 'order')}">
                                             <label for="order1">Order No</label>
                                             <div *ngIf="isInvalid('domainListForm', 'orderNo')">
-                                                <div class="error-alert"
+                                                <div class="error-message"
                                                     *ngIf="isRequired('domainListForm', 'orderNo')">
                                                     Order no is requird</div>
                                             </div>
@@ -344,14 +346,14 @@
                             <div style="padding: 0x 15px 10px 15px">
                                 <div class="row app-row">
                                     <div class="col-sm-6  col-md-6 ">
-                                        <div class="app-dropdown">
+                                        <div class="app-dropdown" style="margin-bottom: 5px;">
                                             <p-dropdown styleClass="app-dropdown-field" [options]="logicType"
                                                 formControlName="logicType" optionLabel="label" optionValue="value"
                                                 appendTo="body" placeholder="Select a logic type"
                                                 [styleClass]="'app-dropdown-field ' + (isInvalid('fieldAppLogicForm','logicType') ? 'is-invalid' : '')"></p-dropdown>
                                             <label for="logicType">Logic Type<span style="color: red;">*</span></label>
                                             <div *ngIf="isInvalid('fieldAppLogicForm', 'logicType')">
-                                                <div class="error-alert"
+                                                <div class="error-message"
                                                     *ngIf="isRequired('fieldAppLogicForm', 'logicType')">
                                                     Label is requird</div>
                                             </div>
@@ -363,7 +365,8 @@
                                                 [ngClass]="{'is-invalid': isInvalid('domainListForm', 'value')}">
                                             <label for="value3">value</label>
                                             <div *ngIf="isInvalid('domainListForm', 'value')">
-                                                <div class="error-alert" *ngIf="isRequired('domainListForm', 'value')">
+                                                <div class="error-message"
+                                                    *ngIf="isRequired('domainListForm', 'value')">
                                                     value is requird</div>
                                             </div>
                                         </div>
@@ -380,7 +383,7 @@
                                             <label for="dependentFieldId">Dependent Filed<span
                                                     style="color: red;">*</span></label>
                                             <div *ngIf="isInvalid('fieldAppLogicForm', 'dependentFieldId')">
-                                                <div class="error-alert"
+                                                <div class="error-message"
                                                     *ngIf="isRequired('fieldAppLogicForm', 'dependentFieldId')">
                                                     Dependent field requird</div>
                                             </div>
