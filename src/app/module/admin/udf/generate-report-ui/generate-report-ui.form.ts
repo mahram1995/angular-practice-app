@@ -183,7 +183,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
     }
 
-    onDateSelect(field) {
+    onDateSelect(event: any, field: any) {
         if (field.dataType === 'DATE') {
             // Example: ensure selected date >= minimumDate
             if (field.minimumLength) {
@@ -195,6 +195,8 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             }
 
         }
+
+
     }
 
     loadDependentFieldOptions(field: any) {
@@ -382,15 +384,29 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             this.form.markAllAsTouched();
             return;
         }
+        let data = this.form.value;
+        const result: any = {};
 
-        const queryString = (Object.entries(this.form.value) as [string, any][])
+        Object.entries(data).forEach(([key, value]) => {
+            if (key === 'M' && value) {
+                const date = new Date(value as string);
+                result.M = date.getMonth() + 1;
+            } else if (key === 'Y' && value) {
+                const date = new Date(value as string);
+                result.Y = date.getFullYear();
+            } else {
+                result[key] = value;
+            }
+        });
+
+        const queryString = (Object.entries(result) as [string, any][])
             .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
             .join("&");
 
-        let data = this.form.value;
         let reportFileName = this.getReportFIleName(data)
         const reportExtension = data.reportExtension; // or 'html', 'txt'
         const parameter = queryString + '&j_username=jasperadmin&j_password=jasperadmin';
+
         if (reportFileName === "") {
             this.notificationService.sendError('Report file name is not found, Please check the report file name or expresion')
             return;
@@ -408,7 +424,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
                 // ✅ Only for XLS/XLSX → trigger download
                 if (reportExtension.toLowerCase() === 'xls' || reportExtension.toLowerCase() === 'xlsx'
                     || reportExtension.toLowerCase() === 'docx' || reportExtension.toLowerCase() === 'csv') {
-                    const fileName = this.udfProfileData.reportFileName + '.' + reportExtension;
+                    const fileName = reportFileName + '.' + reportExtension;
                     const url = window.URL.createObjectURL(file);
                     const a = document.createElement('a');
                     a.href = url;
@@ -493,6 +509,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
         let dependedFiledId = this.getFieldIdByFiledName(fieldName)
         this.getUDFIdByDependedFiledId(dependedFiledId, selectOptionValue, fieldName);
+
 
 
         // You can also trigger any dependent logic from here
