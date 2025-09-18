@@ -73,9 +73,9 @@
                 </div>
                 <div class="col-sm-6  col-md-6 app-card"
                     style="margin: 0px 10px 10px 2px; padding: 15px 10px 15px 10px !important;">
-                    <h3 style="font-weight: 500;">UDF Form:</h3>
+                    <h3 style="font-weight: 500; margin-bottom: 0px;">UDF Form:</h3>
 
-                    <div class="row " style=" padding: 0px 10px 0px 10px;">
+                    <div class="row app-row" style=" padding: 0px 10px 0px 10px;">
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-input-field">
                                 <input type="text" id="label" placeholder=" " formControlName="label"
@@ -104,15 +104,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" style=" padding: 0px 10px 0px 10px;">
+                    <div class="row app-row" style=" padding: 0px 10px 0px 10px;">
                         <div class="col-sm-6  col-md-6 ">
                             <div class="app-dropdown">
+                                <label for="dataType">Data Type<span style="color: red;">*</span></label>
                                 <p-dropdown
                                     [styleClass]="'app-dropdown-field ' + (isInvalid('udfForm','dataType') ? 'is-invalid' : '')"
                                     [options]="dataType" formControlName="dataType" optionLabel="label"
                                     optionValue="value" appendTo="body" placeholder="Select a filed type"
                                     (onChange)="onDataTypeSeclect($event)"></p-dropdown>
-                                <label for="dataType">Data Type<span style="color: red;">*</span></label>
+
                                 <div *ngIf="isInvalid('udfForm', 'dataType')">
                                     <div class="error-message" *ngIf="isRequired('udfForm', 'dataType')">
                                         Data Type is requird</div>

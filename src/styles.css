@@ -83,14 +83,11 @@
     font-weight: 500;
 }
 
-.app-input-field label {
-    display: block;
-    font-size: 12px;
-    transform: translate(0, -2.75rem);
-}
 
 .app-input-field {
     font-size: 12px;
+    height: 45px;
+    transform: translate(0, 13px);
 }
 
 .app-input-field input {
@@ -120,7 +117,7 @@
         font-size: 13px;
         color: #1aa89c;
         font-weight: 500;
-        transform: translate(1px, -41px);
+        transform: translate(1px, -44px);
     }
 }
 
@@ -201,19 +198,18 @@
 .app-input-field-date .error-message {
     color: red;
     font-size: 11px;
-    height: 8px;
-    margin-top: -1px;
-    padding-left: 2px;
+    height: 10px;
+    padding-left: 5px;
+    transform: translate(0, -2px);
 
 }
 
 .app-input-field .error-message {
     color: red;
     font-size: 11px;
-    height: 8px;
+    height: 0px;
     padding-left: 2px;
-    margin-top: 10px;
-    transform: translate(0, -32px);
+    transform: translate(0, -22px);
 
 }
 
@@ -226,28 +222,43 @@
     border: none;
 }
 
+.p-element .p-dropdown-label {
+    padding: 0px !important;
+    transform: translate(0, 0px);
+}
+
+.p-element .p-dropdown-label .p-inputtext .p-placeholder {
+    height: 25px !important;
+}
 
 
-
-
-@supports (not (-ms-ime-align:auto)) {
-    .app-dropdown label {
-        font-size: 13px;
-        font-weight: 500;
-        padding-left: 0px !important;
-        color: #1aa89c;
-        transform: translate(0.25rem, -40px);
-    }
+.app-dropdown label {
+    font-size: 13px;
+    height: 0px !important;
+    font-weight: 500;
+    padding-left: 5px !important;
+    color: #1aa89c;
 }
 
 .app-dropdown-field {
     border: none;
     width: 100%;
-    padding: 0px !important;
+    padding-left: 5px;
     border-bottom: 1px solid gray;
     border-radius: 0px;
+    transform: translate(0, 4px);
 
+}
 
+.app-dropdown .p-dropdown-trigger {
+    color: rgb(0, 0, 0);
+
+}
+
+.app-dropdown .p-icon {
+    width: 13px;
+    color: #737272;
+    height: 13px;
 }
 
 .p-inputtext {
@@ -265,33 +276,18 @@ ul {
 .app-dropdown .error-message {
     color: red;
     font-size: 11px;
-    height: 8px;
+    height: 10px;
     padding-left: 5px;
-    transform: translate(0, -22px);
-}
-
-/* user for set dropdown icon position */
-@supports (not (-ms-ime-align:auto)) {
-    .app-dropdown .select {
-        transform: translate(1px, 8px);
-        font-size: 5px;
-        border: none;
-    }
-}
-
-.app-dropdown-filed {
-    width: 100%;
-    border: none;
-    border-bottom: 1px solid black;
+    transform: translate(0, 2px);
 }
 
 
-.app-dropdown-filed:focus {
+.app-dropdown-field:focus {
     outline: none;
 }
 
 /* Remove border if a non-empty value is selected */
-.app-dropdown-filed option[value=""] {
+.app-dropdown-field option[value=""] {
     color: gray;
     /* placeholder color */
 }
@@ -503,17 +499,6 @@ ul {
 
 }
 
-.app-dropdown .p-dropdown-trigger {
-    color: rgb(0, 0, 0);
-
-}
-
-.app-dropdown .p-icon {
-    width: 13px;
-    margin-top: 12px !important;
-    color: #737272;
-    height: 13px;
-}
 
 
 
@@ -732,5 +717,5 @@ ul {
 }
 
 .ui-datepicker-title select.ui-datepicker-year {
-  display: none !important;
+    display: none !important;
 }
