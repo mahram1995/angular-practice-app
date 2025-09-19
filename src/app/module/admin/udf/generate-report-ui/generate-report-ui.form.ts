@@ -385,18 +385,20 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
             return;
         }
         let data = this.form.value;
-        const result: any = {};
 
+        let result: { [key: string]: any } = {};
         Object.entries(data).forEach(([key, value]) => {
-            if (key === 'M' && value) {
+            let dataType = this.fields.find(f => f.name === key)?.dataType
+            if (dataType === 'MONTH' && value) {
                 const date = new Date(value as string);
-                result.M = date.getMonth() + 1;
-            } else if (key === 'Y' && value) {
+                result[key] = date.getMonth() + 1;
+            } else if (dataType === 'YEAR' && value) {
                 const date = new Date(value as string);
-                result.Y = date.getFullYear();
-            } else {
-                result[key] = value;
-            }
+                result[key] = date.getFullYear();
+            } else if (dataType === 'DATE' && value) {
+                const date = new Date(value as string);
+                result[key] = this.datePipe.transform(date, 'yyyy-MM-dd');
+            } else { result[key] = value; }
         });
 
         const queryString = (Object.entries(result) as [string, any][])

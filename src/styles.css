@@ -35,6 +35,7 @@
 
 .app-row {
     margin-top: 15px;
+
 }
 
 .app-card {
@@ -86,7 +87,6 @@
 
 .app-input-field {
     font-size: 12px;
-    height: 45px;
     transform: translate(0, 13px);
 }
 
@@ -96,7 +96,7 @@
     border: none;
     border-bottom: 1px solid #737272;
     transition: border-color 0.2s ease;
-    margin-top: 9px;
+
 }
 
 .app-input-field input:focus {
@@ -127,6 +127,7 @@
     border-bottom: 1px solid #737272;
     border-radius: 0px !important;
     font-size: 13px !important;
+    transform: translate(0, -9px);
 }
 
 .p-calendar input:focus {
@@ -152,13 +153,24 @@
     padding: 0px;
     font-size: 13px !important;
 
+
 }
 
+.p-datepicker .p-datepicker-header {
+    padding: 0px !important;
+    background-color: #cccce9;
+}
+
+.p-datepicker {
+    padding: 0px !important;
+    margin: 0px !important;
+}
 
 /* Reduce height of calendar rows */
 .p-datepicker table td,
 .p-datepicker table th {
     padding: 2px !important;
+    text-align: center !important;
     /* reduce padding */
     height: 20px !important;
     /* adjust row height */
@@ -187,6 +199,42 @@
     color: #1aa89c;
     padding-left: 6px;
     font-weight: 500;
+    transform: translate(0, -8px);
+}
+
+/* Global: remove calendar input + trigger focus outline/glow */
+.p-calendar .p-inputtext,
+.p-calendar input,
+.p-datepicker-input,
+.p-calendar .p-datepicker-trigger {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: inherit !important;
+}
+
+/* cover focus-visible (modern browsers) */
+.p-calendar .p-inputtext:focus,
+.p-calendar .p-inputtext:focus-visible,
+.p-calendar .p-datepicker-trigger:focus,
+.p-datepicker-input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* PrimeNG wrapper classes that sometimes get the focus styling */
+.p-inputwrapper-focus,
+.p-inputwrapper-focused,
+.p-calendar.p-focus,
+.p-calendar.p-focused {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* overlay day cell focus (selected day in popup) */
+.p-datepicker td:focus,
+.p-datepicker td:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 .app-input-field-date:focus {
@@ -200,17 +248,16 @@
     font-size: 11px;
     height: 10px;
     padding-left: 5px;
-    transform: translate(0, -2px);
+    transform: translate(0, -10px);
 
 }
 
 .app-input-field .error-message {
     color: red;
     font-size: 11px;
-    height: 0px;
+    height: 10px;
     padding-left: 2px;
     transform: translate(0, -22px);
-
 }
 
 
@@ -238,6 +285,7 @@
     font-weight: 500;
     padding-left: 5px !important;
     color: #1aa89c;
+    transform: translate(0, -8px);
 }
 
 .app-dropdown-field {
@@ -246,7 +294,8 @@
     padding-left: 5px;
     border-bottom: 1px solid gray;
     border-radius: 0px;
-    transform: translate(0, 4px);
+    transform: translate(0, -5px);
+
 
 }
 
@@ -278,7 +327,7 @@ ul {
     font-size: 11px;
     height: 10px;
     padding-left: 5px;
-    transform: translate(0, 2px);
+    transform: translate(0, -7px);
 }
 
 
