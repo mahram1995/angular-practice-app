@@ -594,7 +594,11 @@ ul {
 }
 
 table tr:nth-child(even) {
-    background-color: #ececec !important;
+    background-color: #f1f1f1 !important;
+}
+
+table tr:nth-child(even):hover {
+    background-color: #d7d9da !important;
 }
 
 html,
@@ -603,9 +607,10 @@ body {
 }
 
 .tree-dot-button {
+    background-color: transparent !important;
     background: none;
     color: black;
-    border: none;
+    border: none !important;
     padding: 0px !important;
     margin: 0px !important;
 }

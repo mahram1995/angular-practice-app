@@ -23,20 +23,21 @@
 .module-name {
     text-align: center;
     font-size: large;
-    color: rgb(40, 8, 99);
-    font-weight: bold;
+    color: rgb(4, 108, 150);
+    font-weight: 500;
 }
 
-.module-name:hover{
+.module-name:hover {
     cursor: pointer;
     color: black;
 }
 
 
-.right-menu-item{
+.right-menu-item {
     text-decoration: none !important;
     color: #009688;
 }
+
 .parent-right-menu-item {
     font-size: 14px;
     width: 250px;
