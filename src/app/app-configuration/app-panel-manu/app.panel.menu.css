@@ -83,7 +83,7 @@
 
 .submenu a {
   display: block;
-  padding: 5px 0px 5px 0px;
+  padding: 2px 0px 2px 0px;
   text-decoration: none;
   color: #0c0101;
   transition: all 0.25s ease-in-out;
@@ -91,7 +91,7 @@
 
 .submenu i {
   padding-right: 5px;
-  padding-top: 7px !important;
+  padding-top: 4px !important;
 }
 
 .submenu a:hover {

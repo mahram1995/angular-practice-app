@@ -32,6 +32,22 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
     reportName: any;
     isShowParaForm: boolean = true
     isShowReport: boolean = false
+    yearList: { label: string; value: number }[] = [];
+    monthList = [
+        { label: "January", value: 1 },
+        { label: "February", value: 2 },
+        { label: "March", value: 3 },
+        { label: "April", value: 4 },
+        { label: "May", value: 5 },
+        { label: "June", value: 6 },
+        { label: "July", value: 7 },
+        { label: "August", value: 8 },
+        { label: "September", value: 9 },
+        { label: "October", value: 10 },
+        { label: "November", value: 11 },
+        { label: "December", value: 12 }
+    ];
+
     reportTypeList = [
         { label: "PDF", value: 'pdf' },
         { label: "DOCX", value: 'docx' },
@@ -56,6 +72,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
     ) { super(location, commonService); }
 
     ngOnInit() {
+        this.yearList = this.generateYearList(2000);
         this.route.queryParams.subscribe(params => {
             this.profileId = params.udfProfileId;
             this.fetchUdfs(this.profileId);
@@ -66,6 +83,18 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         });
 
     }
+    generateYearList(startYear: number): { label: string; value: number }[] {
+        const currentYear = new Date().getFullYear();
+        const years: { label: string; value: number }[] = [];
+
+        for (let year = startYear; year <= currentYear; year++) {
+            years.push({ label: year.toString(), value: year });
+        }
+
+        // Sort descending
+        return years.sort((a, b) => b.value - a.value);
+    }
+
 
     fetchUdfs(profileId: any) {
         this.urlSearchMap = new Map

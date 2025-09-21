@@ -15,24 +15,24 @@
         <hr style="margin: 0px; padding: 0px; width: 100%;">
     </div>
 
-    <div *ngIf="isShowParaForm" style=" margin: 10px 10px 10px 10px; ">
+    <div *ngIf="isShowParaForm" style=" margin: 10px 20px 10px 20px; ">
         <form [formGroup]="form" class="app-card">
             <div class="row" *ngIf="form" style="padding: 10px 25px 0px 25px;">
                 <ng-container *ngFor="let field of visibleFields(); let i = index">
-                    <div [class]="field.styleClass" style="padding: 0px 10px 0px 10px !important; margin-bottom: 10px;">
+                    <div [class]="field.styleClass" style="padding: 0px 10px 0px 10px !important; margin-bottom: 14px;">
                         <ng-container [ngSwitch]="field.dataType">
 
-                            <div *ngIf="field.dataType=='DATE' ||field.dataType=='MONTH' || field.dataType=='YEAR'  ">
+                            <div *ngIf="field.dataType=='DATE'">
                                 <div class="app-input-field-date">
                                     <label [for]="field.name">{{ field.label }}<span
                                             style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
 
                                     <p-calendar [id]="field.name" [formControlName]="field.name" appendTo="body"
-                                        [dateFormat]="field.dataType === 'MONTH' ? 'mm' : (field.dataType === 'YEAR' ? 'yy' : 'dd/mm/yy')"
+                                        [dateFormat]="field.dataType === 'MONTH' ? 'MM' : (field.dataType === 'YEAR' ? 'yy' : 'dd/mm/yy')"
                                         (onSelect)="onDateSelect($event, field)"
                                         [placeholder]="field.dataType==='MONTH'?'mm': (field.dataType==='YEAR'? 'yyyy' :'dd/mm/yyyy')"
                                         [view]="field.dataType==='MONTH'?'month': (field.dataType==='YEAR'? 'year' :'date')"
-                                        [styleClass]="'app-date-field ' + (isInvalid('form',field.name) ? 'is-invalid' : '')">
+                                        [styleClass]="'app-date-field ' + (isInvalid('form',field.name) ? 'is-invalid' : '' + field.dataType=='MONTH'?' monthpicker':' ')">
                                     </p-calendar>
 
 
@@ -123,6 +123,50 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- DROP_DOWN for month-->
+                            <div *ngSwitchCase="'MONTH'">
+                                <div class="app-dropdown">
+                                    <label [for]="field.name">{{ field.label }}<span
+                                            style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
+                                    <p-dropdown
+                                        [styleClass]="'app-dropdown-field ' + (isInvalid('form',field.name) ? 'is-invalid' : '')"
+                                        [options]="monthList" [formControlName]="field.name" optionLabel="label"
+                                        optionValue="value" appendTo="body" [placeholder]="'Select '+ field.label"
+                                        [filter]="true" [resetFilterOnHide]='true'
+                                        (onChange)="onSelectChange($event, field.name)">
+                                    </p-dropdown>
+
+
+                                    <div *ngIf="isInvalid('form', field.name)">
+                                        <div class="error-message" *ngIf="isRequired('form', field.name)">
+                                            {{ field.label }} is required.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- DROP_DOWN for year-->
+                            <div *ngSwitchCase="'YEAR'">
+                                <div class="app-dropdown">
+                                    <label [for]="field.name">{{ field.label }}<span
+                                            style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
+                                    <p-dropdown
+                                        [styleClass]="'app-dropdown-field ' + (isInvalid('form',field.name) ? 'is-invalid' : '')"
+                                        [options]="yearList" [formControlName]="field.name" optionLabel="label"
+                                        optionValue="value" appendTo="body" [placeholder]="'Select '+ field.label"
+                                        [filter]="true" [resetFilterOnHide]='true'
+                                        (onChange)="onSelectChange($event, field.name)">
+                                    </p-dropdown>
+
+
+                                    <div *ngIf="isInvalid('form', field.name)">
+                                        <div class="error-message" *ngIf="isRequired('form', field.name)">
+                                            {{ field.label }} is required.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
 
                         </ng-container>
                     </div>

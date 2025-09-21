@@ -61,6 +61,7 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
     urlSearchMap: Map<string, any> = new Map();
     profileId: number;
     isRowSelected: boolean = false;
+    isNameIsExists: boolean = false;
     isServiceEndpoint: boolean = true;
     isFieldAppearanceLogic: boolean = false;
     dependentDataList: any[] = []
@@ -386,6 +387,23 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
 
 
     }
+    onNameChange(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const name = input?.value ?? '';
+        const control = this.udfForm.get('name');
+
+        const existingNames = this.userDefinedFields.find(field => field.name.toString().toLowerCase() == name.toString().toLowerCase())?.name
+        if (existingNames) {
+            control?.setErrors({ nameNotUnique: true });
+            this.isNameIsExists = true;
+        } else {
+            control?.setErrors(null); // clears error
+            this.isNameIsExists = false
+        }
+
+
+    }
+
     back() {
 
         this.location.back()
