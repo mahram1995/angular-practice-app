@@ -28,10 +28,8 @@
                                             style="color: red;">{{field.mandatory==true?'*':''}}</span></label>
 
                                     <p-calendar [id]="field.name" [formControlName]="field.name" appendTo="body"
-                                        [dateFormat]="field.dataType === 'MONTH' ? 'MM' : (field.dataType === 'YEAR' ? 'yy' : 'dd/mm/yy')"
-                                        (onSelect)="onDateSelect($event, field)"
-                                        [placeholder]="field.dataType==='MONTH'?'mm': (field.dataType==='YEAR'? 'yyyy' :'dd/mm/yyyy')"
-                                        [view]="field.dataType==='MONTH'?'month': (field.dataType==='YEAR'? 'year' :'date')"
+                                        [dateFormat]="'dd/mm/yy'" (onSelect)="onDateSelect($event, field)"
+                                        [placeholder]="'dd/mm/yyyy'" [view]="'date'"
                                         [styleClass]="'app-date-field ' + (isInvalid('form',field.name) ? 'is-invalid' : '' + field.dataType=='MONTH'?' monthpicker':' ')">
                                     </p-calendar>
 
