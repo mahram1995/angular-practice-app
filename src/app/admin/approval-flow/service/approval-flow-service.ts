@@ -30,8 +30,9 @@ export class ApprovalflowService extends BaseService implements ApprovalflowServ
         return this.http.put(`/api/approvalflow/profiles/${pathParams.id}`, workflowProfile);
     }
 
-    fetchApprovalflowTasks(params: Map<string, string>): Observable<any> {
-        return this.http.get(endpoints.GET_TASKS, params);
+    fetchApprovalflowTasks(urlSearchParams: Map<string, string>): Observable<any> {
+
+        return this.http.get(endpoints.GET_TASKS, { params: urlSearchParams });
     }
 
     verifyTask(params: Map<string, any>): Observable<any> {

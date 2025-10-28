@@ -1,15 +1,39 @@
 import { Injectable } from "@angular/core"
+import { TranslateService } from "@ngx-translate/core";
 import { MessageService } from "primeng/api";
 
 @Injectable()
 export class NotificationService {
-    constructor(private messageService: MessageService,) {
+    isAfRespose: boolean
+    taskId: string
+    constructor(private messageService: MessageService) {
 
     }
 
-    sendSuccess(message: any) {
+    sendSuccess(msgKey: any, params?: any) {
+        let message: string = '';
+        if (params) {
+            message = msgKey.replace(/{([^{}]*)}/g, function (a, b) {
+                const r = params[b];
+                return typeof r === 'string' || typeof r === 'number' ? r : a;
+            });
+        } else message = msgKey;
 
-        this.messageService.add({ severity: 'success', summary: 'Success !!', detail: this.transform(message), styleClass: 'toast-success-style', icon: 'abc', sticky: true });
+        if (this.isAfRespose) {
+            message = message[1] + ' Task ID: ' + this.taskId,
+
+                this.messageService.add({ severity: 'success', summary: 'Success !!', detail: this.transform(message), styleClass: 'toast-success-style', icon: 'abc', sticky: true });
+
+        } else if (params) {
+            this.messageService.add({ severity: 'success', summary: 'Success !!', detail: this.transform(message), styleClass: 'toast-success-style', icon: 'abc', sticky: true });
+
+        } else {
+            this.messageService.add({ severity: 'success', summary: 'Success !!', detail: this.transform(message), styleClass: 'toast-success-style', icon: 'abc', sticky: true });
+
+        }
+
+
+
     }
 
     sendInfo(message: any) {

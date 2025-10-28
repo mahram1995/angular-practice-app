@@ -3,16 +3,20 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { NotificationService } from './notification.service';
+import { map, Observable, of, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 
-@Injectable({
-    providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class CommonService {
+    static getClientIpAddress(): string | string[] {
+        throw new Error('Method not implemented.');
+    }
     isSumbitted: boolean = false;
 
     constructor(
         private notificationService: NotificationService,
+        private http: HttpClient
 
     ) {
 
@@ -79,5 +83,32 @@ export class CommonService {
         }
         return max;
     }
+
+    private clientIp: string | null = null;
+
+
+    /** Called once to load and store the IP */
+    loadClientIp(): Observable<string> {
+        if (this.clientIp) {
+            return of(this.clientIp); // ✅ already loaded
+        }
+
+        return this.http.get('https://api.ipify.org?format=json').pipe(
+            map((res: any) => res.ip),
+            tap(ip => this.clientIp = ip) // ✅ store the result
+        );
+    }
+
+    /** Used later — returns cached IP (or null if not loaded yet) */
+    getClientIp(): string | null {
+        console.log(this.clientIp);
+
+        return this.clientIp;
+    }
+
+
+
+
+
 
 }

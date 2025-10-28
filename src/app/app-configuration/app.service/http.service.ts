@@ -5,6 +5,7 @@ import { finalize } from 'rxjs/operators';
 import { HttpServiceInterface, IRequestOptions } from './http.service.interface';
 import { LoaderOverlayService } from './loader.overlay.service';
 import { AuthService } from '../../module/admin/login/service/auth.service';
+import { CommonService } from './common.service';
 
 
 
@@ -21,6 +22,7 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
 
     constructor(
         private httpHandler: HttpHandler,
+        private commonService: CommonService,
         @Optional() @Inject(HTTP_DYNAMIC_INTERCEPTORS) private interceptors: HttpInterceptor[] = [],
         private loaderOverlayService: LoaderOverlayService,
 
@@ -80,6 +82,11 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
                 if (correctionUI != null) {
                     headers = headers.set('correctionUI', correctionUI);
                 }
+
+            }
+            const terminalIp = this.commonService.getClientIp();
+            if (terminalIp) {
+                headers = headers.set('terminalIp', terminalIp);
             }
         }
 
@@ -155,5 +162,7 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
             this.loaderVisble = false;
         }
     }
+
+
 
 }

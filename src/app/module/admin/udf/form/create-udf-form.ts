@@ -56,6 +56,9 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
     selectedUdf: any;
     selectedDependentData: any;
     selectedDoaminData: any;
+    isDomainDataEdit: boolean = false;
+    isFieldApearanceLogicEdit: boolean = false;
+    selecteFieldAppearanceLogic: any;
     udfData: UDFDomain;
     userDefinedFields: UserDefinedField[];
     urlSearchMap: Map<string, any> = new Map();
@@ -127,6 +130,14 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
             this.userDefinedFields = this.commonService.sortByKeyAsc(data.userDefinedFields, 'orderNo')
             this.createDependantDropdownList();
         })
+    }
+    onDomainRowSelect(event: any) {
+        this.isDomainDataEdit = true;
+        this.prepareDomainListForm(event.data)
+    }
+    onFiledAppearanceLogicRowSelect(event: any) {
+        this.isFieldApearanceLogicEdit = true;
+        this.prapareFieldappearnceLogicListForm(event.data)
     }
 
     onRowSelect(event: any) {
@@ -200,28 +211,50 @@ export class CreateUdfFormComponent extends FormBaseComponent implements OnInit 
             return;
         }
         customDomainData = this.domainListForm.value;
-        customDomainData.userDefinedFieldId = this.selectUserDefinedField.id
-        this.userDefinedFieldDomainDataList.push(customDomainData)
+        if (this.isDomainDataEdit) {
+            let domainList = this.selectUserDefinedField.userDefinedFieldDomainDataList
+            const index = domainList.findIndex(item => item.id === this.selectedDoaminData.id);
+            if (index !== -1) {
+                domainList[index] = { ...customDomainData }; // update original JSON
+                this.selectUserDefinedField.userDefinedFieldDomainDataList = domainList
+                this.isDomainDataEdit = false;
+            }
+        } else {
+            customDomainData.userDefinedFieldId = this.selectUserDefinedField.id
+            this.userDefinedFieldDomainDataList.push(customDomainData)
 
-        this.selectUserDefinedField.userDefinedFieldDomainDataList = this.userDefinedFieldDomainDataList
+            this.selectUserDefinedField.userDefinedFieldDomainDataList = this.userDefinedFieldDomainDataList
+        }
         this.prepareDomainListForm(new UserDefinedFieldDomainData)
     }
 
     addAppearanceLogic() {
         let apperanceLogic = new FieldAppearanceLogic();
+        apperanceLogic = this.fieldAppLogicForm.value;
 
-
+        // check the fomr control is valid or not
         if (this.commonService.isFormInvalid(this.fieldAppLogicForm, this.fieldAppLogicRequiredFiled)) {
             return;
         }
-        apperanceLogic = this.fieldAppLogicForm.value;
-        console.log(apperanceLogic);
+
         apperanceLogic.userDefinedFieldId = this.selectUserDefinedField.id
         apperanceLogic.dependentFieldName = this.userDefinedFields.find(field => field.id == apperanceLogic.dependentFieldId)?.label
-        this.fieldAppLogicList.push(apperanceLogic)
-        this.selectUserDefinedField.fieldAppearanceLogics = this.fieldAppLogicList
+        if (this.isFieldApearanceLogicEdit) {
+            // code for row edit
+            const index = this.fieldAppLogicList.findIndex(item => item.id === this.selecteFieldAppearanceLogic.id);
+            if (index !== -1) {
+                this.fieldAppLogicList[index] = { ...apperanceLogic }; // update original JSON
+                this.selectUserDefinedField.fieldAppearanceLogics = this.fieldAppLogicList
+                this.isFieldApearanceLogicEdit = false;
+            }
 
+        } else {
+            // code for inatial added logic
+            this.fieldAppLogicList.push(apperanceLogic)
+            this.selectUserDefinedField.fieldAppearanceLogics = this.fieldAppLogicList
+        }
 
+        // refresh the appearance logic form 
         this.prapareFieldappearnceLogicListForm(new FieldAppearanceLogic)
     }
 

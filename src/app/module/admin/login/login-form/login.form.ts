@@ -47,8 +47,9 @@ export class LoginFormComponent implements OnInit {
         if (this.loginForm.valid) {
 
             let formvalue = this.loginForm.value
+            formvalue.password = '@'
             formvalue.loginTerminal = this.loginTerminal;
-            this.authService.login(this.loginForm.value).subscribe(
+            this.authService.login(formvalue).subscribe(
                 (response) => {
                     const returnUrl = sessionStorage.getItem('returnUrl');
                     sessionStorage.removeItem('returnUrl'); // clear after use

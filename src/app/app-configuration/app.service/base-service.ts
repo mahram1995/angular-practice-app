@@ -11,7 +11,7 @@ export class BaseService {
 
     fullURL: string
 
-    getHttpParam(urlSearchParams: Map<string, any>) {
+    getHttpParam(urlSearchParams: Map<string, any>): any {
         let params = new HttpParams()
         for (let entry of urlSearchParams.entries()) {
             params = params.set(entry[0], entry[1])

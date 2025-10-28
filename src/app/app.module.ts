@@ -46,6 +46,8 @@ import { AdminModule } from './module/admin/admin.module';
 import { AppShareModule } from './app-configuration/app-component/app-share-module/app-share-module';
 import { RouterModule, RouterStateSnapshot } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ResponseInterceptor } from './app-configuration/interceptor/response-Interceptor';
+import { TranslateLoader, TranslateService } from '@ngx-translate/core';
 
 
 
@@ -98,14 +100,10 @@ import { CommonModule } from '@angular/common';
     NotificationService,
     ApprovalflowService,
     AdminService,
+    { provide: HTTP_INTERCEPTORS, useClass: ResponseInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     {
-      provide: HTTP_INTERCEPTORS,
-      useClass: ErrorInterceptor,
-      multi: true
-    },
-    {
-      provide: APPROVAL_FLOW_SERVICE,
-      useClass: ApprovalflowService
+      provide: APPROVAL_FLOW_SERVICE, useClass: ApprovalflowService
     },
     provideAnimationsAsync()],
   exports: [RouterModule],

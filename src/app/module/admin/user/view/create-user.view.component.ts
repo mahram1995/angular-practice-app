@@ -37,12 +37,12 @@ export class UserRegistrationViewComponent extends FormBaseComponent implements 
             let command = params.commandName;
             this.taskId = params.taskId
             this.userName = params.userName;
-            if (command == 'CREATE_NEW_USER') {
+            if (command == 'CreateNewUserCommand') {
                 this.header = 'Create new User'
             }
             if (this.taskId) {
                 this.approvalFlowService.fetchApprovalFlowTaskInstancePayload({ taskId: this.taskId }).subscribe(data => {
-                    this.userInfo = data
+                    this.userInfo = data.payload
                 })
             }
             if (this.userName) {

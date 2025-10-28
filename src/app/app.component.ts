@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from './module/admin/login/service/auth.service';
+import { CommonService } from './app-configuration/app.service/common.service';
 
 @Component({
   selector: 'app-root',
@@ -11,11 +12,15 @@ export class AppComponent implements OnInit {
   logoutWorningMessage: string
   logoutWorningModalHeader: string;
   isVisibleLogoutDialog: boolean = false
-  constructor(private router: Router, private authService: AuthService) {
+  constructor(private router: Router, private authService: AuthService, private commonService: CommonService) {
 
   }
 
   ngOnInit(): void {
+
+    this.commonService.loadClientIp().subscribe(ip => {
+      console.log('✅ IP loaded at startup:', ip);
+    });
 
     // when user log out in any tab in then user will be logout from all 
     // other open tab and redirect to login page for login back.

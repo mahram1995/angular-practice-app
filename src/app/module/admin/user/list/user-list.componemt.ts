@@ -79,20 +79,32 @@ export class UserListComponent implements OnInit {
         this.router.navigate(['admin/create-user']);
     }
 
+
     search(searchMap: Map<string, any>) {
         this.dt?.reset();
         this.urlSearchMap.set('page', 0);
-        if (searchMap != null) { this.urlSearchMap = searchMap; }
+
+        if (searchMap != null) {
+            this.urlSearchMap = new Map(searchMap);
+        }
+
         for (const control in this.userSearchForm.controls) {
-            this.urlSearchMap.delete(control);
-            const formControlValue = (this.userSearchForm.get(control).value).toString().trim();
+            this.urlSearchMap.delete(control); //delete existing value
+            const formControlValue = this.userSearchForm.get(control)?.value?.toString().trim() ?? '';
             if (formControlValue.length !== 0) {
                 this.urlSearchMap.set(control, formControlValue);
             }
         }
-        this.fetchUsers(this.urlSearchMap)
-        this.prepareSearchForm()
+
+        // ✅ Loop is complete here
+        // ✅ Delay for 2 seconds before calling fetchUsers
+        setTimeout(() => {
+            this.fetchUsers(this.urlSearchMap);
+            this.prepareSearchForm();
+        }, 500);
+
     }
+
     onRowsChange(event: any) {
         this.rowPerPage = event.rows;
         this.fetchUsers(null)

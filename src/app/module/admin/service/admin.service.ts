@@ -25,7 +25,7 @@ export class AdminService extends BaseService {
         return this.http.put(endpoints.UPDATE_USER, data, urlSearchParams);
     }
     public fetchUsers(urlSearchParams): Observable<any> {
-        return this.http.get(endpoints.GET_USERS, urlSearchParams);
+        return this.http.get(endpoints.GET_USERS, { params: urlSearchParams });
     }
 
 }

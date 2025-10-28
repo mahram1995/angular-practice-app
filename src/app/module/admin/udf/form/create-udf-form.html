@@ -16,14 +16,14 @@
     </div>
     <div style="margin: 10px 10px 10px 10px;">
         <div class="row">
-            <div class="app-card" style="margin: 2px 10px 10px 10px;padding: 15px 10px 15px 10px !important;">
-                <h3 style="font-weight: 500;">Basic Information:</h3>
+            <div class="app-card" style="margin: 2px 10px 10px 10px;padding: 10px 10px 10px 10px !important;">
+                <h3 style="font-weight: 500; margin-bottom: 0px;">Basic Information:</h3>
                 <table class="table table-striped table-even-rows">
-                    <tr style="background-color: rgb(226, 224, 222); height: 40px;">
-                        <th style="width: 100px; padding-left: 5px;">Name</th>
+                    <tr style="background-color: rgb(226, 224, 222); height: 35px;">
+                        <th style="width: 51px; padding-left: 5px;">Name</th>
                         <th style="width: 10px;">:</th>
                         <td style="text-align: left; width: 350px;">{{udfData?.name}} </td>
-                        <th style="width: 100px;">Code</th>
+                        <th style="width: 45px;">Code</th>
                         <th style="width: 10px;">:</th>
                         <td style="text-align: left;">{{udfData?.code}} </td>
                     </tr>
@@ -36,7 +36,8 @@
                 <div class="col-sm-6  col-md-5 app-card"
                     style="margin: 0px 2px 10px 10px; padding: 15px 10px 15px 10px !important;">
 
-                    <h3 style="font-weight: 500; padding-bottom: 0px; padding-bottom: 0px;">Defiled Fileds:</h3>
+                    <h3 style="font-weight: 500; padding-bottom: 0px; padding-bottom: 0px; margin-bottom: 0px;">Defined
+                        Fileds:</h3>
 
                     <div style="text-align:right; margin-bottom: 2px; ">
                         <button class="app-button" style="width: 60px; text-align: center;" (click)="addNew()">+
@@ -303,21 +304,19 @@
                                     (click)="addDomain()">+ Add</button>
                             </div>
 
-                            <div class="row ">
-                                <p-table [style]="{'margin-bottom': '5px'}" class=" table-hover table-responsive"
-                                    [value]="userDefinedFieldDomainDataList" dataKey="id" editMode="row"
-                                    [(selection)]="selectedDependentData" styleClass="p-datatable-sm"
-                                    (onRowSelect)="onRowSelect($event)" selectionMode="single">
+                            <div class="row " [style]="{'margin-bottom': '5px'}">
+                                <p-table class=" table-hover table-responsive" [value]="userDefinedFieldDomainDataList"
+                                    [(selection)]="selectedDoaminData" styleClass="p-datatable-sm"
+                                    (onRowSelect)="onDomainRowSelect($event)" selectionMode="single">
                                     <ng-template pTemplate="header">
                                         <tr style="font-size: 12px;">
                                             <th style="width: 30px;">Order</th>
                                             <th style="width: 150px;">Label</th>
-                                            <th style="min-width: 150px;">Value</th>
+                                            <th style="min-width: 100px;">Value</th>
                                             <th style="width: 150px;">Dependent Data </th>
                                             <th style="width:50px;">Action</th>
                                         </tr>
                                     </ng-template>
-
                                     <ng-template pTemplate="body" let-data let-editing="editing" let-ri="rowIndex">
                                         <tr [pSelectableRow]="data" style="font-size: 12px;">
                                             <td style=" text-align: center;">{{ data.orderNo }}</td>
@@ -330,7 +329,6 @@
                                                 </button></td>
                                         </tr>
                                     </ng-template>
-
                                 </p-table>
                             </div>
 
@@ -405,10 +403,11 @@
                                     (click)="addAppearanceLogic()">+ Add</button>
                             </div>
 
-                            <div class="row">
-                                <p-table [style]="{'margin-bottom': '5px'}" class=" table-hover table-responsive"
-                                    [value]="fieldAppLogicList" dataKey="id" [(selection)]="selectedDoaminData"
-                                    styleClass="p-datatable-sm" selectionMode="single">
+                            <div class="row" [style]="{'margin-bottom': '5px'}">
+                                <p-table class=" table-hover table-responsive" [value]="fieldAppLogicList"
+                                    [(selection)]="selecteFieldAppearanceLogic"
+                                    (onRowSelect)="onFiledAppearanceLogicRowSelect($event)" styleClass="p-datatable-sm"
+                                    selectionMode="single">
                                     <ng-template pTemplate="header">
                                         <tr style="font-size: 12px;">
                                             <th>Logic Type</th>

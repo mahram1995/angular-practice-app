@@ -10,6 +10,10 @@ import { FormBaseComponent } from '../../../../app-configuration/app-component/b
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApprovalflowService } from '../../../../admin/approval-flow/service/approval-flow-service';
 
+export const CREATE_SUCCESS_MESSAGE: string[] = ['User created successfully.', 'User Created Successfully send for approval.'];
+export const UPDATE_SUCCESS_MESSAGE: string[] = ['User update successfully.', 'User Update Successfully send for approval.'];
+
+
 const DETAILS_UI = 'admin/user-details';
 const CORRECTION_UI = 'admin/create-user';
 @Component({
@@ -115,20 +119,16 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
         if (this.isEdit) {
             this.adminService.updateUser(formData, urlSearchParams).subscribe(
                 (response) => {
-                    this.notificationService.sendSuccess(response.message);
+                    this.notificationService.sendSuccess(UPDATE_SUCCESS_MESSAGE);
                     this.prepareForm(new UserRegistrationDTO)
-                    this.router.navigate([this.location.back()], {
-                        queryParams: {
-                            userName: formData.userName
-                        }
-                    })
+                    this.location.back()
 
                 }
             )
         } else {
             this.adminService.createUser(formData, urlSearchParams).subscribe(
                 (response) => {
-                    this.notificationService.sendSuccess(response.message);
+                    this.notificationService.sendSuccess(CREATE_SUCCESS_MESSAGE, response.content);
                     this.prepareForm(new UserRegistrationDTO)
                     this.location.back()
                 }
