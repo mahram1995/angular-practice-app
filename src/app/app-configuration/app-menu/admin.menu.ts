@@ -21,6 +21,16 @@ export const AdminMenuList = [
         ]
     },
     {
+        name: 'RND Project',
+        icon: 'pi pi-qrcode',
+        active: false,
+        submenu: [
+            { name: 'Dynamic Data source In Jasper Report', url: '#', routerLink: "/admin/dynamic-data-source-in-jasperreport" },
+            { name: 'Panel Menu', url: '#', routerLink: "/admin/demo-panel-manue" },
+
+        ]
+    },
+    {
         name: 'finantial institution',
         icon: 'pi pi-bars',
         active: false,

@@ -17,6 +17,7 @@ import { UDFService } from './udf/service/udf.service';
 import { CreateUdfFormComponent } from './udf/form/create-udf-form';
 import { GenerateReportUiFormComponent } from './udf/generate-report-ui/generate-report-ui.form';
 import { ReportListComponent } from './udf/report-list/report-list.componemt';
+import { JasperReportComponent } from './daynamic-data-source-in-jasper-report/jasper-report-demo';
 
 
 
@@ -39,6 +40,7 @@ export const routes: Routes = [
       { path: 'create-udf', component: CreateUdfFormComponent, canActivate: [AuthGuard] },
       { path: 'run-report', component: GenerateReportUiFormComponent, canActivate: [AuthGuard] },
       { path: 'report-list', component: ReportListComponent, canActivate: [AuthGuard] },
+      { path: 'dynamic-data-source-in-jasperreport', component: JasperReportComponent, canActivate: [AuthGuard] },
       { path: '', redirectTo: "deshbord", pathMatch: 'full' },
     ]
   },

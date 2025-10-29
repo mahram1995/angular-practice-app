@@ -804,3 +804,11 @@ ul {
 .text-right {
     text-align: right !important;
 }
+
+.jasper-form { max-width: 720px; margin: 16px; font-family: Arial, sans-serif; }
+.row { display: flex; flex-direction: column; margin-bottom: 10px; }
+.row label { font-weight: 600; margin-bottom: 4px; }
+.row input, .row select, .row textarea { padding: 8px; font-size: 14px; }
+.actions { margin-top: 12px; }
+.message { margin-top: 12px; color: #333; }
+.jdbc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }

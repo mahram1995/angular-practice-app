@@ -20,6 +20,7 @@ import { FormsModule } from '@angular/forms';
 import { GenerateReportUiFormComponent } from './udf/generate-report-ui/generate-report-ui.form';
 import { ReportListComponent } from './udf/report-list/report-list.componemt';
 import { SafeUrlPipe } from '../../app-configuration/app-security/safe-url.pipe';
+import { JasperReportComponent } from './daynamic-data-source-in-jasper-report/jasper-report-demo';
 
 @NgModule({
     imports: [
@@ -47,6 +48,7 @@ import { SafeUrlPipe } from '../../app-configuration/app-security/safe-url.pipe'
         UdfListComponent,
         GenerateReportUiFormComponent,
         ReportListComponent,
+        JasperReportComponent
 
 
 

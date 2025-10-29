@@ -1,0 +1,64 @@
+<br>
+<div class="app-card" style="width: 60%; margin: auto;">
+    <form [formGroup]="form" (ngSubmit)="run()" class="jasper-form">
+  <div class="row">
+    <label>Jasper Server URL</label>
+    <input formControlName="serverUrl" />
+  </div>
+  <div class="row">
+    <label>Username</label>
+    <input formControlName="username" />
+    <label>Password</label>
+    <input formControlName="password" type="password" />
+  </div>
+
+  <div class="row">
+    <label>Report Unit URI</label>
+    <input formControlName="reportUnitUri" />
+  </div>
+
+  <div class="row"> 
+    <label>Output Format</label>
+    <select formControlName="outputFormat">
+      <option value="pdf">PDF</option>
+      <option value="html">HTML</option>
+      <option value="xls">XLS</option>
+      <option value="xlsx">XLSX</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <label><input type="checkbox" formControlName="useRepositoryDatasource" /> Use repository datasource</label>
+  </div>
+
+  <div *ngIf="form.get('useRepositoryDatasource')?.value" class="row">
+    <label>Repository Datasource URI</label>
+    <input formControlName="repositoryDatasourceUri" />
+  </div>
+
+  <div *ngIf="!form.get('useRepositoryDatasource')?.value" class="jdbc-grid">
+    <label>JDBC URL</label>
+    <input formControlName="jdbcUrl" />
+    <label>JDBC Username</label>
+    <input formControlName="jdbcUsername" />
+    <label>JDBC Password</label>
+    <input formControlName="jdbcPassword" type="password" />
+    <label>Driver Class</label>
+    <input formControlName="jdbcDriver" />
+  </div>
+
+  <div class="row">
+    <label>Parameters (JSON)</label>
+    <textarea formControlName="parameters" rows="4"></textarea>
+  </div>
+
+  <div class="row actions">
+    <button type="submit" [disabled]="running">Run Report</button>
+  </div>
+
+  <div class="row message">
+    {{ message }}
+  </div>
+</form>
+
+</div>
