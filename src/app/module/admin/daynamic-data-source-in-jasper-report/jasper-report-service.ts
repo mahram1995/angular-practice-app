@@ -1,68 +1,109 @@
+// report.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class JasperService {
-  constructor(private http: HttpClient) {}
+  private apiUrl = 'http://localhost:5050/api/reports/dynamic-db';
 
-  private authHeader(username: string, password: string) {
-    const token = btoa(`${username}:${password}`);
-    return { Authorization: `Basic ${token}` };
-  }
+  private springBootBaseUrl = 'http://localhost:5050'; // Your Spring Boot server
+  private proxyEndpoint = '/api/reports/generate-with-dynamic-db';
 
-  async createReportExecution(serverUrl: string, username: string, password: string, reportUnitUri: string, outputFormat: string, dataSource: any, parameters: any) {
-    //const url = this.normalize(serverUrl) + '/jasperserver/rest_v2/reportExecutions';
-    const url = this.normalize(serverUrl || '') + '/jasperserver/rest_v2/reportExecutions';
+  constructor(private http: HttpClient) { }
+  downloadReport(reportName: string, reportType: string = 'pdf', params?: any) {
+    const headers = new HttpHeaders({ Accept: 'application/pdf' });
+    let url = `${this.apiUrl}?reportName=${reportName}&reportType=${reportType}`;
 
-    const body: any = { reportUnitUri, outputFormat };
-
-    if (dataSource) body.dataSource = dataSource;
-
-    if (parameters && Object.keys(parameters).length) {
-      body.parameters = { reportParameter: [] };
-      for (const k of Object.keys(parameters)) {
-        body.parameters.reportParameter.push({ name: k, value: parameters[k] });
-      }
+    if (params) {
+      const query = Object.entries(params)
+        .map(([k, v]) => `${k}=${encodeURIComponent(String(v))}`)
+        .join(',');
+      url += `&parameter=${query}`;
     }
 
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      ...this.authHeader(username, password),
+    return this.http.post(url, {}, { headers, responseType: 'blob' });
+  }
+
+  // Method 1: Using Spring Boot proxy
+  generateReportWithDynamicDB(dbConfig: any, reportParams: any = {}): Observable<Blob> {
+    const url = this.springBootBaseUrl + this.proxyEndpoint;
+
+    // Combine all parameters
+    let params = new HttpParams();
+
+    // Add database configuration
+    const dbParams = {
+      'db_host': dbConfig.host,
+      'db_port': dbConfig.port,
+      'db_service_name': dbConfig.serviceName,
+      'db_username': dbConfig.username,
+      'db_password': dbConfig.password,
+      'db_schema': dbConfig.schema
+    };
+
+    Object.keys(dbParams).forEach(key => {
+      if (dbParams[key]) {
+        params = params.set(key, dbParams[key]);
+      }
     });
 
-    const res: any = await this.http.post(url, body, { headers }).toPromise();
-    return res;
-  }
-
-  async waitForExport(serverUrl: string, username: string, password: string, requestId: string, timeoutMs = 120000) {
-    const start = Date.now();
-    const headers = new HttpHeaders(this.authHeader(username, password));
-    const base = this.normalize(serverUrl) + `/jasperserver/rest_v2/reportExecutions/${requestId}/exports`;
-
-    while (true) {
-      const res: any = await this.http.get(base, { headers }).toPromise();
-      if (Array.isArray(res) && res.length) {
-        return res[0];
+    // Add report parameters
+    Object.keys(reportParams).forEach(key => {
+      if (reportParams[key]) {
+        params = params.set(key, reportParams[key]);
       }
-      if (Date.now() - start > timeoutMs) throw new Error('Export timed out');
-      await this.delay(1000);
+    });
+
+    return this.http.get(url, {
+      params: params,
+      responseType: 'blob'
+    });
+  }
+
+  // Method 2: Using explicit endpoint
+  generateReportWithExplicitParams(dbConfig: any, reportParams: any = {}): Observable<Blob> {
+    const url = `${this.springBootBaseUrl}/api/reports/generate-with-db`;
+
+    let params = new HttpParams()
+      .set('db_host', dbConfig.host)
+      .set('db_port', dbConfig.port)
+      .set('db_service_name', dbConfig.serviceName)
+      .set('db_username', dbConfig.username)
+      .set('db_password', dbConfig.password)
+      .set('db_schema', dbConfig.schema);
+
+    // Add optional report parameters
+    if (reportParams.startDate) {
+      params = params.set('startDate', reportParams.startDate);
     }
+    if (reportParams.endDate) {
+      params = params.set('endDate', reportParams.endDate);
+    }
+    if (reportParams.department) {
+      params = params.set('department', reportParams.department);
+    }
+    if (reportParams.reportType) {
+      params = params.set('reportType', reportParams.reportType);
+    }
+
+    return this.http.get(url, {
+      params: params,
+      responseType: 'blob'
+    });
   }
 
-  async downloadExport(serverUrl: string, username: string, password: string, requestId: string, exportId: string) {
-    const url = this.normalize(serverUrl) +
-      `/jasperserver/rest_v2/reportExecutions/${requestId}/exports/${exportId}/outputResource`;
-
-    const headers = new HttpHeaders(this.authHeader(username, password));
-    const blob = await this.http.get(url, { headers, responseType: 'blob' as 'json' }).toPromise();
-    return blob as Blob;
+  // Utility method to download the blob
+  downloadBlob(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    window.URL.revokeObjectURL(url);
   }
 
-  normalize(url: string) {
-    return url.replace(/\/+$/, '');
-  }
 
-  delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
 }

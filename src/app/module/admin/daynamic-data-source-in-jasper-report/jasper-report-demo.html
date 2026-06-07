@@ -1,64 +1,140 @@
-<br>
-<div class="app-card" style="width: 60%; margin: auto;">
-    <form [formGroup]="form" (ngSubmit)="run()" class="jasper-form">
-  <div class="row">
-    <label>Jasper Server URL</label>
-    <input formControlName="serverUrl" />
-  </div>
-  <div class="row">
-    <label>Username</label>
-    <input formControlName="username" />
-    <label>Password</label>
-    <input formControlName="password" type="password" />
+<!-- report-generator.component.html -->
+<div class="container">
+  <h2>Dynamic Database Report Generator</h2>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
   </div>
 
-  <div class="row">
-    <label>Report Unit URI</label>
-    <input formControlName="reportUnitUri" />
+  <!-- Database Configuration -->
+  <div class="card mb-3">
+    <div class="card-header">
+      <h5>Database Configuration</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="dbConfigForm">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Host</label>
+              <input type="text" class="form-control" formControlName="host">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Port</label>
+              <input type="text" class="form-control" formControlName="port">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Service Name / Database</label>
+              <input type="text" class="form-control" formControlName="serviceName">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Schema</label>
+              <input type="text" class="form-control" formControlName="schema">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Username</label>
+              <input type="text" class="form-control" formControlName="username">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" class="form-control" formControlName="password">
+            </div>
+          </div>
+        </div>
+
+        <!-- Predefined Configurations -->
+        <div class="row">
+          <div class="col-12">
+            <label>Quick Configurations:</label>
+            <div class="btn-group">
+              <button type="button" class="btn btn-outline-secondary btn-sm"
+                (click)="loadPredefinedConfig('development')">Development</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm"
+                (click)="loadPredefinedConfig('test')">Test</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm"
+                (click)="loadPredefinedConfig('production')">Production</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <div class="row"> 
-    <label>Output Format</label>
-    <select formControlName="outputFormat">
-      <option value="pdf">PDF</option>
-      <option value="html">HTML</option>
-      <option value="xls">XLS</option>
-      <option value="xlsx">XLSX</option>
-    </select>
+  <!-- Report Parameters -->
+  <div class="card mb-3">
+    <div class="card-header">
+      <h5>Report Parameters</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="reportParamsForm">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Start Date</label>
+              <input type="date" class="form-control" formControlName="startDate">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>End Date</label>
+              <input type="date" class="form-control" formControlName="endDate">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Department</label>
+              <input type="text" class="form-control" formControlName="department">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Report Type</label>
+              <select class="form-control" formControlName="reportType">
+                <option value="summary">Summary</option>
+                <option value="detailed">Detailed</option>
+                <option value="analytical">Analytical</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <div class="row">
-    <label><input type="checkbox" formControlName="useRepositoryDatasource" /> Use repository datasource</label>
-  </div>
+  <!-- Action Buttons -->
+  <div class="text-center">
+    <button class="btn btn-primary me-2" (click)="generateReportDirect()"
+      [disabled]="isLoading || dbConfigForm.invalid">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+      Generate Report (Direct)
+    </button>
+    <button class="btn btn-primary me-2" (click)="generateReport()" [disabled]="isLoading || dbConfigForm.invalid">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+      Generate By Spring Boot
+    </button>
 
-  <div *ngIf="form.get('useRepositoryDatasource')?.value" class="row">
-    <label>Repository Datasource URI</label>
-    <input formControlName="repositoryDatasourceUri" />
+    <button class="btn btn-success" (click)="generateReportViaProxy()" [disabled]="isLoading || dbConfigForm.invalid">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+      Generate Report (Via Proxy)
+    </button>
   </div>
-
-  <div *ngIf="!form.get('useRepositoryDatasource')?.value" class="jdbc-grid">
-    <label>JDBC URL</label>
-    <input formControlName="jdbcUrl" />
-    <label>JDBC Username</label>
-    <input formControlName="jdbcUsername" />
-    <label>JDBC Password</label>
-    <input formControlName="jdbcPassword" type="password" />
-    <label>Driver Class</label>
-    <input formControlName="jdbcDriver" />
-  </div>
-
-  <div class="row">
-    <label>Parameters (JSON)</label>
-    <textarea formControlName="parameters" rows="4"></textarea>
-  </div>
-
-  <div class="row actions">
-    <button type="submit" [disabled]="running">Run Report</button>
-  </div>
-
-  <div class="row message">
-    {{ message }}
-  </div>
-</form>
-
 </div>

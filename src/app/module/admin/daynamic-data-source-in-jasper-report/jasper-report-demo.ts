@@ -1,92 +1,143 @@
-// File: jasper-report.component.ts
+// report-generator.component.ts
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { JasperService } from './jasper-report-service';
+import { DatabaseConfig } from './dynamic.domain';
 
 
 @Component({
-  selector: 'app-jasper-report',
+  selector: 'app-report-generator',
   templateUrl: './jasper-report-demo.html',
- 
+  styleUrls: ['./report-generator.component.css']
 })
 export class JasperReportComponent {
-  form: FormGroup;
-  running = false;
-  message = '';
+  dbConfigForm: FormGroup;
+  reportParamsForm: FormGroup;
+  isLoading = false;
+  errorMessage = '';
 
-  constructor(private fb: FormBuilder, private jasper: JasperService) {
-    this.form = this.fb.group({
-      serverUrl: ['', [Validators.required]],
-      username: ['jasperadmin', [Validators.required]],
-      password: ['jasperadmin', [Validators.required]],
-      reportUnitUri: ['/AbabilNG/RPT_EXPORT', [Validators.required]],
-      outputFormat: ['pdf', [Validators.required]],
-      useRepositoryDatasource: [true],
-      repositoryDatasourceUri: ['/ababil_ng/DEVDB'],
-      jdbcUrl: ['jdbc:oracle:thin:@192.168.1.197:1521:devdbng'],
-      jdbcUsername: ['ababil_ng2'],
-      jdbcPassword: ['a'],
-      jdbcDriver: ['oracle.jdbc.driver.OracleDriver'],
-      parameters: ['{"YEAR":2025, "REGION":"EAST"}']
-    });
+  constructor(
+    private fb: FormBuilder,
+    private reportService: JasperService
+  ) {
+    this.initializeForms();
   }
 
-  async run() {
-    if (this.form.invalid) return;
-    this.running = true;
-    this.message = 'Starting report...';
+  private initializeForms(): void {
+    // Database Configuration Form
+    this.dbConfigForm = this.fb.group({
+      host: ['localhost', [Validators.required]],
+      port: ['1521', [Validators.required]],
+      serviceName: ['ORCL', [Validators.required]],
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+      schema: ['MYSCHEMA', [Validators.required]]
+    });
 
-    const v = this.form.value;
+    // Report Parameters Form
+    this.reportParamsForm = this.fb.group({
+      startDate: ['2024-01-01'],
+      endDate: ['2024-12-31'],
+      PACCOUNT_NO: ['2024-12-31'],
+      department: [''],
+      reportType: ['summary']
+    });
+  }
+  // Method 1: Specific report with DB config
+  generateReport(): void {
+    this.reportService.downloadReport('ACCOUNT_BALANCE_REPORT', 'pdf', {
+      startDate: '2023-01-01',
+      endDate: '2024-01-01',
+      PACCOUNT_NO: '01710279904'
+    }).subscribe({
+      next: (blob) => {
+        const fileURL = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = fileURL;
+        a.download = 'ACCOUNT_BALANCE_REPORT.pdf';
+        a.click();
+        URL.revokeObjectURL(fileURL);
+      },
+      error: (err) => console.error('Error downloading report:', err)
+    });
 
-    const dataSource = v.useRepositoryDatasource
-      ? { uri: v.repositoryDatasourceUri }
-      : {
-          dataSourceType: 'jdbcDataSource',
-          connectionUrl: v.jdbcUrl,
-          username: v.jdbcUsername,
-          password: v.jdbcPassword,
-          driverClass: v.jdbcDriver
-        };
+  }
 
-    let paramsObj = {};
-    try {
-      paramsObj = v.parameters ? JSON.parse(v.parameters) : {};
-    } catch (e) {
-      this.message = 'Invalid JSON in parameters';
-      this.running = false;
+  // Method 1: Generate report with direct Jasper Server call
+  generateReportDirect(): void {
+    if (this.dbConfigForm.invalid) {
+      this.errorMessage = 'Please fill all required database fields';
       return;
     }
 
-    try {
-      const exec = await this.jasper.createReportExecution(v.serverUrl, v.username, v.password, v.reportUnitUri, v.outputFormat, dataSource, paramsObj);
-      this.message = 'Report execution created, polling exports...';
-      const exportEntry = await this.jasper.waitForExport(v.serverUrl, v.username, v.password, exec.requestId);
-      this.message = 'Downloading...';
-      const blob = await this.jasper.downloadExport(v.serverUrl, v.username, v.password, exec.requestId, exportEntry.id);
+    this.isLoading = true;
+    this.errorMessage = '';
 
-      // Trigger download in browser
-      const filename = `${this.sanitizeFilename(v.reportUnitUri)}.${v.outputFormat}`;
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
+    const dbConfig: DatabaseConfig = this.dbConfigForm.value;
+    const reportParams = this.reportParamsForm.value;
 
-      this.message = 'Download started';
-    } catch (err: any) {
-      console.error(err);
-      this.message = err?.message || 'Error executing report';
-    } finally {
-      this.running = false;
+    this.reportService.generateReportWithDynamicDB(dbConfig, reportParams)
+      .subscribe({
+        next: (pdfBlob) => {
+          this.reportService.downloadBlob(pdfBlob, 'dynamic_report.pdf');
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Report generation failed:', error);
+          this.errorMessage = 'Failed to generate report. Please check your database configuration.';
+          this.isLoading = false;
+        }
+      });
+  }
+
+  // Method 2: Generate report via Spring Boot proxy
+  generateReportViaProxy(): void {
+    if (this.dbConfigForm.invalid) {
+      this.errorMessage = 'Please fill all required database fields';
+      return;
+    }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    const reportRequest = {
+      dbConfig: this.dbConfigForm.value,
+      reportParameters: this.reportParamsForm.value
+    };
+
+  }
+
+  // Load predefined database configurations
+  loadPredefinedConfig(configName: string): void {
+    const configs: { [key: string]: DatabaseConfig } = {
+      production: {
+        host: 'prod-db-server',
+        port: '1521',
+        serviceName: 'PRODDB',
+        username: 'report_user',
+        password: 'report_pass',
+        schema: 'REPORT_SCHEMA'
+      },
+      development: {
+        host: 'localhost',
+        port: '1521',
+        serviceName: 'xe',
+        username: 'hims',
+        password: 'root',
+        schema: 'hims'
+      },
+      test: {
+        host: 'test-db-server',
+        port: '1521',
+        serviceName: 'TESTDB',
+        username: 'test_user',
+        password: 'test_pass',
+        schema: 'TEST_SCHEMA'
+      }
+    };
+
+    if (configs[configName]) {
+      this.dbConfigForm.patchValue(configs[configName]);
     }
   }
-
-  sanitizeFilename(uri: string) {
-    return uri.replace(/[^a-z0-9]/gi, '_').replace(/^_+/, '');
-  }
 }
-
-
