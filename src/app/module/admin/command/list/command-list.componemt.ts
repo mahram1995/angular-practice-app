@@ -61,7 +61,7 @@ export class CommandListComponent implements OnInit {
         console.log(this.data);
 
         this.commandService.updateCommand(this.data, this.urlSearchMap).subscribe(data => {
-            this.notificationService.sendSuccess(data.message)
+            this.notificationService.sendSuccess('Commands updated successfully');
         });
     }
 

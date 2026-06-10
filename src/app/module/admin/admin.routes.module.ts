@@ -31,6 +31,7 @@ export const routes: Routes = [
       { path: 'deshbord', component: AdminHomePageComponent },
       { path: 'user-list', component: UserListComponent, canActivate: [AuthGuard] },
       { path: 'create-user', component: UserRegistrationComponent, canActivate: [AuthGuard] },
+      { path: 'update-user', component: UserRegistrationComponent, canActivate: [AuthGuard] },
       { path: 'my-task', component: ApprovalFlowTaskComponent, canActivate: [AuthGuard], },
       { path: 'pending-task', component: PendingTaskComponent, canActivate: [AuthGuard], },
       { path: 'user-details', component: UserRegistrationViewComponent, canActivate: [AuthGuard], },

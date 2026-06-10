@@ -6,33 +6,62 @@ export class NotificationService {
     isAfRespose: boolean
     taskId: string
     constructor(private messageService: MessageService) {
-
+        this.isAfRespose = false;
     }
 
-    sendSuccess(msgKey: any, params?: any) {
-        let message: string = '';
-        if (params) {
-            message = msgKey.replace(/{([^{}]*)}/g, function (a, b) {
-                const r = params[b];
-                return typeof r === 'string' || typeof r === 'number' ? r : a;
+    sendSuccess(msgKey: any, additional?: any) {
+        let message: any = '';
+
+
+        message = msgKey;
+
+        // Handle different data types
+        if (typeof message === 'string') {
+
+            // Normal string
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Success !!',
+                detail: this.transform(message),
+                styleClass: 'toast-success-style',
+                icon: 'abc',
+                sticky: true
             });
-        } else message = msgKey;
 
-        if (this.isAfRespose) {
-            message = message[1] + ' Task ID: ' + this.taskId,
+        } else if (Array.isArray(message)) {
 
-                this.messageService.add({ severity: 'success', summary: 'Success !!', detail: this.transform(message), styleClass: 'toast-success-style', icon: 'abc', sticky: true });
+            // String array
+            const detail = this.isAfRespose
+                ? `${message[1]} Task ID: ${this.taskId}`
+                : message[0];
 
-        } else if (params) {
-            this.messageService.add({ severity: 'success', summary: 'Success !!', detail: this.transform(message), styleClass: 'toast-success-style', icon: 'abc', sticky: true });
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Success !!',
+                detail: this.transform(detail),
+                styleClass: 'toast-success-style',
+                icon: 'abc',
+                sticky: true
+            });
 
-        } else {
-            this.messageService.add({ severity: 'success', summary: 'Success !!', detail: this.transform(message), styleClass: 'toast-success-style', icon: 'abc', sticky: true });
+        } else if (message && typeof message === 'object') {
 
+            // Object response
+            const detail =
+                message.message ||
+                message.body?.message ||
+                message.content?.message ||
+                JSON.stringify(message);
+
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Success !!',
+                detail: this.transform(detail),
+                styleClass: 'toast-success-style',
+                icon: 'abc',
+                sticky: true
+            });
         }
-
-
-
     }
 
     sendInfo(message: any) {

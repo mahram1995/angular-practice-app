@@ -54,12 +54,10 @@ export class PendingTaskComponent extends FormBaseComponent implements OnInit {
         // this.router.navigate([data.taskDetailsUi, data.taskId]);
         this.router.navigate([data.taskCorrectionUi], {
             queryParams: {
-                commandName: data.commandName,
-                taskId: data.taskId
+                taskId: data.taskId,
+                commandName: data.commandName
             }
-        }).then(() => {
-            window.history.replaceState({}, '', data.taskCorrectionUi + '?taskId=' + data.taskId); // Removes params from URL
-        });
+        })
     }
 
     onRowSelect(event: any) {

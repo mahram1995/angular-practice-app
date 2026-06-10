@@ -51,9 +51,17 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
             if (command == 'CREATE_NEW_USER') {
                 this.header = 'Correction of create new user'
             }
+
             if (this.taskId) {
                 this.approvalFlowService.fetchApprovalFlowTaskInstancePayload({ taskId: this.taskId }).subscribe(data => {
-                    this.prepareForm(data);
+                    this.prepareForm(data.payload);
+                    if (command == 'UserModificationCommand') {
+                        this.header = 'Correction of user modification'
+                        this.isEdit = true;
+                        this.userForm.get('userName')?.disable();
+                        this.userForm.get('password')?.clearValidators();
+                        this.userForm.get('password')?.updateValueAndValidity();
+                    }
                 })
             }
 
@@ -110,25 +118,27 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
     }
 
     save() {
-        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, CORRECTION_UI);
+
 
         let formData = this.userForm.getRawValue()
         if (this.commonService.isFormInvalid(this.userForm, this.required_field)) {
             return;
         }
         if (this.isEdit) {
+            let urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, 'admin/update-user');
             this.adminService.updateUser(formData, urlSearchParams).subscribe(
                 (response) => {
-                    this.notificationService.sendSuccess(UPDATE_SUCCESS_MESSAGE);
+                    this.notificationService.sendSuccess(UPDATE_SUCCESS_MESSAGE, null);
                     this.prepareForm(new UserRegistrationDTO)
                     this.location.back()
 
                 }
             )
         } else {
+            let urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, 'admin/creatre-user');
             this.adminService.createUser(formData, urlSearchParams).subscribe(
                 (response) => {
-                    this.notificationService.sendSuccess(CREATE_SUCCESS_MESSAGE, response.content);
+                    this.notificationService.sendSuccess(CREATE_SUCCESS_MESSAGE, null);
                     this.prepareForm(new UserRegistrationDTO)
                     this.location.back()
                 }

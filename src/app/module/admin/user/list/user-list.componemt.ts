@@ -60,7 +60,7 @@ export class UserListComponent implements OnInit {
     }
 
     onEdit(data) {
-        this.router.navigate(['admin/create-user'], {
+        this.router.navigate(['admin/update-user'], {
             queryParams: {
                 userName: data.userName
             }
