@@ -72,6 +72,7 @@
     <p-overlayPanel #opUdfForm [dismissable]="false" [style]="{ width: '550px' }" showCloseIcon="true">
         <div>
             <h4>Create UDF</h4>
+            <hr>
         </div>
         <form [formGroup]="udfForm">
             <div style="margin: 20px 10px 10px 10px;">
@@ -82,7 +83,7 @@
                                          udfForm.controls.code?.errors}">
                             <label for="code">Code</label>
                             <div *ngIf="udfForm.controls['code']?.errors && udfForm.controls['code']?.touched">
-                                <div class="error-alert" [hidden]="!udfForm.controls['code']?.errors?.required">
+                                <div class="error-message" [hidden]="!udfForm.controls['code']?.errors?.required">
                                     Code is required.</div>
                             </div>
                         </div>
@@ -94,7 +95,7 @@
                                          udfForm.controls.name?.errors}">
                             <label for="name">Report Name</label>
                             <div *ngIf="udfForm.controls['name']?.errors && udfForm.controls['name']?.touched">
-                                <div class="error-alert" [hidden]="!udfForm.controls['name']?.errors?.required">
+                                <div class="error-message" [hidden]="!udfForm.controls['name']?.errors?.required">
                                     Name is required.</div>
                             </div>
                         </div>
@@ -106,14 +107,14 @@
                             <label for="moduleName">Module Name</label>
                             <div
                                 *ngIf="udfForm.controls['moduleName']?.errors && udfForm.controls['moduleName']?.touched">
-                                <div class="error-alert" [hidden]="!udfForm.controls['moduleName']?.errors?.required">
+                                <div class="error-message" [hidden]="!udfForm.controls['moduleName']?.errors?.required">
                                     Module is required.</div>
                             </div>
                         </div>
                     </div>
 
                 </div>
-                <div style="text-align: center;"> 
+                <div style="text-align: center;">
                     <button class="app-button" style="width: 100px; text-align: center;" (click)="save()">Save</button>
                 </div>
             </div>
