@@ -106,6 +106,18 @@ export class CommonService {
         return this.clientIp;
     }
 
+    getRowsPerPage(
+        rowHeight: number,
+        reservedHeight: number = 250,
+        minimumRows: number = 5
+    ): number {
+
+        return Math.max(
+            Math.floor((window.innerHeight - reservedHeight) / rowHeight),
+            minimumRows
+        );
+    }
+
 
 
 

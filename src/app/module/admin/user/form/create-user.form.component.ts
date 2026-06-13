@@ -135,7 +135,7 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
                 }
             )
         } else {
-            let urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, 'admin/creatre-user');
+            let urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, 'admin/create-user');
             this.adminService.createUser(formData, urlSearchParams).subscribe(
                 (response) => {
                     this.notificationService.sendSuccess(CREATE_SUCCESS_MESSAGE, null);

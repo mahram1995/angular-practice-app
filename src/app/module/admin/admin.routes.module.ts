@@ -43,6 +43,12 @@ export const routes: Routes = [
       { path: 'report-list', component: ReportListComponent, canActivate: [AuthGuard] },
       { path: 'dynamic-data-source-in-jasperreport', component: JasperReportComponent, canActivate: [AuthGuard] },
       { path: '', redirectTo: "deshbord", pathMatch: 'full' },
+      {
+        path: 'financial-institute',
+        canActivate: [AuthGuard],
+        loadChildren: () =>
+          import('./financial-institute/financial.institute.module').then(m => m.FinancialInstituteModule)
+      },
     ]
   },
 

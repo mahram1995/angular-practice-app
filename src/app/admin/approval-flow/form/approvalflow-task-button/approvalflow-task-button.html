@@ -14,3 +14,35 @@
     <div class="clear-fix"></div>
     <hr style="margin-top: 5px;">
 </div>
+
+
+<p-dialog header="Delegate Task" [(visible)]="isDeligate" [modal]="true" closable="true" [style]="{'width': '370px'}"
+    [draggable]="true" [resizable]="false">
+    <p class="m-0">
+    <form [formGroup]="userDeligateForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+            <div class=" col-md-12">
+                <div class="app-dropdwon">
+                    <p-dropdown styleClass="app-dropdown-field" appendTo="body" [filter]="true"
+                        formControlName="deligateUser" [style]="{width:'100%',}" [resetFilterOnHide]='true'
+                        placeholder="Select a user" [options]="userList" filterBy="label" optionValue="value"
+                        optionLabel="label">
+                    </p-dropdown>
+                    <div
+                        *ngIf="userDeligateForm.controls['deligateUser'].errors && userDeligateForm.controls ['deligateUser'].touched">
+                        <div class="error-message" style="color: red; font-size: 12px;"
+                            [hidden]="!userDeligateForm.controls['deligateUser'].errors.required">
+                            Delegate user required.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div style="text-align: center;">
+            <input type="submit" class="btn" (click)="submitDeligation()"
+                style="background-color: #086960; width:80px; height: 35px; color: white;  font-size: 13px;"
+                value="Delegate" name="">
+        </div>
+    </form>
+
+</p-dialog>

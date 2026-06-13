@@ -7,6 +7,7 @@ import { Menu } from 'primeng/menu';
 import { LazyLoadEvent, MenuItem } from 'primeng/api';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { CommonService } from '../../../../app-configuration/app.service/common.service';
 
 @Component({
     selector: 'approval-flow-task',
@@ -30,14 +31,16 @@ export class UserListComponent implements OnInit {
         private router: Router,
         private adminService: AdminService,
         private formBuilder: FormBuilder,
+        private commonService: CommonService
 
     ) {
 
     }
 
     ngOnInit() {
-        this.fetchUsers(null)
+        // this.fetchUsers(null)
         this.prepareSearchForm()
+        this.rowPerPage = this.commonService.getRowsPerPage(31)
 
     }
 

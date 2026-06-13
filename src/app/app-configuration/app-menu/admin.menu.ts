@@ -52,6 +52,13 @@ export const AdminMenuList = [
 
     },
     {
+        name: 'Financial Institution',
+        icon: 'pi pi-bars',
+        active: false,
+        routerLink: "/admin/financial-institute"
+
+    },
+    {
         name: 'Configuration',
         icon: 'pi pi-qrcode',
         active: false,

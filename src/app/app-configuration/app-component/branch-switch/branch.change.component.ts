@@ -12,6 +12,7 @@ export class BranchSwitchComponent implements OnInit {
   branchChangeForm: FormGroup
   branchs: any[]
   userData: any
+  deligateUser: any
   @Input('formData') set formData(formData: any) {
     if (formData && Object.keys(formData).length) {
       this.userData = formData;
