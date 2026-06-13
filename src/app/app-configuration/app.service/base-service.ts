@@ -11,12 +11,14 @@ export class BaseService {
 
     fullURL: string
 
-    getHttpParam(urlSearchParams: Map<string, any>): any {
-        let params = new HttpParams()
-        for (let entry of urlSearchParams.entries()) {
-            params = params.set(entry[0], entry[1])
+    getHttpParam(urlSearchParams: Map<string, any>): HttpParams {
+        let params = new HttpParams();
+        for (const [key, value] of urlSearchParams.entries()) {
+            if (value !== null && value !== undefined) {
+                params = params.set(key, value.toString());
+            }
         }
-        return params
+        return params;
     }
 
 

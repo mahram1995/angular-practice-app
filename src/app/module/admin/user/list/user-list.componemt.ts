@@ -23,6 +23,7 @@ export class UserListComponent implements OnInit {
     pageNumber: number = 0;
     cols: any[] = []
     isVisibleSearchDialog: boolean = false
+    isSearch: boolean
 
     @ViewChild('dataTable') dt: Table | undefined;
 
@@ -38,7 +39,7 @@ export class UserListComponent implements OnInit {
     }
 
     ngOnInit() {
-        // this.fetchUsers(null)
+        //  this.fetchUsers(null)
         this.prepareSearchForm()
         this.rowPerPage = this.commonService.getRowsPerPage(31)
 
@@ -83,28 +84,24 @@ export class UserListComponent implements OnInit {
     }
 
 
-    search(searchMap: Map<string, any>) {
-        this.dt?.reset();
-        this.urlSearchMap.set('page', 0);
-
-        if (searchMap != null) {
-            this.urlSearchMap = new Map(searchMap);
-        }
-
+    search() {
+        // Remove old search parameters
         for (const control in this.userSearchForm.controls) {
-            this.urlSearchMap.delete(control); //delete existing value
-            const formControlValue = this.userSearchForm.get(control)?.value?.toString().trim() ?? '';
-            if (formControlValue.length !== 0) {
-                this.urlSearchMap.set(control, formControlValue);
+            this.urlSearchMap.delete(control);
+
+            const value = this.userSearchForm.get(control)?.value
+                ?.toString()
+                .trim();
+
+            if (value) {
+                this.urlSearchMap.set(control, value);
             }
         }
 
-        // ✅ Loop is complete here
-        // ✅ Delay for 2 seconds before calling fetchUsers
-        setTimeout(() => {
-            this.fetchUsers(this.urlSearchMap);
-            this.prepareSearchForm();
-        }, 500);
+        // Reset paginator to first page
+        this.dt?.reset();
+
+        this.prepareSearchForm();
 
     }
 
@@ -122,33 +119,25 @@ export class UserListComponent implements OnInit {
     back() { this.location.back() }
 
     refresh() {
-        this.dt?.reset();
-        this.setAsPage()
+        this.prepareSearchForm();   // Reset form values first
+        this.urlSearchMap.clear();  // Remove old search parameters
+
+        this.dt?.reset();           // Triggers onLazyLoad()
     }
-    setAsPage() {
-        this.urlSearchMap = new Map();
-        this.urlSearchMap.set('asPage', true);
-        this.urlSearchMap.set('size', this.rowPerPage);
-        this.urlSearchMap.set('page', this.pageNumber);
-        this.fetchUsers(this.urlSearchMap);
-    }
+
 
     onLazyLoad(event: TableLazyLoadEvent) {
-        this.rowPerPage = event.rows ?? this.rowPerPage;
-        this.pageNumber = event.first / this.rowPerPage;
+        this.pageNumber = event.first
+            ? Math.floor(event.first / event.rows!)
+            : 0;
 
-        if (this.urlSearchMap == null) {
-            this.urlSearchMap = new Map();
-        }
-        this.urlSearchMap.set('asPage', true);
-        this.urlSearchMap.set('page', this.pageNumber);  // 0-based index
+        this.rowPerPage = event.rows ?? 15;
+
+        this.urlSearchMap.set('page', this.pageNumber);
         this.urlSearchMap.set('size', this.rowPerPage);
+        this.urlSearchMap.set('asPage', true);
 
-        this.adminService.fetchUsers(this.urlSearchMap).subscribe(data => {
-            this.users = data.content;
-            this.totalRecords = data.totalElements;   // use backend's totalElements
-            this.totalPages = data.totalPages;
-        });
+        this.fetchUsers(this.urlSearchMap);
     }
 
 

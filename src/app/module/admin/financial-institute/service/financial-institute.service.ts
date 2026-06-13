@@ -8,14 +8,14 @@ import { Bank } from "./bank.domain";
 
 const URL = BASE_URL
 
-const GET_BANKS = URL + 'admin/financial-institute/get-bank';
-const GET_BANK_BY_ID = URL + 'admin/financial-institute/get-bank/{id}';
-const UPDATE_BANK = URL + 'admin/financial-institute/update-bank';
-const SAVE_BANK = URL + 'admin/financial-institute/save-bank';
+const GET_BANKS = URL + 'admin/financial-institute/get-financial-institute';
+const GET_BANK_BY_ID = URL + 'admin/financial-institute/get-financial-institute/{bankId}';
+const UPDATE_BANK = URL + 'admin/financial-institute/update-financial-institute';
+const SAVE_BANK = URL + 'admin/financial-institute/create-financial-institute';
 const GET_BRANCH = URL + 'admin/financial-institute/get-branch';
 const UPDATE_BRANCH = URL + 'admin/financial-institute/update-branch';
-const SAVE_BRANCH = URL + 'admin/financial-institute/save-branch';
-const GET_BRANCH_BY_ID = URL + 'admin/financial-institute/get-branch/{id}';
+const SAVE_BRANCH = URL + 'admin/financial-institute/create-branch';
+const GET_BRANCH_BY_ID = URL + 'admin/financial-institute/get-branch/{branchId}';
 
 
 @Injectable()
@@ -34,7 +34,7 @@ export class FinancialInstituteService extends BaseService {
         return this.http.put(UPDATE_BANK, data, urlSearchParams);
     }
     public getBank(urlSearchParams): Observable<any> {
-        return this.http.get(GET_BANKS, urlSearchParams);
+        return this.http.get(GET_BANKS, { params: urlSearchParams });
     }
     public getBankByBankId(pathParameters: PathParameters): Observable<any> {
         let option = this.create(GET_BANK_BY_ID, pathParameters)
@@ -48,7 +48,7 @@ export class FinancialInstituteService extends BaseService {
         return this.http.put(UPDATE_BRANCH, data, urlSearchParams);
     }
     public getBranch(urlSearchParams): Observable<any> {
-        return this.http.get(GET_BRANCH, urlSearchParams);
+        return this.http.get(GET_BRANCH, { params: urlSearchParams });
     }
     public getBranchById(pathParameters: PathParameters): Observable<any> {
         let option = this.create(GET_BRANCH_BY_ID, pathParameters)

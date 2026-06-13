@@ -13,3 +13,49 @@
     </div>
 </div>
 <hr style="margin-top: 5px;margin-bottom: 2px;">
+<div class="app-list">
+    <div style="padding: 0px 5px 5px 5px">
+        <p-table class="table-striped table-bordered table-hover table-responsive" #dataTable [value]="bankList"
+            [paginator]="true" [rows]="rowPerPage" [totalRecords]="totalRecords" styleClass="p-datatable-sm"
+            [rowsPerPageOptions]="[15,20,25,30,50,100]" [lazy]="true" (onLazyLoad)="onLazyLoad($event)">>
+            <ng-template pTemplate="header">
+                <tr style="font-size: 14px;">
+                    <th style="width: 70px;">Code</th>
+                    <th style="min-width: 200px;">Bank Name</th>
+                    <th style="width: 150px;">Sort Name</th>
+                    <th style="width: 150px;">Swift Code</th>
+                    <th>Owner Type</th>
+                    <th style="width: 250px;">Website</th>
+                    <th style="width: 200px;">Address</th>
+                    <th style="width: 200px;">Institute Type</th>
+                    <th style="width: 65px;">Action</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-data>
+                <tr style="font-size: 14px;">
+                    <td style="text-align: center;">{{data.bankCode}}</td>
+                    <td>{{data.bankName}}</td>
+                    <td style="text-align: center;">{{data.bankSortName}}</td>
+                    <td style="text-align: center;">{{data.swiftCode}}</td>
+                    <td style="text-align: center;">{{data.ownerType}}</td>
+                    <td style="text-align: center;">{{data.website}}</td>
+                    <td style="text-align: center;">{{data.address}}</td>
+                    <td style="text-align: center;">{{data.financialInstitutionType}}</td>
+                    <td style="text-align: center;">
+                        <p-button [styleClass]="'tree-dot-button'" (click)="opShowOption.show($event)"
+                            icon="pi pi-ellipsis-v"></p-button>
+                        <p-overlayPanel styleClass="app-overly-buttons" #opShowOption [style]="{ width: '180px'}">
+                            <button class="app-action-button" (click)="onDetails(data)">
+                                <i class="pi pi-qrcode" style="font-size:13px ; padding-right:5px">
+                                </i> Details</button>
+                            <button class="app-action-button" (click)="onEdit(data)">
+                                <i class="pi pi-file-edit" style="font-size:13px ; padding-right:5px">
+                                </i> Modification</button>
+                        </p-overlayPanel>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

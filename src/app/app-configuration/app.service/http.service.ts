@@ -46,7 +46,7 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
         }
     }
 
-    getHttpHeader(userSearchParam: any, data: any): any {
+    getHttpHeader(urlSearchParam: any, data: any): any {
         let token = this.getToken();
         let headers = new HttpHeaders()
             .set('Authorization', `Bearer ${token}`)
@@ -54,11 +54,11 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
 
         let httpParams = new HttpParams();
 
-        if (userSearchParam) {
+        if (urlSearchParam) {
             if (data === null) {
                 // Add query params
-                if (userSearchParam && userSearchParam instanceof Map) {
-                    userSearchParam.forEach((value: any, key: string) => {
+                if (urlSearchParam && urlSearchParam instanceof Map) {
+                    urlSearchParam.forEach((value: any, key: string) => {
                         if (value !== null && value !== undefined) {
                             httpParams = httpParams.set(key, value); // dynamically add param
                         }
@@ -66,19 +66,19 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
                 }
             } else {
                 // Optional: Add special headers
-                const taskId = userSearchParam.get("taskId");
+                const taskId = urlSearchParam.get("taskId");
                 if (taskId != null) {
                     headers = headers.set('taskId', taskId);
                 }
-                const verifier = userSearchParam.get("verifier");
+                const verifier = urlSearchParam.get("verifier");
                 if (verifier != null) {
                     headers = headers.set('verifier', verifier);
                 }
-                const detailsUI = userSearchParam.get("detailsUI");
+                const detailsUI = urlSearchParam.get("detailsUI");
                 if (detailsUI != null) {
                     headers = headers.set('detailsUI', detailsUI);
                 }
-                const correctionUI = userSearchParam.get("correctionUI");
+                const correctionUI = urlSearchParam.get("correctionUI");
                 if (correctionUI != null) {
                     headers = headers.set('correctionUI', correctionUI);
                 }

@@ -31,13 +31,6 @@ export const AdminMenuList = [
         ]
     },
     {
-        name: 'finantial institution',
-        icon: 'pi pi-bars',
-        active: false,
-        routerLink: "/admin/finantial-institution"
-
-    },
-    {
         name: 'Employee',
         icon: 'pi pi-bars',
         active: false,

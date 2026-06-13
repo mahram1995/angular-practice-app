@@ -9,14 +9,13 @@ import { CommandService } from '../command/service/comand.service';
 import { FinancialInstituteFormComponent } from './from/bank/bank.form.component';
 import { BranchListComponent } from './list/branch-list/branch.list.component';
 import { BranchFormComponent } from './from/branch/branch.form.component';
+import { FinancialInstituteService } from './service/financial-institute.service';
 
 @NgModule({
     imports: [
         AppShareModule,
         CommonModule,
         FinancialInstituteRouteModule,
-        PanelMenuModule,
-        FormsModule,
 
 
     ],
@@ -32,7 +31,7 @@ import { BranchFormComponent } from './from/branch/branch.form.component';
     ],
 
     providers: [
-        DatePipe, CommandService
+        DatePipe, CommandService, FinancialInstituteService
     ],
 
 })
