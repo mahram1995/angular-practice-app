@@ -24,6 +24,8 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { RouterModule } from '@angular/router';
 import { CalendarModule } from 'primeng/calendar';
 import { SafeUrlPipe } from '../../app-security/safe-url.pipe';
+import { ApprovalFlowTaskComponent } from '../../../admin/approval-flow/form/my-task/my-task.componemt';
+import { ApprovalFlowViewButtonComponent } from '../../../admin/approval-flow/form/approvalflow-task-button/approvalflow-task-button';
 
 
 
@@ -58,6 +60,7 @@ import { SafeUrlPipe } from '../../app-security/safe-url.pipe';
         BranchSwitchComponent,
         AppRightMenuComponent,
         SafeUrlPipe,
+        ApprovalFlowViewButtonComponent
 
 
 
@@ -81,7 +84,8 @@ import { SafeUrlPipe } from '../../app-security/safe-url.pipe';
         TreeModule,
         MatCardModule,
         TableModule,
-        CalendarModule
+        CalendarModule,
+        ApprovalFlowViewButtonComponent
     ],
 
     providers: [

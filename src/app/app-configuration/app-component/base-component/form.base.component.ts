@@ -8,13 +8,9 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { BaseComponent } from './base.component';
-import { ApprovalflowServiceInterface } from '../../../admin/approval-flow/service/approval.flow.service.Interface';
 
 import { Injectable } from '@angular/core';
-import { APPROVAL_FLOW_SERVICE } from '../../../admin/approval-flow/service/approval-flow.token';
 import { CommonService } from '../../app.service/common.service';
-import { PathParameters } from '../../app.service/base-service';
-import { Validators } from '@angular/forms';
 
 @Injectable()
 export class FormBaseComponent extends BaseComponent implements AfterViewInit {
@@ -44,7 +40,7 @@ export class FormBaseComponent extends BaseComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        // Optional lifecycle hook
+        this.commonService.focusFirstControl();
     }
 
     handleNavigation(): void {

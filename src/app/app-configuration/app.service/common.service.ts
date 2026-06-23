@@ -15,6 +15,7 @@ export class CommonService {
     isSumbitted: boolean = false;
 
     constructor(
+        // Don't call any service here. 
         private notificationService: NotificationService,
         private http: HttpClient
 
@@ -116,6 +117,17 @@ export class CommonService {
             Math.floor((window.innerHeight - reservedHeight) / rowHeight),
             minimumRows
         );
+    }
+
+
+    focusFirstControl(): void {
+        setTimeout(() => {
+            const element = document.querySelector(
+                'input:not([disabled]), select:not([disabled]), textarea:not([disabled])'
+            ) as HTMLElement;
+
+            element?.focus();
+        }, 100);
     }
 
 

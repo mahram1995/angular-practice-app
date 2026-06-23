@@ -1,12 +1,13 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { Location } from '@angular/common';
 import { NotificationService } from "../../../../../app-configuration/app.service/notification.service";
-import { FormBuilder } from "@angular/forms";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { CommonService } from "../../../../../app-configuration/app.service/common.service";
 import { FinancialInstituteService } from "../../service/financial-institute.service";
 import { Bank } from "../../service/bank.domain";
-import { TableLazyLoadEvent } from "primeng/table";
+import { Table, TableLazyLoadEvent } from "primeng/table";
+import { OverlayPanel } from "primeng/overlaypanel";
 
 @Component({
     selector: 'financial-institute-list',
@@ -15,6 +16,8 @@ import { TableLazyLoadEvent } from "primeng/table";
 export class FinancialInstituteListComponent implements OnInit {
 
     bankList: Bank[];
+    searchForm: FormGroup;
+    selectedBank: Bank;
 
     totalRecords: number = 0;
     totalPages: number
@@ -22,11 +25,13 @@ export class FinancialInstituteListComponent implements OnInit {
     pageNumber: number = 0;
 
     urlSearchMap: Map<string, any> = new Map();
+    @ViewChild('dataTable') dataTable: Table | undefined;
 
     constructor(
         private location: Location,
         private router: Router,
         private commonService: CommonService,
+        private formBuilder: FormBuilder,
         private bankService: FinancialInstituteService,
 
     ) {
@@ -34,44 +39,73 @@ export class FinancialInstituteListComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.rowPerPage = this.commonService.getRowsPerPage(32)
-
-        this.fetchBanks(null)
+        this.rowPerPage = this.commonService.getRowsPerPage(31)
+        this.prepareSearchForm();
 
 
     }
 
-    fetchBanks(searchParam: any) {
+    prepareSearchForm() {
+        this.searchForm = this.formBuilder.group({
+            bankName: [''],
+        });
+    }
 
-        this.urlSearchMap.set('asPage', true);
-        this.urlSearchMap.set('page', this.pageNumber);  // 0-based index
-        this.urlSearchMap.set('size', this.rowPerPage);
-        this.bankService.getBank(this.urlSearchMap).subscribe(data => {
+    showLookup(op: OverlayPanel, event: Event): void {
+        op.toggle(event);
+
+
+        this.commonService.focusFirstControl();
+
+    }
+
+    search() {
+        // Remove old search parameters
+        for (const control in this.searchForm.controls) {
+            this.urlSearchMap.delete(control);
+            const value = this.searchForm.get(control)?.value
+                ?.toString()
+                .trim();
+            if (value) {
+                this.urlSearchMap.set(control, value);
+            }
+        }
+        // Reset paginator to first page
+        this.dataTable?.reset();
+        this.prepareSearchForm();
+    }
+
+    fetchBanks(urlSearchMap: any) {
+        this.bankService.getBank(urlSearchMap).subscribe(data => {
             this.bankList = data.content
             this.totalRecords = data.totalElements;
             this.totalPages = data.totalPages;
         })
     }
 
+
     onLazyLoad(event: TableLazyLoadEvent) {
-        this.rowPerPage = event.rows ?? this.rowPerPage;
-        this.pageNumber = event.first / this.rowPerPage;
+        this.pageNumber = event.first
+            ? Math.floor(event.first / event.rows!)
+            : 0;
 
-        if (this.urlSearchMap == null) {
-            this.urlSearchMap = new Map();
-        }
-        this.urlSearchMap.set('asPage', true);
-        this.urlSearchMap.set('page', this.pageNumber);  // 0-based index
+        this.rowPerPage = event.rows ?? 15;
+
+        this.urlSearchMap.set('page', this.pageNumber);
         this.urlSearchMap.set('size', this.rowPerPage);
+        this.urlSearchMap.set('asPage', true);
 
-        this.bankService.getBank(this.urlSearchMap).subscribe(data => {
-            this.bankList = data.content;
-            this.totalRecords = data.totalElements;   // use backend's totalElements
-            this.totalPages = data.totalPages;
-        });
+        this.fetchBanks(this.urlSearchMap);
     }
 
-    onDetails(data: any) { }
+    onDetails(data: any) {
+        this.router.navigate(['admin/financial-institute/bank-details'], {
+            queryParams: {
+                bankId: data.id
+            }
+        })
+    }
+
     onEdit(data: any) {
         this.router.navigate(['admin/financial-institute/update-financial-institute'], {
             queryParams: {
@@ -80,11 +114,24 @@ export class FinancialInstituteListComponent implements OnInit {
         });
     }
 
+    onRowSelect(event: any) {
+
+        this.router.navigate(['admin/financial-institute/bank-details'], {
+            queryParams: {
+                bankId: this.selectedBank.id
+            }
+        })
+    }
+
     create() {
         this.router.navigate(['admin/financial-institute/create-financial-institute']);
     }
 
-    refresh() { this.fetchBanks(null) }
+    refresh() {
+        this.prepareSearchForm();   // Reset form values first
+        this.urlSearchMap.clear();  // Remove old search parameters
+        this.dataTable?.reset();
+    }
 
     back() { this.location.back() }
 

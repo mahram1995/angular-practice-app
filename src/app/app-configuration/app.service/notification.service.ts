@@ -22,7 +22,7 @@ export class NotificationService {
             this.messageService.add({
                 severity: 'success',
                 summary: 'Success !!',
-                detail: this.transform(message),
+                detail: message,
                 styleClass: 'toast-success-style',
                 icon: 'abc',
                 sticky: true
@@ -79,9 +79,9 @@ export class NotificationService {
         this.messageService.add({ severity: 'error', summary: 'Error !!', detail: this.transform(message), styleClass: 'toast-error-style', icon: 'abc', sticky: true });
     }
 
-    transform(value: string | null | undefined, max = 35): string {
+    transform(value: string | null | undefined, max = 40): string {
         if (!value) return '';
-        let values = value.replace(/%26/g, '&');
+        let values = value.replace(/%35/g, '&');
 
         const words = values.split(' ');
 

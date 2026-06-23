@@ -39,7 +39,7 @@ import { JasperReportComponent } from './daynamic-data-source-in-jasper-report/j
         UserRegistrationComponent,
         ApprovalFlowTaskComponent,
         UserRegistrationViewComponent,
-        ApprovalFlowViewButtonComponent,
+        //  ApprovalFlowViewButtonComponent,
         PendingTaskComponent,
         UserListComponent,
         PanelMenuControlledDemo,

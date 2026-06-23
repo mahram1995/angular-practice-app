@@ -39,9 +39,6 @@ export class ErrorInterceptor implements HttpInterceptor {
                         case 401:
                             if (error.error.message) {
                                 errorMsg = error.error.message
-                            } else {
-                                errorMsg = error.error;
-
                             }
 
                             this.authService.logoutByUser(null)

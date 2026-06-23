@@ -74,6 +74,10 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
                 if (verifier != null) {
                     headers = headers.set('verifier', verifier);
                 }
+                const maker = urlSearchParam.get("maker");
+                if (maker != null) {
+                    headers = headers.set('maker', maker);
+                }
                 const detailsUI = urlSearchParam.get("detailsUI");
                 if (detailsUI != null) {
                     headers = headers.set('detailsUI', detailsUI);

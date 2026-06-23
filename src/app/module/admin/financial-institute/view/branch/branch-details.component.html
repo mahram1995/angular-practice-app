@@ -1,0 +1,77 @@
+<div class="app-page">
+    <div>
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left  ">
+                <p class="app-page-header">Branch Details</p>
+            </div>
+            <div class="app-button-group">
+                <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+            </div>
+        </div>
+    </div>
+</div>
+<hr style="margin-top: 5px;margin-bottom: 2px;">
+<div class="app-list">
+    <mat-card>
+        <mat-card-content>
+            <div class="row" style=" padding: 10px; ">
+                <div class="col-sm-12  col-md-6 " style="display:flex; flex-direction:row">
+                    <div style="flex: 2; margin-right: 3px;">
+                        <table class="table table-bordered table-striped table-even-rows">
+                            <tr>
+                                <th style="width:200px;">Branch name</th>
+                                <th style="width: 10px;">:</th>
+                                <td>{{branchInfo.name}} </td>
+                            </tr>
+                            <tr>
+                                <th>Branch Id</th>
+                                <th style="width: 10px;">:</th>
+                                <td>{{branchInfo.branchId}} </td>
+                            </tr>
+                            <tr>
+                                <th>Routing Number</th>
+                                <th style="width: 10px;">:</th>
+                                <td>{{branchInfo.routingNumber}} </td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <th style="width: 10px;">:</th>
+                                <td>{{branchInfo.isActive}} </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-12  col-md-6 " style="display:flex; flex-direction:row">
+                    <div style="flex: 2; margin-right: 3px;">
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th style="width: 200px;">Address1</th>
+                                <th style="width: 10px;">:</th>
+                                <td>{{branchInfo.addressLine1}} </td>
+                            </tr>
+                            <tr>
+                                <th>Address2</th>
+                                <th style="width: 10px;">:</th>
+                                <td>{{branchInfo.addressLine2}} </td>
+                            </tr>
+                            <tr>
+                                <th>Website</th>
+                                <th style="width: 10px;">:</th>
+                                <td>{{branchInfo.website}} </td>
+                            </tr>
+                            <tr>
+                                <th>Swift Code</th>
+                                <th style="width: 10px;">:</th>
+                                <td>{{branchInfo.swiftCode}} </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+
+</div>

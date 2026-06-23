@@ -12,6 +12,7 @@ export class AuthService {
   private userSubject = new BehaviorSubject<any>(null);
   private logoutTimeout: any;
   private readonly TIMEOUT_MINUTES = 100;
+  static getUserObservable: any;
 
   constructor(
     private http: HttpClient,

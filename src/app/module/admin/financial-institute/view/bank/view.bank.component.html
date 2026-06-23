@@ -1,0 +1,151 @@
+<div class="app-page">
+
+    <div *ngIf="taskId">
+        <approval-flow-task-button [taskId]="taskId" [header]="header"></approval-flow-task-button>
+    </div>
+
+    <div class="app-list">
+        <mat-card>
+            <mat-card-content>
+                <div class="row" style=" padding: 10px; ">
+                    <h3 style="font-weight: bold;">Financial Institution Information :</h3>
+                    <div class="col-sm-12  col-md-6 " style="display:flex; flex-direction:row">
+                        <div style="flex: 2; margin-right: 3px;">
+                            <table class="table table-bordered table-striped table-even-rows">
+                                <tr>
+                                    <th style="width:200px;">Bank Code</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.bankCode}} </td>
+                                </tr>
+                                <tr>
+                                    <th>Bank Name</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.bankName}} </td>
+                                </tr>
+                                <tr>
+                                    <th>Bank Sort Name</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.bankSortName}} </td>
+                                </tr>
+                                <tr>
+                                    <th>Owner Type</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.ownerType}} </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-sm-12  col-md-6 " style="display:flex; flex-direction:row">
+                        <div style="flex: 2; margin-right: 3px;">
+                            <table class="table table-bordered table-striped">
+                                <tr *ngIf="bankInfo.financialInstitutionType=='Bank'">
+                                    <th style="width: 200px;">Central Bank Code</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.centralBankCode}} </td>
+                                </tr>
+                                <tr>
+                                    <th>Institution Type</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.financialInstitutionType}} </td>
+                                </tr>
+                                <tr>
+                                    <th>Website</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.website}} </td>
+                                </tr>
+                                <tr *ngIf="bankInfo.financialInstitutionType=='Bank'">
+                                    <th>Swift Code</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.swiftCode}} </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style=" padding: 10px; ">
+                    <h3 style="font-weight: bold;">Address :</h3>
+                    <div class="col-sm-12  col-md-6 " style="display:flex; flex-direction:row">
+                        <div style="flex: 2; margin-right: 3px;">
+                            <table class="table table-bordered table-striped table-even-rows">
+                                <tr>
+                                    <th style="width:200px;">Address Line1</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.addressLine1}} </td>
+                                </tr>
+                                <tr>
+                                    <th>Address Line2</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.addressLine2}} </td>
+                                </tr>
+                                <tr *ngIf="bankInfo.financialInstitutionType=='Bank'">
+                                    <th>Division</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.divisionCode}} </td>
+                                </tr>
+                                <tr *ngIf="bankInfo.financialInstitutionType=='Bank'">
+                                    <th>District</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.districtCode}} </td>
+                                </tr>
+
+                                <tr *ngIf="bankInfo.financialInstitutionType!='Bank'">
+                                    <th>Sate Name</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.state}} </td>
+                                </tr>
+                                <tr *ngIf="bankInfo.financialInstitutionType!='Bank'">
+                                    <th>City Name</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.cityName}} </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-sm-12  col-md-6 " style="display:flex; flex-direction:row">
+                        <div style="flex: 2; margin-right: 3px;">
+                            <table class="table table-bordered table-striped">
+                                <tr *ngIf="bankInfo.financialInstitutionType=='Bank'">
+                                    <th style="width: 200px;">Upozila</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.upozilaCode}} </td>
+                                </tr>
+                                <tr *ngIf="bankInfo.financialInstitutionType=='Bank'">
+                                    <th>House No</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.houseNo}} </td>
+                                </tr>
+                                <tr *ngIf="bankInfo.financialInstitutionType=='Bank'">
+                                    <th>Road No</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.roadNo}} </td>
+                                </tr>
+                                <tr *ngIf="bankInfo.financialInstitutionType=='Bank'">
+                                    <th>Valiage Name</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.villageName}} </td>
+                                </tr>
+                                <tr *ngIf="bankInfo.financialInstitutionType!='Bank'">
+                                    <th>Post Office</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.postOffice}} </td>
+                                </tr>
+                                <tr *ngIf="bankInfo.financialInstitutionType!='Bank'">
+                                    <th>Post Code</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.postCode}} </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </mat-card-content>
+        </mat-card>
+
+
+    </div>
+
+</div>

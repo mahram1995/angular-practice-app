@@ -1,1 +1,158 @@
-<h1>Branch List</h1>
+<div class="app-page">
+
+    <div>
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left ; margin: 0px; padding: 0px; ">
+                <p class="app-page-header">Financial Institute Details :</p>
+            </div>
+
+            <div class="app-button-group">
+                <button (click)="op.show($event)"><i class="pi pi-search" style="font-size:10px"></i> Search</button>
+
+                <button (click)="create()"><i class="pi pi-plus" style="font-size:10px"></i> Create</button>
+                <button (click)="onEditBank(bankInfo)"><i class="pi pi-pencil" style="font-size:10px"></i> Edit</button>
+                <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+            </div>
+        </div>
+        <div class="clear-fix"></div>
+        <hr style="margin: 0px; padding: 0px; width: 100%;">
+    </div>
+
+    <div class="app-list">
+        <mat-card>
+            <mat-card-content>
+                <div class="row" style=" padding: 10px; ">
+                    <div class="col-sm-12  col-md-6 " style="display:flex; flex-direction:row">
+                        <div style="flex: 2; margin-right: 3px;">
+                            <table class="table table-bordered table-striped table-even-rows">
+                                <tr>
+                                    <th style="width:200px;">Bank Code</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.bankCode}} </td>
+                                </tr>
+                                <tr>
+                                    <th>Bank Name</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.bankName}} </td>
+                                </tr>
+                                <tr>
+                                    <th>Bank Sort Name</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.bankSortName}} </td>
+                                </tr>
+                                <tr>
+                                    <th>Owner Type</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.ownerType}} </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-sm-12  col-md-6 " style="display:flex; flex-direction:row">
+                        <div style="flex: 2; margin-right: 3px;">
+                            <table class="table table-bordered table-striped">
+                                <tr>
+                                    <th style="width: 200px;">Address1</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.addressLine1}} </td>
+                                </tr>
+                                <tr>
+                                    <th>Address2</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.addressLine2}} </td>
+                                </tr>
+                                <tr>
+                                    <th>Website</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.website}} </td>
+                                </tr>
+                                <tr>
+                                    <th>Swift Code</th>
+                                    <th style="width: 10px;">:</th>
+                                    <td>{{bankInfo?.swiftCode}} </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+            <mat-card-content>
+                <div style="padding: 0px 5px 5px 5px">
+                    <p-table class="table-striped table-bordered table-hover table-responsive" #dataTable
+                        [value]="branchList" [paginator]="true" [rows]="rowPerPage" [totalRecords]="totalRecords"
+                        styleClass="p-datatable-sm" [rowsPerPageOptions]="[15,20,25,30,50,100]">>
+                        <ng-template pTemplate="header">
+                            <tr style="font-size: 14px;">
+                                <th style="width: 100px;">branch Id</th>
+                                <th style="min-width: 250px;">Branch name</th>
+                                <th style="width: 150px;">Routing Number</th>
+                                <th style="width: 150px;">Mobile No</th>
+                                <th style="width: 150px;">Phone No</th>
+                                <th style="width: 150px;">Swift Code</th>
+                                <th style="width: 250px;">Ad Code</th>
+                                <th>Address</th>
+                                <th style="width: 200px;">Status</th>
+                                <th style="width: 65px;">Action</th>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="body" let-data>
+                            <tr style="font-size: 14px;">
+                                <td style="text-align: center;">{{data.branchId}}</td>
+                                <td style="text-align: left;">{{data.name}}</td>
+                                <td>{{data.routingNumber}}</td>
+                                <td style="text-align: center;">{{data.mobileNumber}}</td>
+                                <td style="text-align: center;">{{data.phoneNumber}}</td>
+                                <td style="text-align: center;">{{data.swiftCode}}</td>
+                                <td style="text-align: center;">{{data.adCode}}</td>
+                                <td style="text-align: left;">{{data.address}}</td>
+                                <td style="text-align: center;">{{data.active}}</td>
+                                <td style="text-align: center;">
+                                    <p-button [styleClass]="'tree-dot-button'" (click)="opShowOption.show($event)"
+                                        icon="pi pi-ellipsis-v"></p-button>
+                                    <p-overlayPanel styleClass="app-overly-buttons" #opShowOption
+                                        [style]="{ width: '180px'}">
+                                        <button class="app-action-button" (click)="onDetails(data)">
+                                            <i class="pi pi-qrcode" style="font-size:13px ; padding-right:5px">
+                                            </i> Details</button>
+                                        <button class="app-action-button" (click)="onEdit(data)">
+                                            <i class="pi pi-file-edit" style="font-size:13px ; padding-right:5px">
+                                            </i> Modification</button>
+                                    </p-overlayPanel>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <p-overlayPanel #op [style]="{ width: '450px' }" showCloseIcon="true" [appendTo]="'body'">
+        <form [formGroup]="searchForm">
+            <div style="margin: 20px 10px 10px 10px;">
+                <div class="row app-row">
+                    <div class="col-sm-6  col-md-6 ">
+                        <div class="app-input-field">
+                            <input type="text" id="branchName" placeholder=" " formControlName="branchName">
+                            <label for="branchName">Branch Name</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-6 ">
+                        <div class="app-input-field">
+                            <input type="text" id="branchId" placeholder=" " formControlName="branchId">
+                            <label for="branchId">Branch ID</label>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <button class="app-button" (click)="search();op.hide()">Search</button>
+                </div>
+            </div>
+        </form>
+    </p-overlayPanel>
+</div>

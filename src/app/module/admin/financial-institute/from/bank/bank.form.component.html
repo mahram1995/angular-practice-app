@@ -2,15 +2,246 @@
     <div>
         <div style="padding: 0px 10px 0px 10px;">
             <div style="float:left  ">
-                <p class="app-page-header">Create Financial Institute</p>
+                <p class="app-page-header">{{ pageHeader }}</p>
             </div>
             <div class="app-button-group">
-                <button (click)="create()"><i class="pi pi-plus" style="font-size:10px"></i> Create</button>
+                <button (click)="create()"><i class="pi pi-save" style="font-size:10px"></i> Save</button>
                 <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
                 <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
             </div>
         </div>
+        <hr style="margin-top: 5px;margin-bottom: 2px;">
     </div>
+    <form [formGroup]="bankForm">
+        <div class="app-card" style="margin: 10px 20px 15px 20px;">
+            <h3>Financial Institution Information :</h3>
+            <div style="margin: 0px 15px 10px 15px" ;>
+                <div class="row app-row">
+                    <div class="col-sm-6  col-md-3 ">
+                        <div class="app-dropdown">
+                            <label for="financialInstitutionType">Financial Institution Type<span
+                                    style="color: red;">*</span></label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('bankForm','financialInstitutionType') ? 'is-invalid' : '')"
+                                [options]="institutionType" formControlName="financialInstitutionType"
+                                (onChange)="onFinancialInstitutionTypeChange($event)" optionLabel="label"
+                                optionValue="value" appendTo="body"
+                                placeholder="Select a financial institution type"></p-dropdown>
+
+                            <div *ngIf="isInvalid('bankForm', 'financialInstitutionType')">
+                                <div class="error-message" *ngIf="isRequired('bankForm', 'financialInstitutionType')">
+                                    Financial Institution Type is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 ">
+                        <div class="app-dropdown">
+                            <label for="ownerType">Owner Type<span style="color: red;">*</span></label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('bankForm','ownerType') ? 'is-invalid' : '')"
+                                [options]="ownershipType" formControlName="ownerType" optionLabel="label"
+                                optionValue="value" appendTo="body" placeholder="Select a owner type"></p-dropdown>
+
+                            <div *ngIf="isInvalid('bankForm', 'ownerType')">
+                                <div class="error-message" *ngIf="isRequired('bankForm', 'ownerType')">
+                                    Owner Type is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 ">
+                        <div class="app-input-field">
+                            <input type="text" id="bankName" placeholder=" " formControlName="bankName">
+                            <label for="bankName">Bank Name <span style="color: red;">*</span></label>
+                            <div
+                                *ngIf="bankForm.controls['bankName']?.errors && bankForm.controls['bankName']?.touched">
+                                <div class="error-message" [hidden]="!bankForm.controls['bankName']?.errors?.required">
+                                    Bank Name is required.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 ">
+                        <div class="app-input-field">
+                            <input type="text" id="bankCode" placeholder=" " formControlName="bankCode">
+                            <label for="bankCode">Bank Code <span style="color: red;">*</span></label>
+                            <div
+                                *ngIf="bankForm.controls['bankCode']?.errors && bankForm.controls['bankCode']?.touched">
+                                <div class="error-message" [hidden]="!bankForm.controls['bankCode']?.errors?.required">
+                                    Bank Code is required.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row app-row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6  col-md-3 ">
+                        <div class="app-input-field">
+                            <input type="text" id="bankSortName" placeholder=" " formControlName="bankSortName">
+                            <label for="bankSortName">Bank Sort Name</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 ">
+                        <div class="app-input-field">
+                            <input type="text" id="website" placeholder=" " formControlName="website">
+                            <label for="website">Website</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6  col-md-3 " *ngIf="isBank">
+                        <div class="app-input-field">
+                            <input type="text" id="swiftCode" placeholder=" " formControlName="swiftCode">
+                            <label for="swiftCode">SWIFT Code</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 " *ngIf="isBank">
+                        <div class="app-input-field">
+                            <input type="text" id="centralBankCode" placeholder=" " formControlName="centralBankCode">
+                            <label for="centralBankCode">Central Bank Code <span style="color: red;">*</span></label>
+                            <div
+                                *ngIf="bankForm.controls['centralBankCode']?.errors && bankForm.controls['centralBankCode']?.touched">
+                                <div class="error-message"
+                                    [hidden]="!bankForm.controls['centralBankCode']?.errors?.required">
+                                    Central Bank Code is required.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <h3>Address :</h3>
+            <div style="margin: 0px 15px 10px 15px" ;>
+                <div class="row app-row" style="margin-bottom: 10px;">
+                    <div class="col-sm-6  col-md-6 ">
+                        <div class="app-input-field">
+                            <input type="text" id="addressLine1" placeholder=" " formControlName="addressLine1">
+                            <label for="addressLine1">Address Line 1 <span style="color: red;">*</span></label>
+                            <div
+                                *ngIf="bankForm.controls['addressLine1']?.errors && bankForm.controls['addressLine1']?.touched">
+                                <div class="error-message"
+                                    [hidden]="!bankForm.controls['addressLine1']?.errors?.required">
+                                    Address Line 1 is required.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-6 ">
+                        <div class="app-input-field">
+                            <input type="text" id="addressLine2" placeholder=" " formControlName="addressLine2">
+                            <label for="addressLine2">Address Line 2</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row app-row" style="margin-bottom: 15px;">
+                    <div class="col-sm-6  col-md-3 ">
+                        <div class="app-dropdown">
+                            <label for="countryCode">Country<span style="color: red;">*</span></label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('bankForm','countryCode') ? 'is-invalid' : '')"
+                                [options]="countryList" formControlName="countryCode"
+                                (onChange)="onCountryChange($event)" optionLabel="label" optionValue="value"
+                                appendTo="body" placeholder="Select a country"></p-dropdown>
+                            <div *ngIf="isInvalid('bankForm', 'countryCode')">
+                                <div class="error-message" *ngIf="isRequired('bankForm', 'countryCode')">
+                                    Country is required</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 " *ngIf="isBangladesh">
+                        <div class="app-dropdown">
+                            <label for="divisionCode">Division</label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('bankForm','divisionCode') ? 'is-invalid' : '')"
+                                [options]="divisionList" formControlName="divisionCode"
+                                (onChange)="onCountryChange($event)" optionLabel="label" optionValue="value"
+                                appendTo="body" placeholder="Select a division"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 " *ngIf="isBangladesh">
+                        <div class="app-dropdown">
+                            <label for="districtCode">District</label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('bankForm','districtCode') ? 'is-invalid' : '')"
+                                [options]="districtList" formControlName="districtCode"
+                                (onChange)="onCountryChange($event)" optionLabel="label" optionValue="value"
+                                appendTo="body" placeholder="Select a district"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 " *ngIf="isBangladesh">
+                        <div class="app-dropdown">
+                            <label for="upozilaCode">Upozila</label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('bankForm','upozilaCode') ? 'is-invalid' : '')"
+                                [options]="upozilaList" formControlName="upozilaCode"
+                                (onChange)="onCountryChange($event)" optionLabel="label" optionValue="value"
+                                appendTo="body" placeholder="Select a upozila"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 " *ngIf="!isBangladesh">
+                        <div class="app-input-field">
+                            <input type="text" id="state" placeholder=" " formControlName="state">
+                            <label for="state">State</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 " *ngIf="!isBangladesh">
+                        <div class="app-input-field">
+                            <input type="text" id="cityName" placeholder=" " formControlName="cityName">
+                            <label for="cityName">City Name</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 " *ngIf="!isBangladesh">
+                        <div class="app-input-field">
+                            <input type="text" id="postOffice" placeholder=" " formControlName="postOffice">
+                            <label for="postOffice">Post Office</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row app-row" style="margin-bottom: 15px;" *ngIf="!isBangladesh">
+                    <div class="col-sm-6  col-md-3 ">
+                        <div class="app-input-field">
+                            <input type="text" id="zipCode" placeholder=" " formControlName="zipCode">
+                            <label for="zipCode">Zip Code</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row app-row" style="margin-bottom: 15px;" *ngIf="isBangladesh">
+                    <div class="col-sm-6  col-md-3 ">
+                        <div class="app-dropdown">
+                            <label for="postCode">Post Code</label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('bankForm','postCode') ? 'is-invalid' : '')"
+                                [options]="postCodeList" formControlName="postCode" (onChange)="onCountryChange($event)"
+                                optionLabel="label" optionValue="value" appendTo="body"
+                                placeholder="Select a post code"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 ">
+                        <div class="app-input-field">
+                            <input type="text" id="houseNo" placeholder=" " formControlName="houseNo">
+                            <label for="houseNo">House No</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 ">
+                        <div class="app-input-field">
+                            <input type="text" id="roadNo" placeholder=" " formControlName="roadNo">
+                            <label for="roadNo">Road No</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6  col-md-3 ">
+                        <div class="app-input-field">
+                            <input type="text" id="villageName" placeholder=" " formControlName="villageName">
+                            <label for="villageName">Village Name</label>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <br><br>
+        </div>
+    </form>
+
+
 </div>
-<hr style="margin-top: 5px;margin-bottom: 2px;">
-<h1>Financial Institute Form</h1>

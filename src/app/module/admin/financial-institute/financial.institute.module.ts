@@ -10,6 +10,8 @@ import { FinancialInstituteFormComponent } from './from/bank/bank.form.component
 import { BranchListComponent } from './list/branch-list/branch.list.component';
 import { BranchFormComponent } from './from/branch/branch.form.component';
 import { FinancialInstituteService } from './service/financial-institute.service';
+import { BranchDetailsComponent } from './view/branch/branch-details.component';
+import { BankViewComponent } from './view/bank/view.bank.component';
 
 @NgModule({
     imports: [
@@ -24,7 +26,9 @@ import { FinancialInstituteService } from './service/financial-institute.service
         FinancialInstituteListComponent,
         FinancialInstituteFormComponent,
         BranchListComponent,
-        BranchFormComponent
+        BranchFormComponent,
+        BranchDetailsComponent,
+        BankViewComponent,
 
 
 
