@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { NotificationService } from './notification.service';
-import { map, Observable, of, tap } from 'rxjs';
+import { map, Observable, of, Subject, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 
@@ -12,7 +12,11 @@ export class CommonService {
     static getClientIpAddress(): string | string[] {
         throw new Error('Method not implemented.');
     }
+    private showProgressLoader = new Subject<any>();
     isSumbitted: boolean = false;
+    public loaderVisble: boolean = false;
+    public requestsPending: number = 0;
+
 
     constructor(
         // Don't call any service here. 
@@ -129,10 +133,6 @@ export class CommonService {
             element?.focus();
         }, 100);
     }
-
-
-
-
 
 
 }

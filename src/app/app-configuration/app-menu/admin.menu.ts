@@ -15,6 +15,7 @@ export const AdminMenuList = [
         icon: 'pi pi-qrcode',
         active: false,
         submenu: [
+            { name: 'Aproval Flow Setup', url: '#', routerLink: "/admin/approval_flow_setup" },
             { name: 'Command Mapping', url: '#', routerLink: "/admin/command" },
 
         ]
@@ -24,8 +25,9 @@ export const AdminMenuList = [
         icon: 'pi pi-qrcode',
         active: false,
         submenu: [
-            { name: 'Dynamic Data source In Jasper Report', url: '#', routerLink: "/admin/dynamic-data-source-in-jasperreport" },
+            { name: 'Dynamic Data source in Report', url: '#', routerLink: "/admin/dynamic-data-source-in-jasperreport" },
             { name: 'Panel Menu', url: '#', routerLink: "/admin/demo-panel-manue" },
+            { name: 'Dynamic Report Generation', url: '#', routerLink: "/admin/dynamic-report" },
 
         ]
     },

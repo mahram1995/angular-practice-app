@@ -53,6 +53,7 @@ import { TranslateLoader, TranslateService } from '@ngx-translate/core';
 
 
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -61,6 +62,8 @@ import { TranslateLoader, TranslateService } from '@ngx-translate/core';
     AppHomePageComponent,
     LoginFormComponent,
     AppHeaderComponent,
+
+
 
 
   ],
@@ -81,7 +84,8 @@ import { TranslateLoader, TranslateService } from '@ngx-translate/core';
     ConfirmDialogModule,
     MenuModule,
     OverlayPanelModule,
-    SidebarModule
+    SidebarModule,
+
 
 
 

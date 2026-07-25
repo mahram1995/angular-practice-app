@@ -26,6 +26,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { SafeUrlPipe } from '../../app-security/safe-url.pipe';
 import { ApprovalFlowTaskComponent } from '../../../admin/approval-flow/form/my-task/my-task.componemt';
 import { ApprovalFlowViewButtonComponent } from '../../../admin/approval-flow/form/approvalflow-task-button/approvalflow-task-button';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 
 
@@ -85,7 +87,9 @@ import { ApprovalFlowViewButtonComponent } from '../../../admin/approval-flow/fo
         MatCardModule,
         TableModule,
         CalendarModule,
-        ApprovalFlowViewButtonComponent
+        ApprovalFlowViewButtonComponent,
+        InputIconModule,
+        IconFieldModule
     ],
 
     providers: [

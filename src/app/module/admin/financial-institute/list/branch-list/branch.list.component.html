@@ -83,12 +83,13 @@
         <mat-card>
             <mat-card-content>
                 <div style="padding: 0px 5px 5px 5px">
-                    <p-table class="table-striped table-bordered table-hover table-responsive" #dataTable
+                    <p-table #dt2 class="table-striped table-bordered table-hover table-responsive" #dataTable
                         [value]="branchList" [paginator]="true" [rows]="rowPerPage" [totalRecords]="totalRecords"
-                        styleClass="p-datatable-sm" [rowsPerPageOptions]="[15,20,25,30,50,100]">>
+                        styleClass="p-datatable-sm" [rowsPerPageOptions]="[15,20,25,30,50,100]" sortMode="single">
                         <ng-template pTemplate="header">
                             <tr style="font-size: 14px;">
-                                <th style="width: 100px;">branch Id</th>
+                                <th pSortableColumn="branchId" style="width: 100px;">branch Id <p-sortIcon
+                                        field="branchId"></p-sortIcon></th>
                                 <th style="min-width: 250px;">Branch name</th>
                                 <th style="width: 150px;">Routing Number</th>
                                 <th style="width: 150px;">Mobile No</th>

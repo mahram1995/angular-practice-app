@@ -5,7 +5,8 @@
                 <p class="app-page-header">{{reportName}}</p>
             </div>
             <div class="app-button-group">
-
+                <button (click)="exportPDF()" [disabled]="tableData.length==0">Export PDF</button>
+                <button (click)="exportExcel()" [disabled]="tableData.length==0">Export Excel</button>
                 <button (click)="showParaForm()"> {{!isShowParaForm? 'Show':'Hide' }} Paraform List</button>
                 <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
                 <button (click)="refresh()"><i class="pi pi-refresh" style="font-size:12px"></i> Refresh</button>
@@ -187,17 +188,53 @@
 
             </div>
             <div style="text-align: center; margin-bottom: 20px; margin-top: 20px;">
-                <button type="submit" class="app-button" (click)="downloadedReport()">Show Report</button>
+                <button type="submit" class="app-button" (click)="downloadedData()">Show Report</button>
             </div>
 
         </form>
 
     </div>
 
-    <div *ngIf="isShowReport" class="app-card" style=" margin: 10px 20px 10px 20px; ">
-        <iframe *ngIf="reportUrl" [src]="reportUrl | safeUrl" width="100%" height="800px"
-            style="border: 1px solid #ccc;">
-        </iframe>
+    <div *ngIf="isShowReport" class="app-list">
+        <div style="padding: 0px 5px 5px 5px">
+            <p-table class=" table-hover table-responsive" #dataTable [value]="tableData" dataKey="id" editMode="row"
+                [paginator]="true" [rows]="rowPerPage" [columns]="cols" styleClass="p-datatable-sm"
+                [resizableColumns]="true" (onColResize)="columnResize($event)" columnResizeMode="expand"
+                selectionMode="single" [scrollable]="true">
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th *ngFor="let col of columns" [ngStyle]="{ 'white-space': 'nowrap' }" pResizableColumn
+                            [style.width.px]="col.width">
+                            {{ col.header }}
+                        </th>
+                    </tr>
+                </ng-template>
 
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td *ngFor="let col of columns" [ngStyle]="{ 'white-space': 'nowrap' }">
+                            {{ rowData[col.field] }}
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
     </div>
+
+    <p-dialog  #op header="Select Column for Export as PDF" [modal]="true" [(visible)]="isExportPDF" [style]="{ width: '30rem' , height: '33rem'}">
+         <button class="app-button" (click)="exportPdfReport()" style="margin-bottom: 5px;" [disabled]="isExporting">Export PDF Report</button>
+        <p-multiSelect [options]="cols" [(ngModel)]="selectedPdfColumns" optionLabel="header"
+            placeholder="Select PDF Columns" [style]="{width: '100%' , }"> 
+        </p-multiSelect>
+        
+    </p-dialog>
+
+
+    <div class="export-overlay" *ngIf="isExporting">
+        <p-progressSpinner></p-progressSpinner>
+        <span>Preparing Excel file...</span>
+    </div>
+
 </div>

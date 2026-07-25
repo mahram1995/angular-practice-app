@@ -42,7 +42,6 @@ export class FinancialInstituteListComponent implements OnInit {
         this.rowPerPage = this.commonService.getRowsPerPage(31)
         this.prepareSearchForm();
 
-
     }
 
     prepareSearchForm() {

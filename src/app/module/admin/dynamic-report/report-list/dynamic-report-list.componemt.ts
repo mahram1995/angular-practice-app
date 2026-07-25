@@ -4,18 +4,18 @@ import { Location } from '@angular/common';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
-import { UDFDomain } from '../service/udf.domain';
-import { UDFService } from '../service/udf.service';
 import { CommonService } from '../../../../app-configuration/app.service/common.service';
 import { OverlayPanel } from 'primeng/overlaypanel';
+import { UDFDomain } from '../../udf/service/udf.domain';
+import { UDFService } from '../../udf/service/udf.service';
 
 const DETAILS_UI = 'admin/udf-details';
 const CORRECTION_UI = 'admin/create-udf';
 @Component({
-    selector: 'udf-list',
-    templateUrl: './report-list.component.html',
+    selector: 'dynamic-report-list',
+    templateUrl: './dynamic-report-list.component.html',
 })
-export class ReportListComponent implements OnInit {
+export class DynamicReportListComponent implements OnInit {
     required_field: any = {
         userName: 'code',
         password: 'name',
@@ -41,7 +41,7 @@ export class ReportListComponent implements OnInit {
         private router: Router,
         private commonService: CommonService,
         private notificationService: NotificationService,
-        private UDFService: UDFService,
+        private udfService: UDFService,
         private formBuilder: FormBuilder,
 
     ) {
@@ -61,7 +61,7 @@ export class ReportListComponent implements OnInit {
 
 
     fetchUdfs(searchParam: any) {
-        this.UDFService.getUdf(searchParam).subscribe(data => {
+        this.udfService.getUdf(searchParam).subscribe(data => {
             this.data = data.content
             this.totalRecords = data.totalElements;
             this.totalPages = data.totalPages;
@@ -94,7 +94,7 @@ export class ReportListComponent implements OnInit {
     }
     onRowSelect(event: any) {
         console.log(event.data);
-        this.router.navigate(['admin/run-report'], {
+        this.router.navigate(['admin/dynamic-report/view-report'], {
             queryParams: {
                 udfProfileId: event.data.id
             }
@@ -127,7 +127,7 @@ export class ReportListComponent implements OnInit {
         this.urlSearchMap.set('page', this.pageNumber);  // 0-based index
         this.urlSearchMap.set('size', this.rowPerPage);
 
-        this.UDFService.getUdf(this.urlSearchMap).subscribe(data => {
+        this.udfService.getUdf(this.urlSearchMap).subscribe(data => {
             this.data = data.content;
             this.totalRecords = data.totalElements;   // use backend's totalElements
             this.totalPages = data.totalPages;

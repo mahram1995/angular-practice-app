@@ -5,19 +5,22 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { PathParameters } from '../../../../app-configuration/app.service/base-service';
 import { CommonService } from '../../../../app-configuration/app.service/common.service';
 import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
-import { UDFService } from '../service/udf.service';
-import { UDFDomain, UserDefinedField, UserDefinedFieldDomainData } from '../service/udf.domain';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
-
+import { UDFDomain, UserDefinedField, UserDefinedFieldDomainData } from '../../udf/service/udf.domain';
+import { UDFService } from '../../udf/service/udf.service';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 
 @Component({
-    selector: 'generate-report-ui',
-    templateUrl: 'generate-report-ui.form.html'
+    selector: 'generate-dynamic-report-ui',
+    templateUrl: 'generate-dynamic-report-ui.form.html'
 })
-export class GenerateReportUiFormComponent extends FormBaseComponent {
+export class GenerateDynamicReportUiFormComponent extends FormBaseComponent {
     title = 'agular dynamic form';
     reportUrl: string;
     form: FormGroup = this.fb.group({});
@@ -55,8 +58,22 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
     ];
 
+    cols: any[] = [];
+    tableData: any[] = [];
+
+    isExporting = false;
+    isExportPDF = false;
+
     udfProfileData: UDFDomain; // Paste your JSON here
     profileId: number
+
+    selectedPdfColumns: any[] = [];
+
+    rowPerPage = 0; // Default
+
+
+
+
 
     constructor(private fb: FormBuilder,
         protected override location: Location,
@@ -69,6 +86,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
     ) { super(location, commonService); }
 
     ngOnInit() {
+        this.rowPerPage = this.commonService.getRowsPerPage(25)
         this.yearList = this.generateYearList(2000);
         this.route.queryParams.subscribe(params => {
             this.profileId = params.udfProfileId;
@@ -80,6 +98,12 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         });
 
     }
+
+    exportPDF() {
+        this.isExportPDF = true;
+    }
+
+
     generateYearList(startYear: number): { label: string; value: number }[] {
         const currentYear = new Date().getFullYear();
         const years: { label: string; value: number }[] = [];
@@ -667,5 +691,184 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         this.fields = []
         this.fetchUdfs(this.profileId)
     }
+
+
+    downloadedData() {
+        if (this.form.invalid) {
+            this.form.markAllAsTouched();
+            return;
+        }
+        let data = this.form.value;
+
+        let result: { [key: string]: any } = {};
+        Object.entries(data).forEach(([key, value]) => {
+            let dataType = this.fields.find(f => f.name === key)?.dataType
+            if (dataType === 'MONTH' && value) {
+                const date = new Date(value as string);
+                result[key] = date.getMonth() + 1;
+            } else if (dataType === 'YEAR' && value) {
+                const date = new Date(value as string);
+                result[key] = date.getFullYear();
+            } else if (dataType === 'DATE' && value) {
+                const date = new Date(value as string);
+                result[key] = this.datePipe.transform(date, 'yyyy-MM-dd');
+            } else { result[key] = value; }
+        });
+
+
+        let params = {
+            sql: '1001',
+            params: result
+
+        }
+        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null);
+
+
+
+
+        this.udfService.getReportData(params, urlSearchParams).subscribe(
+            (response) => {
+                this.isShowParaForm = false;
+                this.isShowReport = true;
+                console.log(response);
+
+                this.tableData = response;
+
+                if (response && response.length > 0) {
+                    this.cols = Object.keys(response[0]).map(key => ({
+                        field: key,
+                        header: key.replace(/_/g, ' ')
+                    }));
+                    this.selectedPdfColumns = [...this.cols];
+                }
+            });
+
+    }
+
+    exportExcel() {
+        this.isExporting = true
+        setTimeout(() => {
+
+            try {
+                const workbook = XLSX.utils.book_new();
+
+                const chunkSize = 300000; // 300k rows per sheet
+
+                for (let i = 0; i < this.tableData.length; i += chunkSize) {
+
+                    const chunk = this.tableData.slice(i, i + chunkSize);
+
+                    const worksheet = XLSX.utils.json_to_sheet(chunk);
+
+                    const sheetName = `Report_${Math.floor(i / chunkSize) + 1}`;
+
+                    XLSX.utils.book_append_sheet(
+                        workbook,
+                        worksheet,
+                        sheetName
+                    );
+                }
+
+                XLSX.writeFile(
+                    workbook,
+                    'Budget_Report.xlsx',
+                    {
+                        compression: true
+                    }
+                );
+
+            } finally {
+                this.isExporting = false
+            }
+
+        }, 100);
+
+
+
+    }
+
+
+
+
+    exportPdfReport() {
+
+        this.isExporting = true
+        setTimeout(() => {
+
+            try {
+
+                const doc = new jsPDF('l', 'mm', 'a4');
+
+
+                const headers = this.selectedPdfColumns.map(
+                    c => c.header
+                );
+
+
+                const rows = this.tableData.map(row => {
+
+                    return this.selectedPdfColumns.map(
+                        c => row[c.field]
+                    );
+
+                });
+
+
+                autoTable(doc, {
+
+                    head: [headers],
+
+                    body: rows,
+
+                    styles: {
+                        fontSize: 8
+                    },
+
+                    columnStyles:
+                        this.selectedPdfColumns.reduce(
+                            (obj, col, index) => {
+
+                                obj[index] = {
+                                    cellWidth:
+                                        col.width ? col.width / 4 : 'auto'
+                                };
+
+                                return obj;
+
+                            }, {}
+                        )
+
+                });
+
+
+                doc.save('Report.pdf');
+
+            } finally {
+                this.isExporting = false
+            }
+
+        }, 100);
+
+
+
+    }
+
+    columnResize(event: any) {
+
+        const column = event.element;
+
+        const field = column.getAttribute('data-field');
+
+        const col = this.cols.find(
+            x => x.field === field
+        );
+
+        if (col) {
+            col.width = column.offsetWidth;
+        }
+    }
+
+
+
 }
 

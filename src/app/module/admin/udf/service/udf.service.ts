@@ -17,6 +17,8 @@ const GET_UDF_BY_ID = URL + 'admin/udf/getUdfById'
 const DELETE_USER_DIFINE_FIELD = URL + 'admin/udf/delete-user-defined-filed-byId/{id}'
 const GET_REPORT = URL + 'reports/get-report'
 
+const EXECUTE_REPORT_QUERY = URL + 'admin/query-executor/execute'
+
 @Injectable()
 export class UDFService extends BaseService {
 
@@ -61,6 +63,11 @@ export class UDFService extends BaseService {
     public deleteUserDifinedFieldById(pathParameters: PathParameters): Observable<any> {
         let option = this.create(DELETE_USER_DIFINE_FIELD, pathParameters)
         return this.http.delete(option);
+    }
+
+
+    public getReportData(data: any, urlSearchParams): Observable<any> {
+        return this.http.post(EXECUTE_REPORT_QUERY, data, urlSearchParams);
     }
 
 

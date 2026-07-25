@@ -804,3 +804,21 @@ ul {
 .text-right {
     text-align: right !important;
 }
+
+.export-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 15, 15, 0.37);
+    display: flex;
+    color: blue;
+    font-weight: bold;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0.7;
+    align-items: center;
+    z-index: 9999;
+    gap: 15px;
+}

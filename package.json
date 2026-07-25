@@ -26,7 +26,10 @@
     "@ngx-translate/http-loader": "^17.0.0",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.7",
+    "file-saver": "^2.0.5",
     "jquery": "^3.7.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "ngx-spinner": "^19.0.0",
     "pdfjs-dist": "^2.16.105",
     "popper.js": "^1.16.1",
@@ -34,6 +37,7 @@
     "primeng": "^17.18.15",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.14.2"
   },
   "devDependencies": {

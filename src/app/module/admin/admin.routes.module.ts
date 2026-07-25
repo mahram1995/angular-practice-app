@@ -49,6 +49,13 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./financial-institute/financial.institute.module').then(m => m.FinancialInstituteModule)
       },
+
+      {
+        path: 'dynamic-report',
+        canActivate: [AuthGuard],
+        loadChildren: () =>
+          import('./dynamic-report/dynamic-report.module').then(m => m.DynamicReportModule)
+      },
     ]
   },
 
