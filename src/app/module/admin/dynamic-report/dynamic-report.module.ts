@@ -10,6 +10,7 @@ import { GenerateDynamicReportUiFormComponent } from './generate-report-ui/gener
 import { DynamicReportListComponent } from './report-list/dynamic-report-list.componemt';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { QueryExecutorFormComponent } from './query-executor/query-executor.form';
 
 
 
@@ -27,8 +28,9 @@ import { MultiSelectModule } from 'primeng/multiselect';
     declarations: [
      
     GenerateDynamicReportUiFormComponent,
-    DynamicReportListComponent
-
+    DynamicReportListComponent,
+    QueryExecutorFormComponent
+   
     ],
 
     providers: [

@@ -1,0 +1,113 @@
+<div class="app-page">
+    <div>
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left ; margin: 0px; padding: 0px; ">
+                <p class="app-page-header">{{reportName}}</p>
+            </div>
+            <div class="app-button-group">
+                <button (click)="exportPDF()" [disabled]="tableData.length==0">Export PDF</button>
+                <button (click)="exportExcel()" [disabled]="tableData.length==0">Export Excel</button>
+                <button (click)="showParaForm()"> {{!isShowParaForm? 'Show':'Hide' }} Query </button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+                <button (click)="refresh()"><i class="pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+            </div>
+        </div>
+        <div class="clear-fix"></div>
+        <hr style="margin: 0px; padding: 0px; width: 100%;">
+    </div>
+
+    <div *ngIf="isShowParaForm" style=" margin: 10px 20px 10px 20px; ">
+        <form [formGroup]="form" class="app-card">
+            <div class="row" style="padding: 10px 25px 0px 25px;">
+                <div class="form-group">
+                    <div class="col-sm-6  col-md-12">
+                        <div>
+                            <textarea id="queryString" placeholder="Write Query" formControlName="queryString" 
+                            style="width: 100%; height: 200px;"
+                            [ngClass]="{  'is-invalid': form.controls.queryString?.touched && form.controls.queryString?.errors}"></textarea>
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-bottom: 20px; margin-top: 20px;">
+                <button type="submit" class="app-button" (click)="downloadedData()">Show Report</button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div *ngIf="isShowReport" class="app-list">
+        <div style="padding: 0px 5px 5px 5px;">
+            <p-table class=" table-hover table-responsive" #dataTable [value]="tableData" dataKey="id" editMode="row"
+                [paginator]="true" [rows]="rowPerPage" [columns]="cols" styleClass="p-datatable-sm"
+                [resizableColumns]="true" (onColResize)="columnResize($event)" columnResizeMode="expand"
+                selectionMode="single" [scrollable]="true">
+                <ng-template pTemplate="header" let-columns>
+
+                    <!-- Header -->
+                    <tr>
+                        <th *ngFor="let col of columns" pResizableColumn style="width: 150px !important;"
+                        style="min-width: 80px" >
+
+                            {{ col.header }}
+
+                        </th>
+                    </tr>
+
+                    <!-- Filter Row -->
+                    <tr>
+                        <th *ngFor="let col of columns" style="padding: 0px !important; text-align: center;">
+
+                            <p-columnFilter [field]="col.field" display="row" matchMode="contains" [showMenu]="false">
+
+                                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+
+                                    <input pInputText type="text" [ngModel]="value" (ngModelChange)="filter($event)"
+                                        style="width:100%; height:24px; padding:0px 0px; font-size:12px;" />
+
+                                </ng-template>
+
+                            </p-columnFilter>
+
+                        </th>
+                    </tr>
+
+                </ng-template>
+
+
+
+                <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+                    <tr>
+                        <td *ngFor="let col of columns" [ngStyle]="{ 'white-space': 'nowrap' }"
+                            (click)="selectCell(rowIndex, col.field)"
+                            [style.background]="isSelected(rowIndex, col.field) ? '#48dbfb' : ''"
+                            [style.cursor]="'pointer'">
+                            {{ rowData[col.field] }}
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+    </div>
+
+    <p-dialog #op header="Select Column for Export as PDF" [modal]="true" [(visible)]="isExportPDF"
+        [style]="{ width: '30rem' , height: '33rem'}">
+        <button class="app-button" (click)="exportPdfReport()" style="margin-bottom: 5px;"
+            [disabled]="isExporting">Export PDF Report</button>
+        <p-multiSelect [options]="cols" [(ngModel)]="selectedPdfColumns" optionLabel="header"
+            placeholder="Select PDF Columns" [style]="{width: '100%' , }">
+        </p-multiSelect>
+
+    </p-dialog>
+
+
+    <div class="export-overlay" *ngIf="isExporting">
+        <p-progressSpinner></p-progressSpinner>
+        <span>Preparing Excel file...</span>
+    </div>
+
+</div>

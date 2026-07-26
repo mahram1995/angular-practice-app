@@ -27,7 +27,8 @@ export const AdminMenuList = [
         submenu: [
             { name: 'Dynamic Data source in Report', url: '#', routerLink: "/admin/dynamic-data-source-in-jasperreport" },
             { name: 'Panel Menu', url: '#', routerLink: "/admin/demo-panel-manue" },
-            { name: 'Dynamic Report Generation', url: '#', routerLink: "/admin/dynamic-report" },
+            { name: 'Dynamic Report', url: '#', routerLink: "/admin/dynamic-report" },
+            { name: 'Query Executor', url: '#', routerLink: "/admin/dynamic-report/query-executor" },
 
         ]
     },
