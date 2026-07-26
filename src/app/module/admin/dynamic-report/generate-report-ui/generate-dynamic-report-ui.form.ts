@@ -70,6 +70,9 @@ export class GenerateDynamicReportUiFormComponent extends FormBaseComponent {
     selectedPdfColumns: any[] = [];
 
     rowPerPage = 0; // Default
+    fontSize = 12; // Default
+    selectedCell: { row: number; field: string } | null = null;
+
 
 
 
@@ -86,7 +89,7 @@ export class GenerateDynamicReportUiFormComponent extends FormBaseComponent {
     ) { super(location, commonService); }
 
     ngOnInit() {
-        this.rowPerPage = this.commonService.getRowsPerPage(25)
+        this.rowPerPage = this.commonService.getRowsPerPage(27)
         this.yearList = this.generateYearList(2000);
         this.route.queryParams.subscribe(params => {
             this.profileId = params.udfProfileId;
@@ -99,8 +102,28 @@ export class GenerateDynamicReportUiFormComponent extends FormBaseComponent {
 
     }
 
+    selectCell(row: number, field: string) {
+        this.selectedCell = { row, field };
+    }
+
+    isSelected(row: number, field: string): boolean {
+        return this.selectedCell?.row === row &&
+            this.selectedCell?.field === field;
+    }
     exportPDF() {
         this.isExportPDF = true;
+    }
+
+    increaseFont() {
+        if (this.fontSize < 24) {
+            this.fontSize++;
+        }
+    }
+
+    decreaseFont() {
+        if (this.fontSize > 8) {
+            this.fontSize--;
+        }
     }
 
 
