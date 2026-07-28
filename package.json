@@ -30,6 +30,8 @@
     "jquery": "^3.7.1",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
+    "monaco-editor": "^0.56.0",
+    "ngx-monaco-editor-v2": "^22.0.4",
     "ngx-spinner": "^19.0.0",
     "pdfjs-dist": "^2.16.105",
     "popper.js": "^1.16.1",

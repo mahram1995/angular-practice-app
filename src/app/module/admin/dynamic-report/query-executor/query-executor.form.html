@@ -22,25 +22,15 @@
             <div class="row" style="padding: 10px 25px 0px 25px;">
                 <div class="form-group">
                     <div class="col-sm-6 col-md-12">
-                        <div>{{highlightedQuery}}</div>
-                        <div><span style="color:rgb(250, 204, 79)">branch</span></div>
-                         <div><pre >    {{highlightedQuery}}</pre></div>
-                         <div><pre [innerHTML]="highlightedQuery">  {{highlightedQuery}}  </pre></div>
-                        <div class="sql-editor">
 
-                            <pre class="highlight-layer" [innerHTML]="highlightedQuery">    </pre>
-
-                            <textarea id="queryString" class="input-layer" placeholder="Write Query"
-                                formControlName="queryString" [style]="{'width':'100%','height':'200px'}"
-                                (input)="onQueryChange($event)" spellcheck="false" [ngClass]="{
+                        <textarea id="queryString" class="input-layer" placeholder="Write Query"
+                            formControlName="queryString" [style]="{'width':'100%','height':'200px'}" spellcheck="false"
+                            [ngClass]="{
                           'is-invalid': form.controls.queryString?.touched &&
                           form.controls.queryString?.errors
                         }">
                 </textarea>
 
-
-
-                        </div>
 
                     </div>
                 </div>

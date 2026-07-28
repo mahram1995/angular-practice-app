@@ -44,10 +44,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     databaseObjects: string[] = [];
 
-    queryText = '';
-    highlightedQuery = '';
-
-
 
     cols: any[] = [];
     tableData: any[] = [];
@@ -590,52 +586,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.form = this.fb.group({});
         this.fields = []
     }
-
-
-    onQueryChange(event: any) {
-
-        const value = event.target.value;
-
-        this.highlightedQuery = this.highlightSql(value);
-    }
-
-    highlightSql(value: string): string {
-
-        if (!value) {
-            return '&nbsp;';
-        }
-
-
-        let text = value
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
-
-
-        this.databaseObjects.forEach(obj => {
-
-            const safeObj = obj.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-
-            const regex = new RegExp(
-                '\\b' + safeObj + '\\b',
-                'gi'
-            );
-
-
-            text = text.replace(
-                regex,
-                `<span style="color:rgb(250, 204, 79)">$&</span>`
-            );
-
-        });
-
-        console.log(text);
-        return text;
-
-
-    }
-
 
 
 
