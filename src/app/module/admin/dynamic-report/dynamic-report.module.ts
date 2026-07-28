@@ -11,6 +11,9 @@ import { DynamicReportListComponent } from './report-list/dynamic-report-list.co
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { QueryExecutorFormComponent } from './query-executor/query-executor.form';
+import { ContextMenuModule } from 'primeng/contextmenu';
+
+
 
 
 
@@ -20,7 +23,8 @@ import { QueryExecutorFormComponent } from './query-executor/query-executor.form
         CommonModule,
         DynamicReportRouteModule,
         ProgressSpinnerModule,
-        MultiSelectModule
+        MultiSelectModule,
+        ContextMenuModule
 
 
     ],

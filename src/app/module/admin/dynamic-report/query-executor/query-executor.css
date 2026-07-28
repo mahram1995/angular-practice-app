@@ -1,0 +1,86 @@
+.custom-context-menu .p-menuitem-link {
+    text-decoration: none !important;
+    padding: 5px 10px !important;
+    line-height: 1.2 !important;
+    transition: background-color 0.2s ease;
+}
+.custom-context-menu .p-menuitem-text {
+    font-size: 13px;
+}
+
+.custom-context-menu .p-menuitem-icon {
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.custom-context-menu .p-menuitem {
+    margin: 0 !important;
+}
+
+.custom-context-menu .p-menuitem-link:hover {
+    background-color: #b8d9f1 !important;
+    color: #0056b3 !important;
+}
+
+.custom-context-menu .p-menuitem-link:hover .p-menuitem-icon {
+    color: #0056b3 !important;
+}
+
+.sql-editor {
+    position: relative;
+    width: 100%;
+    height: 200px;
+}
+
+
+.highlight-layer,
+.input-layer {
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 10px;
+
+    font-family: Consolas, monospace;
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+
+    white-space: pre-wrap;
+    overflow: auto;
+
+    box-sizing: border-box;
+}
+
+
+.highlight-layer {
+
+    z-index: 1;
+
+    background: rgb(238, 243, 239);
+
+
+    pointer-events: none;
+
+}
+
+
+.input-layer {
+
+    z-index: 2;
+
+    background: transparent;
+
+    color: transparent;
+
+    caret-color: black;
+
+}

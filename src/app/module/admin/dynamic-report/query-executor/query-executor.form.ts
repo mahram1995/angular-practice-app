@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DatePipe, Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -14,11 +14,20 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { MenuItem } from 'primeng/api';
+import { Table } from 'primeng/table';
+import { ViewEncapsulation } from '@angular/core';
+
+
+
 
 
 @Component({
     selector: 'query-executor-form',
-    templateUrl: 'query-executor.form.html'
+    templateUrl: 'query-executor.form.html',
+    styleUrls: ['./query-executor.css'],
+    encapsulation: ViewEncapsulation.None
+
 })
 export class QueryExecutorFormComponent extends FormBaseComponent {
     title = 'agular dynamic form';
@@ -33,8 +42,12 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     isShowParaForm: boolean = true
     isShowReport: boolean = false
 
-   
-    
+    databaseObjects: string[] = [];
+
+    queryText = '';
+    highlightedQuery = '';
+
+
 
     cols: any[] = [];
     tableData: any[] = [];
@@ -46,14 +59,24 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     profileId: number
 
     selectedPdfColumns: any[] = [];
-
+    selectedRow: any;
     rowPerPage = 0; // Default
     fontSize = 12; // Default
-    selectedCell: { row: number; field: string } | null = null;
+    selectedCell: any
+
+    @ViewChild('dataTable') dataTable!: Table;
+
+    menuItems: MenuItem[] = [];
+    selectedRows: any[] = [];
+
+    showCountDialog = false;
+    countMessage = '';
+    insertTableName = 'PLESE_REPLACE_YOUR_TABLE';
 
 
 
 
+    filteredTableData: any[] = [];
 
 
     constructor(private fb: FormBuilder,
@@ -67,6 +90,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     ) { super(location, commonService); }
 
     ngOnInit() {
+        this.loadDatabaseObjects();
+
         this.rowPerPage = this.commonService.getRowsPerPage(27)
         this.route.queryParams.subscribe(params => {
             this.profileId = params.udfProfileId;
@@ -75,7 +100,464 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             queryString: [null, Validators.required]
         });
 
+        this.menuItems = [
+            {
+                label: 'Select All Rows',
+                icon: 'pi pi-check-square',
+                command: () => this.selectAllRows()
+            },
+            {
+                label: 'Unselect All Rows',
+                icon: 'pi pi-times-circle',
+                command: () => this.unselectAllRows()
+            },
+            {
+                label: 'Refresh',
+                icon: 'pi pi-refresh',
+                command: () => this.refreshReport()
+            },
+            {
+                label: 'Remove Filter',
+                icon: 'pi pi-refresh',
+                command: () => this.removeFilter()
+            },
+            {
+                label: 'Copy Selected Cell Value',
+                icon: 'pi pi-copy',
+                command: () => this.copyCell()
+            },
+            {
+                label: 'Copy Selected Row Value',
+                icon: 'pi pi-clone',
+                command: () => this.copyRow()
+            },
+            {
+                label: 'Filter by this value',
+                icon: 'pi pi-filter',
+                command: () => this.filterBySelectedValue()
+            },
+            {
+                label: 'Count Total Rows Number',
+                icon: 'pi pi-calculator',
+                command: () => this.countRow()
+            },
+
+            {
+                label: 'Export Selected Row',
+                icon: 'pi pi-file-excel',
+                command: () => this.exportSelectedRowsToExcel()
+            },
+            {
+                label: 'Sort Ascending',
+                icon: 'pi pi-sort-amount-up',
+                command: () => this.sortAscending()
+            },
+
+            {
+                label: 'Sort Descending',
+                icon: 'pi pi-sort-amount-down',
+                command: () => this.sortDescending()
+            },
+            {
+                label: 'Create Table Script',
+                icon: 'pi pi-table',
+                command: () => this.createTableScript()
+            },
+            {
+                label: 'Create Insert Script',
+                icon: 'pi pi-database',
+                command: () => this.createInsertScript()
+            }
+        ];
+
     }
+
+
+
+    selectAllRows() {
+
+        this.selectedRows = [...this.tableData];
+
+    }
+    unselectAllRows() {
+
+        this.selectedRows = [];
+
+    }
+
+    createTableScript() {
+
+        if (!this.cols || this.cols.length === 0) {
+
+            this.countMessage = 'No columns available.';
+            this.showCountDialog = true;
+            return;
+        }
+
+
+        let script = `CREATE TABLE ${this.insertTableName} (\n`;
+
+
+        const columns = this.cols.map(col => {
+
+            const field = col.field;
+
+            // Find sample value from data
+            const sampleValue = this.tableData.find(
+                row => row[field] !== null && row[field] !== undefined
+            )?.[field];
+
+
+            let dataType = 'VARCHAR2(255)';
+
+
+            if (typeof sampleValue === 'number') {
+
+                dataType = 'NUMBER';
+
+            }
+            else if (sampleValue instanceof Date) {
+
+                dataType = 'DATE';
+
+            }
+            else if (typeof sampleValue === 'string') {
+
+
+                // Date string detection
+                if (!isNaN(Date.parse(sampleValue))) {
+                    dataType = 'DATE';
+                }
+                else {
+
+                    const maxLength = Math.max(
+                        ...this.tableData.map(row =>
+                            row[field]
+                                ? String(row[field]).length
+                                : 0
+                        )
+                    );
+
+
+                    if (maxLength <= 50) {
+                        dataType = 'VARCHAR2(50)';
+                    }
+                    else if (maxLength <= 200) {
+                        dataType = 'VARCHAR2(200)';
+                    }
+                    else {
+                        dataType = 'CLOB';
+                    }
+
+                }
+
+            }
+
+
+            return `    ${field} ${dataType}`;
+
+        });
+
+
+        script += columns.join(',\n');
+
+        script += '\n);';
+
+
+        navigator.clipboard.writeText(script);
+
+
+        this.countMessage = 'Create table script copied to clipboard.';
+        this.showCountDialog = true;
+
+    }
+
+    createInsertScript() {
+
+        if (!this.selectedRows || this.selectedRows.length === 0) {
+
+            this.countMessage = 'Please select at least one row.';
+            this.showCountDialog = true;
+            return;
+        }
+
+
+        const columns = this.cols.map(col => col.field);
+
+
+        let script = '';
+
+
+        this.selectedRows.forEach(row => {
+
+            const values = columns.map(col => {
+
+                const value = row[col];
+
+
+                if (value === null || value === undefined) {
+                    return 'NULL';
+                }
+
+
+                if (typeof value === 'number') {
+                    return value;
+                }
+
+
+                // escape single quote
+                return `'${String(value).replace(/'/g, "''")}'`;
+
+            });
+
+
+            script += `INSERT INTO ${this.insertTableName} (${columns.join(', ')})\n`;
+            script += `VALUES (${values.join(', ')});\n\n`;
+
+        });
+
+
+        navigator.clipboard.writeText(script);
+
+
+        this.countMessage = 'Insert script copied to clipboard.';
+        this.showCountDialog = true;
+
+    }
+
+    removeFilter() {
+        this.selectedRows = [];
+        this.selectedCell = null;
+        this.dataTable.clear();
+
+    }
+    refreshReport() {
+        this.selectedRows = [];
+        this.selectedCell = null;
+        this.dataTable.clear();
+        this.downloadedData();
+
+    }
+    filterBySelectedValue() {
+
+        if (!this.selectedCell) {
+            return;
+        }
+
+        const field = this.selectedCell.column.field;
+        const value = this.selectedCell.value;
+
+
+        this.dataTable.filter(
+            value,
+            field,
+            'equals'
+        );
+
+    }
+
+    sortAscending() {
+
+        if (!this.selectedCell) {
+            return;
+        }
+
+        const field = this.selectedCell.column.field;
+
+        this.tableData.sort((a, b) => {
+
+            const valueA = a[field];
+            const valueB = b[field];
+
+            return this.compare(valueA, valueB);
+
+        });
+
+    }
+
+    compare(a: any, b: any): number {
+
+        if (a == null) return -1;
+        if (b == null) return 1;
+
+
+        // Number sorting
+        if (!isNaN(a) && !isNaN(b)) {
+            return Number(a) - Number(b);
+        }
+
+
+        // Date sorting
+        const dateA = Date.parse(a);
+        const dateB = Date.parse(b);
+
+        if (!isNaN(dateA) && !isNaN(dateB)) {
+            return dateA - dateB;
+        }
+
+
+        // String sorting
+        return String(a).localeCompare(String(b));
+
+    }
+
+
+
+    sortDescending() {
+
+        if (!this.selectedCell) {
+            return;
+        }
+
+        const field = this.selectedCell.column.field;
+
+        this.tableData.sort((a, b) => {
+
+            const valueA = a[field];
+            const valueB = b[field];
+
+            return this.compare(valueB, valueA);
+
+        });
+
+    }
+
+
+    onCellRightClick(event: MouseEvent, row: any, col: any) {
+        event.preventDefault();
+
+        this.selectedCell = {
+            row: row,
+            column: col,
+            value: row[col.field]
+        };
+    }
+
+    copyCell() {
+        if (!this.selectedCell) {
+            return;
+        }
+
+        navigator.clipboard.writeText(String(this.selectedCell.value));
+
+    }
+
+    copyRow() {
+        // user for copy as a JSON 
+        // -------------------------------------------
+        // navigator.clipboard.writeText(
+        //     JSON.stringify(this.selectedCell.row, null, 2)
+        // );
+
+        // use for select a single row in single line
+        // const headers = this.cols.map(c => c.header).join('\t');
+        // const values = this.cols
+        //     .map(c => this.selectedCell.row[c.field] ?? '')
+        //     .join('\t');
+
+        // navigator.clipboard.writeText(headers + '\n' + values);
+
+        if (!this.selectedRows || this.selectedRows.length === 0) {
+            alert("Please select at least one row.");
+            return;
+        }
+
+        // Header (only once)
+        const header = this.cols
+            .map(c => c.header)
+            .join('\t');
+
+        // Data rows
+        const rows = this.selectedRows.map(row =>
+            this.cols
+                .map(c => row[c.field] ?? '')
+                .join('\t')
+        );
+
+        const text = header + '\n' + rows.join('\n');
+
+        navigator.clipboard.writeText(text);
+
+        console.log(text);
+    }
+
+    onFilter(event: any) {
+
+        this.filteredTableData = event.filteredValue
+            ? event.filteredValue
+            : this.tableData;
+
+    }
+
+
+    countRow() {
+        const count = this.filteredTableData.length;
+
+        this.countMessage = `Total Rows: ${count}`;
+
+        this.showCountDialog = true;
+
+    }
+
+
+
+
+    exportSelectedRowsToExcel() {
+
+        if (!this.selectedRows || this.selectedRows.length === 0) {
+            this.countMessage = 'Please select at least one row.';
+            this.showCountDialog = true;
+            return;
+        }
+
+        // Remove internal row id column
+        const exportData = this.selectedRows.map(row => {
+
+            const data: any = {};
+
+            this.cols.forEach(col => {
+                data[col.header] = row[col.field];
+            });
+
+            return data;
+        });
+
+
+        // Create worksheet
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+
+        // Create workbook
+        const workbook = XLSX.utils.book_new();
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            worksheet,
+            'Selected Rows'
+        );
+
+
+        // Export
+        const excelBuffer = XLSX.write(workbook, {
+            bookType: 'xlsx',
+            type: 'array'
+        });
+
+
+        const blob = new Blob(
+            [excelBuffer],
+            {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            }
+        );
+
+
+        saveAs(
+            blob,
+            'Selected_Report.xlsx'
+        );
+    }
+
 
     selectCell(row: number, field: string) {
         this.selectedCell = { row, field };
@@ -90,7 +572,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
 
-   
+
     showParaForm() {
         if (this.isShowParaForm) {
             this.isShowParaForm = false
@@ -110,6 +592,89 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
 
+    onQueryChange(event: any) {
+
+        const value = event.target.value;
+
+        this.highlightedQuery = this.highlightSql(value);
+    }
+
+    highlightSql(value: string): string {
+
+        if (!value) {
+            return '&nbsp;';
+        }
+
+
+        let text = value
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+
+
+        this.databaseObjects.forEach(obj => {
+
+            const safeObj = obj.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+
+            const regex = new RegExp(
+                '\\b' + safeObj + '\\b',
+                'gi'
+            );
+
+
+            text = text.replace(
+                regex,
+                `<span style="color:rgb(250, 204, 79)">$&</span>`
+            );
+
+        });
+
+        console.log(text);
+        return text;
+
+
+    }
+
+
+
+
+
+
+    loadDatabaseObjects() {
+
+        const params = {
+            sql: `
+            SELECT OBJECT_NAME, OBJECT_TYPE
+            FROM USER_OBJECTS
+            WHERE OBJECT_TYPE IN
+            (
+                'TABLE',
+                'VIEW',
+                'FUNCTION',
+                'PROCEDURE',
+                'PACKAGE',
+                'PACKAGE BODY',
+                'SEQUENCE',
+                'SYNONYM'
+            )
+            ORDER BY OBJECT_TYPE, OBJECT_NAME
+        `,
+            params: {}
+        };
+
+        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null);
+
+        this.udfService.getReportData(params, urlSearchParams)
+            .subscribe((response: any[]) => {
+                this.databaseObjects = response.map(
+                    x => x.OBJECT_NAME.toUpperCase()
+                );
+                console.log(this.databaseObjects);
+            });
+
+    }
+
     downloadedData() {
         if (this.form.invalid) {
             this.form.markAllAsTouched();
@@ -118,12 +683,12 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         let data = this.form.value.queryString;
 
         let result: { [key: string]: any } = {};
-       
+
 
 
         let params = {
             sql: data,
-            params: {id:"abc"}
+            params: { id: "abc" }
 
         }
         const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null);
@@ -132,21 +697,35 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
 
         this.udfService.getReportData(params, urlSearchParams).subscribe(
-            (response) => {
+            (response: any[]) => {
+
                 this.isShowParaForm = false;
                 this.isShowReport = true;
+
                 console.log(response);
 
-                this.tableData = response;
+                // Add temporary unique key for PrimeNG row selection
+                this.tableData = response.map((row: any, index: number) => ({
+                    __rowId: index,
+                    ...row
+                }));
 
-                if (response && response.length > 0) {
-                    this.cols = Object.keys(response[0]).map(key => ({
-                        field: key,
-                        header: key.replace(/_/g, ' ')
-                    }));
+                this.filteredTableData = [...this.tableData];
+
+                if (this.tableData && this.tableData.length > 0) {
+
+                    this.cols = Object.keys(this.tableData[0])
+                        .filter(key => key !== '__rowId') // hide temp column
+                        .map(key => ({
+                            field: key,
+                            header: key.replace(/_/g, ' ')
+                        }));
+
                     this.selectedPdfColumns = [...this.cols];
                 }
+
             });
+
 
     }
 
