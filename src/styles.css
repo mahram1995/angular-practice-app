@@ -497,7 +497,9 @@ table>tr>th {
     background-color: #d2d3d6;
 }
 
-.p-datatable.p-datatable-sm .p-datatable-thead>tr>th {
+
+
+.p-datatable.p-datatable-sm .p-datatable-thead >tr>th {
     padding-top: 4px !important;
     font-size: 13px !important;
     border: 1px solid rgb(190, 188, 188) !important;

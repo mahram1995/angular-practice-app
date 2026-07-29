@@ -740,7 +740,8 @@ export class GenerateDynamicReportUiFormComponent extends FormBaseComponent {
 
 
         let params = {
-            sql: '1001',
+            sql: 'select * from AIBLFE030426.TF_IMPORT_LC_ISSUE where customer_id=nvl(:pcustomer_id,customer_id) ' + 
+                ' and OWNER_BRANCH_ID=:pbranch_id',
             params: result
 
         }

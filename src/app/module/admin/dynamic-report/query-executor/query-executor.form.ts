@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DatePipe, Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -69,11 +69,18 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     countMessage = '';
     insertTableName = 'PLESE_REPLACE_YOUR_TABLE';
 
+    selectedRowIndex = 0;
+    selectedColIndex = 0;
 
 
 
     filteredTableData: any[] = [];
+    pageHeight: number
+    showFIlterRow: boolean = false;
 
+    allColumns: any[] = [];
+
+    selectedColumns: any[] = [];
 
     constructor(private fb: FormBuilder,
         protected override location: Location,
@@ -86,14 +93,15 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     ) { super(location, commonService); }
 
     ngOnInit() {
-        this.loadDatabaseObjects();
+        //this.loadDatabaseObjects();
 
         this.rowPerPage = this.commonService.getRowsPerPage(27)
+        this.pageHeight = this.commonService.getScreenHeight()
         this.route.queryParams.subscribe(params => {
             this.profileId = params.udfProfileId;
         });
         this.form = this.fb.group({
-            queryString: [null, Validators.required]
+            queryString: ["select * from branch", Validators.required]
         });
 
         this.menuItems = [
@@ -169,6 +177,10 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
 
+    @HostListener('window:resize')
+    onResize() {
+        this.commonService.getScreenHeight()
+    }
 
     selectAllRows() {
 
@@ -178,6 +190,15 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     unselectAllRows() {
 
         this.selectedRows = [];
+
+    }
+
+    showFilterRow() {
+        if (this.showFIlterRow == false) {
+            this.showFIlterRow = true;
+        } else {
+            this.showFIlterRow = false;
+        }
 
     }
 
@@ -555,9 +576,93 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
 
-    selectCell(row: number, field: string) {
-        this.selectedCell = { row, field };
+    // selectCell(row: number, field: string) {
+    //     this.selectedCell = { row, field };
+
+
+    // }
+
+    selectCell(rowIndex: number,
+        colIndex: number,
+        rowData: any,
+        col: any) {
+
+        this.selectedRowIndex = rowIndex;
+        this.selectedColIndex = colIndex;
+
+        this.selectedCell = {
+            row: rowData,
+            column: col
+        };
+
     }
+
+    @HostListener('window:keydown', ['$event'])
+    onKeyDown(event: KeyboardEvent) {
+
+        switch (event.key) {
+
+            case 'ArrowLeft':
+
+                if (this.selectedColIndex > 0) {
+                    this.selectedColIndex--;
+                }
+
+                break;
+
+            case 'ArrowRight':
+
+                if (this.selectedColIndex < this.cols.length - 1) {
+                    this.selectedColIndex++;
+                }
+
+                break;
+
+            case 'ArrowUp':
+
+                if (this.selectedRowIndex > 0) {
+                    this.selectedRowIndex--;
+                }
+
+                break;
+
+            case 'ArrowDown':
+
+                if (this.selectedRowIndex < this.tableData.length - 1) {
+                    this.selectedRowIndex++;
+                }
+
+                break;
+
+            default:
+                return;
+        }
+
+        event.preventDefault();
+
+        this.updateSelection();
+
+    }
+
+    updateSelection() {
+
+        setTimeout(() => {
+
+            document
+                .getElementById(
+                    `cell-${this.selectedRowIndex}-${this.selectedColIndex}`
+                )
+                ?.scrollIntoView({
+                    block: 'nearest',
+                    inline: 'nearest'
+                });
+
+        });
+
+    }
+
+
+
 
     isSelected(row: number, field: string): boolean {
         return this.selectedCell?.row === row &&
@@ -674,10 +779,23 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                     this.selectedPdfColumns = [...this.cols];
                 }
 
+
+                this.selectedColumns = [...this.selectedPdfColumns];
+
             });
 
 
     }
+
+    onColumnChange() {
+
+    this.selectedColumns = this.allColumns.filter(column =>
+        this.selectedColumns.some(
+            selected => selected.field === column.field
+        )
+    );
+
+}
 
     exportExcel() {
         this.isExporting = true

@@ -114,13 +114,18 @@ export class CommonService {
     getRowsPerPage(
         rowHeight: number,
         reservedHeight: number = 250,
-        minimumRows: number = 5
+        minimumRows: number = 10
     ): number {
 
         return Math.max(
             Math.floor((window.innerHeight - reservedHeight) / rowHeight),
             minimumRows
         );
+    }
+
+    getScreenHeight( ): number {
+        let reservedHeight: number = 120
+        return (window.innerHeight - reservedHeight)
     }
 
 

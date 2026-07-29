@@ -5,16 +5,22 @@
                 <p class="app-page-header">{{reportName}}</p>
             </div>
             <div class="app-button-group">
+                <button (click)="showFilterRow()" [disabled]="tableData.length==0">Filter</button>
                 <button (click)="exportPDF()" [disabled]="tableData.length==0">Export PDF</button>
+
                 <button (click)="exportExcel()" [disabled]="tableData.length==0">Export Excel</button>
                 <button (click)="showParaForm()"> {{!isShowParaForm? 'Show':'Hide' }} Query </button>
                 <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
-                <button (click)="refresh()"><i class="pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+                <button (click)="removeFilter()"><i class="pi pi-refresh" style="font-size:12px"></i> Refresh</button>
             </div>
         </div>
         <div class="clear-fix"></div>
         <hr style="margin: 0px; padding: 0px; width: 100%;">
     </div>
+
+    <!-- <p-multiSelect [options]="allColumns" [(ngModel)]="selectedColumns" optionLabel="header"
+        (onChange)="onColumnChange()">
+    </p-multiSelect> -->
 
     <div *ngIf="isShowParaForm" style=" margin: 10px 20px 10px 20px; ">
         <form [formGroup]="form" class="app-card">
@@ -51,7 +57,7 @@
     <div *ngIf="isShowReport" class="app-list">
         <div style="padding: 0px 5px 5px 5px;">
             <p-table class=" table-hover table-responsive" #dataTable (onFilter)="onFilter($event)" [value]="tableData"
-                editMode="row" [paginator]="true" [rows]="rowPerPage" [columns]="cols" [(selection)]="selectedRows"
+                editMode="row" [columns]="cols" [(selection)]="selectedRows" [paginator]="true" [rows]="rowPerPage"
                 styleClass="p-datatable-sm" selectionMode="multiple" [resizableColumns]="true" dataKey="__rowId"
                 (onColResize)="columnResize($event)" columnResizeMode="expand" metaKeySelection="true"
                 [scrollable]="true" (contextMenuSelection)]="selectedRow" [contextMenu]="cm">>
@@ -59,8 +65,8 @@
 
                     <!-- Header -->
                     <tr>
-                        <th *ngFor="let col of columns" pResizableColumn style="width: 150px !important;"
-                            style="min-width: 80px">
+                        <th *ngFor="let col of columns" pResizableColumn
+                            style="width: 150px !important; border-color: green;" style="min-width: 80px">
 
                             {{ col.header }}
 
@@ -68,7 +74,7 @@
                     </tr>
 
                     <!-- Filter Row -->
-                    <tr>
+                    <tr *ngIf="showFIlterRow">
                         <th *ngFor="let col of columns" style="padding: 0px !important; text-align: center;">
 
                             <p-columnFilter [field]="col.field" display="row" matchMode="contains" [showMenu]="false">
@@ -92,11 +98,13 @@
                 <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
                     <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData">
 
-                        <td *ngFor="let col of columns" [ngStyle]="{ 'white-space': 'nowrap' }"
-                            (click)="selectCell(rowIndex, col.field)"
+                        <td *ngFor="let col of columns; let colIndex = index" [ngStyle]="{ 'white-space': 'nowrap' }"
+                            (click)="selectCell(rowIndex, colIndex, rowData, col)"
                             (contextmenu)="onCellRightClick($event,rowData,col)"
                             [style.background]="isSelected(rowIndex, col.field) ? '#48dbfb' : ''"
-                            [style.cursor]="'pointer'">
+                            [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"
+                            [id]="'cell-' + rowIndex + '-' + colIndex" tabindex="0" [style.cursor]="'pointer'">
+
                             {{ rowData[col.field] }}
                         </td>
                     </tr>

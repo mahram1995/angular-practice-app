@@ -4,6 +4,7 @@
     line-height: 1.2 !important;
     transition: background-color 0.2s ease;
 }
+
 .custom-context-menu .p-menuitem-text {
     font-size: 13px;
 }
@@ -25,4 +26,31 @@
 .custom-context-menu .p-menuitem-link:hover .p-menuitem-icon {
     color: #0056b3 !important;
 }
+
+
+/* use color the cell when move the selection  */
+.selected-cell {
+    outline: none !important;
+    box-shadow: none !important;
+
+    background: #6ec7f0 !important;
+
+    color: #fff;
+
+}
+
+/* Remove the focus border */
+:host ::ng-deep .p-datatable td:focus,
+:host ::ng-deep .p-datatable td:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove the focus border */
+:host ::ng-deep .p-datatable input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+
 
