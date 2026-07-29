@@ -91,14 +91,17 @@
 
 .column-selector {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columns */
-    gap: 8px 15px;
-    width: 450px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px 20px;
 }
 
 .column-item {
     display: flex;
     align-items: center;
-    white-space: nowrap;
     font-size: 12px;
+    white-space: nowrap;
+}
+
+.p-dialog .p-dialog-header{
+    padding: 0px  !important;
 }

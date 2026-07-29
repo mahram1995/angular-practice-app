@@ -9,7 +9,7 @@
                 <button (click)="filterBySelectedValue()"><i class="pi pi-filter" style="font-size:12px"></i> </button>
                 <button (click)="columnSorting()"><i class="pi pi-sort" style="font-size:12px"></i> </button>
                 <button (click)="showFilterRow()" [disabled]="tableData.length==0">Filter</button>
-                <button (click)="columnPanel.toggle($event)">Columns</button>
+                <button (click)="columnDialog = true">Columns</button>
                 <button (click)="exportPDF()" [disabled]="tableData.length==0">Export PDF</button>
                 <button (click)="exportExcel()" [disabled]="tableData.length==0">Export Excel</button>
                 <button (click)="showParaForm()"> {{!isShowParaForm? 'Show':'Hide' }} Query </button>
@@ -148,15 +148,26 @@
         </div>
     </p-dialog>
 
-    <p-overlayPanel #columnPanel>
+
+
+    <p-dialog [(visible)]="columnDialog"  [style]="{width: '80%'}" appendTo="body" 
+        [contentStyle]="{height: '400px', overflow: 'auto'}" [closeOnEscape]="true">
+
         <div class="column-selector">
+
             <div *ngFor="let col of allColumns" class="column-item">
+
                 <input type="checkbox" [(ngModel)]="col.visible" (change)="columnChange()">
+
                 <span>
                     {{ col.header }}
                 </span>
+
             </div>
+
         </div>
-    </p-overlayPanel>
+
+    </p-dialog>
+
 
 </div>

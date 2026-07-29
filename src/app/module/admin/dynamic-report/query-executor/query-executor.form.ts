@@ -48,6 +48,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     cols: any[] = [];
     visibleColumns: any[] = [];
+    columnDialog:boolean=false
     tableData: any[] = [];
 
     isExporting = false;
