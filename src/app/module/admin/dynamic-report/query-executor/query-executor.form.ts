@@ -43,6 +43,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     isShowReport: boolean = false
 
     databaseObjects: string[] = [];
+    sortingMode: string = 'ascending';
 
 
     cols: any[] = [];
@@ -95,13 +96,13 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     ngOnInit() {
         //this.loadDatabaseObjects();
 
-        this.rowPerPage = this.commonService.getRowsPerPage(27)
+        this.rowPerPage = this.commonService.getRowsPerPage(23)
         this.pageHeight = this.commonService.getScreenHeight()
         this.route.queryParams.subscribe(params => {
             this.profileId = params.udfProfileId;
         });
         this.form = this.fb.group({
-            queryString: ["select * from branch", Validators.required]
+            queryString: ["select *  from budget_data", Validators.required]
         });
 
         this.menuItems = [
@@ -373,6 +374,15 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     }
 
+    columnSorting() {
+        if (this.sortingMode == 'descending') {
+            return this.sortDescending()
+        } {
+            return this.sortAscending()
+        }
+
+    }
+
     sortAscending() {
 
         if (!this.selectedCell) {
@@ -380,7 +390,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         }
 
         const field = this.selectedCell.column.field;
-
+        this.sortingMode = 'descending'
         this.tableData.sort((a, b) => {
 
             const valueA = a[field];
@@ -427,7 +437,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         }
 
         const field = this.selectedCell.column.field;
-
+        this.sortingMode = 'ascending'
         this.tableData.sort((a, b) => {
 
             const valueA = a[field];
@@ -594,6 +604,9 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             row: rowData,
             column: col
         };
+
+        console.log(this.selectedCell);
+
 
     }
 
@@ -770,12 +783,23 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
                 if (this.tableData && this.tableData.length > 0) {
 
-                    this.cols = Object.keys(this.tableData[0])
-                        .filter(key => key !== '__rowId') // hide temp column
-                        .map(key => ({
-                            field: key,
-                            header: key.replace(/_/g, ' ')
-                        }));
+                    // this.cols = Object.keys(this.tableData[0])
+                    //     .filter(key => key !== '__rowId') // hide temp column
+                    //     .map(key => ({
+                    //         field: key,
+                    //         header: key.replace(/_/g, ' ')
+                    //     }));
+
+
+                    this.cols = response.columns.map((column: any) => ({
+
+                        field: column.name,
+                        header: column.name.replace(/_/g, ' '),
+                        sqlType: column.sqlType,
+                        jdbcType: column.jdbcType,
+                        align: this.getAlignment(column.sqlType)
+
+                    }));
 
                     this.selectedPdfColumns = [...this.cols];
                 }
@@ -788,15 +812,65 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     }
 
+    getAlignment(sqlType: string): string {
+
+        switch (sqlType?.toUpperCase()) {
+
+            case 'NUMBER':
+                return 'right';
+
+            case 'DATE':
+                return 'center';
+
+            case 'TIMESTAMP':
+                return 'center';
+
+            default:
+                return 'left';
+        }
+
+    }
+
+    formatCellValue(value: any, sqlType: string): any {
+
+        if (value == null) {
+            return '';
+        }
+
+        switch (sqlType?.toUpperCase()) {
+
+
+            case 'DATE':
+
+                return this.datePipe.transform(
+                    value,
+                    'dd-MMM-yyyy'
+                );
+
+
+            case 'TIMESTAMP':
+
+                return this.datePipe.transform(
+                    value,
+                    'dd-MMM-yyyy HH:mm:ss'
+                );
+
+
+            default:
+                return value;
+        }
+
+    }
+
     onColumnChange() {
 
-    this.selectedColumns = this.allColumns.filter(column =>
-        this.selectedColumns.some(
-            selected => selected.field === column.field
-        )
-    );
+        this.selectedColumns = this.allColumns.filter(column =>
+            this.selectedColumns.some(
+                selected => selected.field === column.field
+            )
+        );
 
-}
+    }
 
     exportExcel() {
         this.isExporting = true

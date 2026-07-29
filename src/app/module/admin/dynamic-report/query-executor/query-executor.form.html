@@ -1,12 +1,15 @@
 <div class="app-page">
     <div>
-        <div style="padding: 0px 10px 0px 10px;">
+        <div style="padding: 0px 10px 4px 10px;">
             <div style="float:left ; margin: 0px; padding: 0px; ">
                 <p class="app-page-header">{{reportName}}</p>
             </div>
             <div class="app-button-group">
                 <button (click)="showFilterRow()" [disabled]="tableData.length==0">Filter</button>
                 <button (click)="exportPDF()" [disabled]="tableData.length==0">Export PDF</button>
+                <button (click)="filterBySelectedValue()"><i class="pi pi-filter" style="font-size:12px"></i> </button>
+                <button (click)="columnSorting()"><i class="pi pi-sort" style="font-size:12px"></i> </button>
+
 
                 <button (click)="exportExcel()" [disabled]="tableData.length==0">Export Excel</button>
                 <button (click)="showParaForm()"> {{!isShowParaForm? 'Show':'Hide' }} Query </button>
@@ -22,7 +25,7 @@
         (onChange)="onColumnChange()">
     </p-multiSelect> -->
 
-    <div *ngIf="isShowParaForm" style=" margin: 10px 20px 10px 20px; ">
+    <div *ngIf="isShowParaForm" style=" margin: 2px 20px 10px 20px; ">
         <form [formGroup]="form" class="app-card">
 
             <div class="row" style="padding: 10px 25px 0px 25px;">
@@ -58,7 +61,7 @@
         <div style="padding: 0px 5px 5px 5px;">
             <p-table class=" table-hover table-responsive" #dataTable (onFilter)="onFilter($event)" [value]="tableData"
                 editMode="row" [columns]="cols" [(selection)]="selectedRows" [paginator]="true" [rows]="rowPerPage"
-                styleClass="p-datatable-sm" selectionMode="multiple" [resizableColumns]="true" dataKey="__rowId"
+                selectionMode="multiple" [resizableColumns]="true" dataKey="__rowId"
                 (onColResize)="columnResize($event)" columnResizeMode="expand" metaKeySelection="true"
                 [scrollable]="true" (contextMenuSelection)]="selectedRow" [contextMenu]="cm">>
                 <ng-template pTemplate="header" let-columns>
@@ -66,7 +69,7 @@
                     <!-- Header -->
                     <tr>
                         <th *ngFor="let col of columns" pResizableColumn
-                            style="width: 150px !important; border-color: green;" style="min-width: 80px">
+                            style="width: 150px !important ; min-width: 80px;">
 
                             {{ col.header }}
 
@@ -82,6 +85,7 @@
                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
 
                                     <input pInputText type="text" [ngModel]="value" (ngModelChange)="filter($event)"
+                                        class="filter-input" [placeholder]="'Search'"
                                         style="width:100%; height:24px; padding:0px 0px; font-size:12px;" />
 
                                 </ng-template>
@@ -99,13 +103,17 @@
                     <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData">
 
                         <td *ngFor="let col of columns; let colIndex = index" [ngStyle]="{ 'white-space': 'nowrap' }"
-                            (click)="selectCell(rowIndex, colIndex, rowData, col)"
+                            (click)="selectCell(rowIndex, colIndex, rowData, col);onCellRightClick($event,rowData,col)"
                             (contextmenu)="onCellRightClick($event,rowData,col)"
                             [style.background]="isSelected(rowIndex, col.field) ? '#48dbfb' : ''"
+                            [style.text-align]="col.align"
                             [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"
                             [id]="'cell-' + rowIndex + '-' + colIndex" tabindex="0" [style.cursor]="'pointer'">
 
-                            {{ rowData[col.field] }}
+                            {{formatCellValue(
+                            rowData[col.field],
+                            col.sqlType
+                            )}}
                         </td>
                     </tr>
                 </ng-template>

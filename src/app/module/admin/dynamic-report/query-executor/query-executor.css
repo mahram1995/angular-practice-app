@@ -54,3 +54,37 @@
 
 
 
+.p-column-filter-menu-button, .p-column-filter-clear-button{
+    display: none !important;
+}
+
+.p-datatable .p-datatable-thead > tr > th,
+.p-datatable .p-datatable-tbody > tr > td {
+    font-size: 12px;
+    padding: 3px 6px;
+    border: 1px solid rgb(165, 163, 163);
+}
+
+.p-datatable .p-datatable-thead > tr > th{
+     background-color: #adafbb; 
+    text-align: center !important;
+}
+
+
+/* Filter input filed css */
+.filter-input {
+    margin: 2px !important;
+    border: none;
+    outline: none !important;
+    background-color:white !important;
+    box-shadow: none !important;
+    text-align: center !important;
+}
+
+/* Focus state */
+.filter-input:focus,
+.filter-input:active {
+    border: solid 2px green !important ;
+    outline: none !important;
+    box-shadow: none !important;
+}
