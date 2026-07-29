@@ -751,16 +751,17 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
 
 
-        this.udfService.getReportData(params, urlSearchParams).subscribe(
-            (response: any[]) => {
+        this.udfService.executeQueryWithDataType(params, urlSearchParams).subscribe(
+            (response: any) => {
 
                 this.isShowParaForm = false;
                 this.isShowReport = true;
 
                 console.log(response);
+                let rows = response.rows;
 
                 // Add temporary unique key for PrimeNG row selection
-                this.tableData = response.map((row: any, index: number) => ({
+                this.tableData = rows.map((row: any, index: number) => ({
                     __rowId: index,
                     ...row
                 }));
