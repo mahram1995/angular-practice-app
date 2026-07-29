@@ -32,11 +32,8 @@
 .selected-cell {
     outline: none !important;
     box-shadow: none !important;
-
     background: #6ec7f0 !important;
-
     color: #fff;
-
 }
 
 /* Remove the focus border */
@@ -71,6 +68,7 @@
 }
 
 
+
 /* Filter input filed css */
 .filter-input {
     margin: 2px !important;
@@ -87,4 +85,20 @@
     border: solid 2px green !important ;
     outline: none !important;
     box-shadow: none !important;
+}
+
+
+
+.column-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    gap: 8px 15px;
+    width: 450px;
+}
+
+.column-item {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    font-size: 12px;
 }

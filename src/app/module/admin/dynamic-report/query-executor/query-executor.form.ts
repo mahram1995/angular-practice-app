@@ -47,6 +47,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
 
     cols: any[] = [];
+    visibleColumns: any[] = [];
     tableData: any[] = [];
 
     isExporting = false;
@@ -70,8 +71,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     countMessage = '';
     insertTableName = 'PLESE_REPLACE_YOUR_TABLE';
 
-    selectedRowIndex = 0;
-    selectedColIndex = 0;
+    selectedRowIndex = null;
+    selectedColIndex = null;
 
 
 
@@ -347,6 +348,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.selectedRows = [];
         this.selectedCell = null;
         this.dataTable.clear();
+        this.filteredTableData = [...this.tableData];
 
     }
     refreshReport() {
@@ -450,9 +452,24 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
 
-    onCellRightClick(event: MouseEvent, row: any, col: any) {
-        event.preventDefault();
+    selectCell(rowIndex: number,
+        colIndex: number,
+        rowData: any,
+        col: any) {
 
+        this.selectedRowIndex = rowIndex;
+        this.selectedColIndex = colIndex;
+        this.selectedCell = {
+            row: rowData,
+            column: col
+        };
+    }
+
+
+    onCellClick(event: MouseEvent, row: any, col: any, rowIndex: any, colIndex: any) {
+        event.preventDefault();
+        this.selectedRowIndex = rowIndex;
+        this.selectedColIndex = colIndex;
         this.selectedCell = {
             row: row,
             column: col,
@@ -526,6 +543,12 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     }
 
+    columnChange() {
+        this.visibleColumns = this.allColumns.filter(
+            col => col.visible
+        );
+    }
+
 
 
 
@@ -591,24 +614,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
 
     // }
-
-    selectCell(rowIndex: number,
-        colIndex: number,
-        rowData: any,
-        col: any) {
-
-        this.selectedRowIndex = rowIndex;
-        this.selectedColIndex = colIndex;
-
-        this.selectedCell = {
-            row: rowData,
-            column: col
-        };
-
-        console.log(this.selectedCell);
-
-
-    }
 
     @HostListener('window:keydown', ['$event'])
     onKeyDown(event: KeyboardEvent) {
@@ -806,6 +811,15 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
 
                 this.selectedColumns = [...this.selectedPdfColumns];
+                this.allColumns = this.selectedColumns.map(col => ({
+                    ...col,
+                    visible: true
+                }));
+
+                this.visibleColumns = [...this.allColumns];
+                console.log(this.visibleColumns);
+
+
 
             });
 

@@ -5,12 +5,12 @@
                 <p class="app-page-header">{{reportName}}</p>
             </div>
             <div class="app-button-group">
-                <button (click)="showFilterRow()" [disabled]="tableData.length==0">Filter</button>
-                <button (click)="exportPDF()" [disabled]="tableData.length==0">Export PDF</button>
+
                 <button (click)="filterBySelectedValue()"><i class="pi pi-filter" style="font-size:12px"></i> </button>
                 <button (click)="columnSorting()"><i class="pi pi-sort" style="font-size:12px"></i> </button>
-
-
+                <button (click)="showFilterRow()" [disabled]="tableData.length==0">Filter</button>
+                <button (click)="columnPanel.toggle($event)">Columns</button>
+                <button (click)="exportPDF()" [disabled]="tableData.length==0">Export PDF</button>
                 <button (click)="exportExcel()" [disabled]="tableData.length==0">Export Excel</button>
                 <button (click)="showParaForm()"> {{!isShowParaForm? 'Show':'Hide' }} Query </button>
                 <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
@@ -60,8 +60,8 @@
     <div *ngIf="isShowReport" class="app-list">
         <div style="padding: 0px 5px 5px 5px;">
             <p-table class=" table-hover table-responsive" #dataTable (onFilter)="onFilter($event)" [value]="tableData"
-                editMode="row" [columns]="cols" [(selection)]="selectedRows" [paginator]="true" [rows]="rowPerPage"
-                selectionMode="multiple" [resizableColumns]="true" dataKey="__rowId"
+                editMode="row" [columns]="visibleColumns" [(selection)]="selectedRows" [paginator]="true"
+                [rows]="rowPerPage" selectionMode="multiple" [resizableColumns]="true" dataKey="__rowId"
                 (onColResize)="columnResize($event)" columnResizeMode="expand" metaKeySelection="true"
                 [scrollable]="true" (contextMenuSelection)]="selectedRow" [contextMenu]="cm">>
                 <ng-template pTemplate="header" let-columns>
@@ -103,8 +103,8 @@
                     <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData">
 
                         <td *ngFor="let col of columns; let colIndex = index" [ngStyle]="{ 'white-space': 'nowrap' }"
-                            (click)="selectCell(rowIndex, colIndex, rowData, col);onCellRightClick($event,rowData,col)"
-                            (contextmenu)="onCellRightClick($event,rowData,col)"
+                            (click)=" onCellClick($event,rowData, col, rowIndex, colIndex)"
+                            (contextmenu)="onCellClick($event,rowData, col, rowIndex, colIndex)"
                             [style.background]="isSelected(rowIndex, col.field) ? '#48dbfb' : ''"
                             [style.text-align]="col.align"
                             [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"
@@ -147,4 +147,16 @@
             {{ countMessage }}
         </div>
     </p-dialog>
+
+    <p-overlayPanel #columnPanel>
+        <div class="column-selector">
+            <div *ngFor="let col of allColumns" class="column-item">
+                <input type="checkbox" [(ngModel)]="col.visible" (change)="columnChange()">
+                <span>
+                    {{ col.header }}
+                </span>
+            </div>
+        </div>
+    </p-overlayPanel>
+
 </div>
