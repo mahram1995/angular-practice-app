@@ -17,6 +17,7 @@ import autoTable from 'jspdf-autotable';
 import { MenuItem } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { ViewEncapsulation } from '@angular/core';
+import { format } from 'sql-formatter';
 
 
 
@@ -48,7 +49,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     cols: any[] = [];
     visibleColumns: any[] = [];
-    columnDialog:boolean=false
+    columnDialog: boolean = false
     tableData: any[] = [];
 
     isExporting = false;
@@ -84,6 +85,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     allColumns: any[] = [];
 
     selectedColumns: any[] = [];
+
 
     constructor(private fb: FormBuilder,
         protected override location: Location,
@@ -178,6 +180,11 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         ];
 
     }
+    sqlFormatar() {
+    this.form.setValue({
+      queryString: format(this.form.value.script),
+    });
+  }
 
 
     @HostListener('window:resize')
@@ -619,38 +626,41 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     @HostListener('window:keydown', ['$event'])
     onKeyDown(event: KeyboardEvent) {
 
+        const target = event.target as HTMLElement;
+
+        // Don't handle arrow keys while typing
+        if (
+            target instanceof HTMLInputElement ||
+            target instanceof HTMLTextAreaElement ||
+            target.isContentEditable
+        ) {
+            return;
+        }
+
         switch (event.key) {
 
             case 'ArrowLeft':
-
                 if (this.selectedColIndex > 0) {
                     this.selectedColIndex--;
                 }
-
                 break;
 
             case 'ArrowRight':
-
                 if (this.selectedColIndex < this.cols.length - 1) {
                     this.selectedColIndex++;
                 }
-
                 break;
 
             case 'ArrowUp':
-
                 if (this.selectedRowIndex > 0) {
                     this.selectedRowIndex--;
                 }
-
                 break;
 
             case 'ArrowDown':
-
                 if (this.selectedRowIndex < this.tableData.length - 1) {
                     this.selectedRowIndex++;
                 }
-
                 break;
 
             default:
@@ -658,9 +668,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         }
 
         event.preventDefault();
-
         this.updateSelection();
-
     }
 
     updateSelection() {
@@ -766,6 +774,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         }
         const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null);
+
 
 
 

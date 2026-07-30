@@ -8,8 +8,9 @@
 
                 <button (click)="filterBySelectedValue()"><i class="pi pi-filter" style="font-size:12px"></i> </button>
                 <button (click)="columnSorting()"><i class="pi pi-sort" style="font-size:12px"></i> </button>
+                <button (click)="columnDialog = true"><i class="pi pi-list-check" style="font-size:12px"></i> </button>
+                <button (click)="sqlFormatar()"  ><i class="pi pi-align-center" style="font-size:12px"></i> </button>
                 <button (click)="showFilterRow()" [disabled]="tableData.length==0">Filter</button>
-                <button (click)="columnDialog = true">Columns</button>
                 <button (click)="exportPDF()" [disabled]="tableData.length==0">Export PDF</button>
                 <button (click)="exportExcel()" [disabled]="tableData.length==0">Export Excel</button>
                 <button (click)="showParaForm()"> {{!isShowParaForm? 'Show':'Hide' }} Query </button>
@@ -86,7 +87,7 @@
 
                                     <input pInputText type="text" [ngModel]="value" (ngModelChange)="filter($event)"
                                         class="filter-input" [placeholder]="'Search'"
-                                        style="width:100%; height:24px; padding:0px 0px; font-size:12px;" />
+                                        style="width:100%; height:24px; padding:0px 0px; font-size:12px; background-color: whitesmoke;" />
 
                                 </ng-template>
 
@@ -150,24 +151,16 @@
 
 
 
-    <p-dialog [(visible)]="columnDialog"  [style]="{width: '80%'}" appendTo="body" 
-        [contentStyle]="{height: '400px', overflow: 'auto'}" [closeOnEscape]="true">
-
+    <p-dialog [(visible)]="columnDialog" [style]="{width: '80%'}" appendTo="body" [contentStyle]="{ overflow: 'auto'}"
+        [closeOnEscape]="true"   >
         <div class="column-selector">
-
             <div *ngFor="let col of allColumns" class="column-item">
-
                 <input type="checkbox" [(ngModel)]="col.visible" (change)="columnChange()">
-
                 <span>
                     {{ col.header }}
                 </span>
-
             </div>
-
         </div>
-
     </p-dialog>
-
 
 </div>
