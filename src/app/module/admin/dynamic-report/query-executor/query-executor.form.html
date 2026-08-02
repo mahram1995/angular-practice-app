@@ -2,14 +2,38 @@
     <div>
         <div style="padding: 0px 10px 4px 10px;">
             <div style="float:left ; margin: 0px; padding: 0px; ">
-                <p class="app-page-header">{{reportName}}</p>
+                <p class="app-page-header">Query Executor: </p>
+                
+            </div>
+            <div style="float:left ; margin: 0px; padding: 0px;">
+                <button class="app-button" (click)="onRightMenuClick()"><i class="pi pi-database"></i></button>
             </div>
             <div class="app-button-group">
 
-                <button (click)="filterBySelectedValue()"><i class="pi pi-filter" style="font-size:12px"></i> </button>
+                <!-- <button (click)="filterBySelectedValue()"><i class="pi pi-filter" style="font-size:12px"></i> </button>
                 <button (click)="columnSorting()"><i class="pi pi-sort" style="font-size:12px"></i> </button>
                 <button (click)="columnDialog = true"><i class="pi pi-list-check" style="font-size:12px"></i> </button>
-                <button (click)="sqlFormatar()"  ><i class="pi pi-align-center" style="font-size:12px"></i> </button>
+                <button (click)="sqlFormatar()"  ><i class="pi pi-align-center" style="font-size:12px"></i> </button> -->
+                <button (click)="sumSelectedColumn()" pTooltip="Sum the selected column values" tooltipPosition="top">
+                    <span style="font-size:14px;font-weight:bold;">Σ</span>
+                </button>
+                <button (click)="filterBySelectedValue()" pTooltip="Filter rows using the selected cell value"
+                    tooltipPosition="top">
+                    <i class="pi pi-filter" style="font-size:12px"></i>
+                </button>
+
+                <button (click)="columnSorting()" pTooltip="Sort the table by the selected column"
+                    tooltipPosition="top">
+                    <i class="pi pi-sort" style="font-size:12px"></i>
+                </button>
+
+                <button (click)="columnDialog = true" pTooltip="Show or hide table columns" tooltipPosition="top">
+                    <i class="pi pi-list-check" style="font-size:12px"></i>
+                </button>
+
+                <button (click)="sqlFormatar()" pTooltip="Format the SQL query" tooltipPosition="top">
+                    <i class="pi pi-align-center" style="font-size:12px"></i>
+                </button>
                 <button (click)="showFilterRow()" [disabled]="tableData.length==0">Filter</button>
                 <button (click)="exportPDF()" [disabled]="tableData.length==0">Export PDF</button>
                 <button (click)="exportExcel()" [disabled]="tableData.length==0">Export Excel</button>
@@ -22,9 +46,7 @@
         <hr style="margin: 0px; padding: 0px; width: 100%;">
     </div>
 
-    <!-- <p-multiSelect [options]="allColumns" [(ngModel)]="selectedColumns" optionLabel="header"
-        (onChange)="onColumnChange()">
-    </p-multiSelect> -->
+
 
     <div *ngIf="isShowParaForm" style=" margin: 2px 20px 10px 20px; ">
         <form [formGroup]="form" class="app-card">
@@ -40,7 +62,6 @@
                           form.controls.queryString?.errors
                         }">
                 </textarea>
-
 
                     </div>
                 </div>
@@ -111,10 +132,7 @@
                             [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"
                             [id]="'cell-' + rowIndex + '-' + colIndex" tabindex="0" [style.cursor]="'pointer'">
 
-                            {{formatCellValue(
-                            rowData[col.field],
-                            col.sqlType
-                            )}}
+                            {{rowData[col.field]}}
                         </td>
                     </tr>
                 </ng-template>
@@ -142,25 +160,45 @@
     <p-contextMenu [style]="{  'width': '250px', 'font-size': '14px'}" #cm [model]="menuItems"
         styleClass="custom-context-menu"></p-contextMenu>
 
-    <p-dialog header="Row Count" [(visible)]="showCountDialog" [modal]="true" [style]="{width: '300px'}"
-        [closable]="true">
+    <p-dialog [(visible)]="showCountDialog" [modal]="true" [style]="{width: '300px'}" [closable]="true">
         <div style="text-align:center; font-size:18px;">
             {{ countMessage }}
         </div>
+        <br>
     </p-dialog>
 
+    <p-dialog [(visible)]="columnDialog" appendTo="body"
+        header="Check or uncheck to hide or visible the columns in table" [contentStyle]="{ overflow: 'auto' }"
+        [closeOnEscape]="true">
 
+        <!-- Select All Checkbox -->
+        <div class="column-item" style="font-weight: bold;">
+            <input type="checkbox" [(ngModel)]="selectAllColumns" (change)="toggleAllColumns()">
 
-    <p-dialog [(visible)]="columnDialog" [style]="{width: '80%'}" appendTo="body" [contentStyle]="{ overflow: 'auto'}"
-        [closeOnEscape]="true"   >
+            <span style="padding-left:3px">
+                Select All
+            </span>
+        </div>
+
+        <hr style="margin: 0px; padding: 0px;">
+
         <div class="column-selector">
             <div *ngFor="let col of allColumns" class="column-item">
                 <input type="checkbox" [(ngModel)]="col.visible" (change)="columnChange()">
-                <span>
+
+                <span style="padding-left:3px">
                     {{ col.header }}
                 </span>
             </div>
         </div>
     </p-dialog>
+
+    <div style=" margin-top: -50px; ">
+        <p-sidebar [(visible)]="sidebarVisible" [showCloseIcon]="false"
+            [style]="{'height':'100%' , 'margin-top':'50px', 'width':'280px' , 'padding':'0px'}">
+            <p>This is Object Viewr</p>
+           
+        </p-sidebar>
+    </div>
 
 </div>

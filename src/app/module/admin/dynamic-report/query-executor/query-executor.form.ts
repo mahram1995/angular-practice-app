@@ -42,6 +42,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     reportName: any;
     isShowParaForm: boolean = true
     isShowReport: boolean = false
+    sidebarVisible: boolean = false;
 
     databaseObjects: string[] = [];
     sortingMode: string = 'ascending';
@@ -83,7 +84,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     showFIlterRow: boolean = false;
 
     allColumns: any[] = [];
-
+    selectAllColumns = true;
     selectedColumns: any[] = [];
 
 
@@ -98,7 +99,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     ) { super(location, commonService); }
 
     ngOnInit() {
-        //this.loadDatabaseObjects();
+        this.loadDatabaseObjects();
 
         this.rowPerPage = this.commonService.getRowsPerPage(23)
         this.pageHeight = this.commonService.getScreenHeight()
@@ -106,7 +107,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             this.profileId = params.udfProfileId;
         });
         this.form = this.fb.group({
-            queryString: ["select *  from budget_data", Validators.required]
+            //queryString: ["select *  from inv_accounts where customer_id=80750", Validators.required]
+            queryString: ["select *  from budget_transaction ", Validators.required]
         });
 
         this.menuItems = [
@@ -180,11 +182,69 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         ];
 
     }
+
+    onRightMenuClick() {
+        this.sidebarVisible = true
+    }
+
+
+
+
+    sumSelectedColumn() {
+        if (this.selectedCell.column.sqlType !== 'NUMBER') {
+
+            this.countMessage = 'Please select a numeric column.';
+            this.showCountDialog = true;
+            return;
+        }
+
+        if (!this.selectedCell) {
+
+            this.countMessage = 'Please select a cell first.';
+            this.showCountDialog = true;
+            return;
+        }
+
+        const field = this.selectedCell.column.field;
+
+        let sum = 0;
+
+        this.filteredTableData.forEach(row => {
+
+            const value = Number(row[field]);
+
+            if (!isNaN(value)) {
+                sum += value;
+            }
+
+        });
+
+        const formattedSum = sum.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        this.countMessage = `Sum of ${this.selectedCell.column.header}: ${formattedSum}`;
+
+        this.showCountDialog = true;
+    }
+
     sqlFormatar() {
-    this.form.setValue({
-      queryString: format(this.form.value.script),
-    });
-  }
+        const sql = this.form.get('queryString')?.value;
+
+        this.form.get('queryString')?.setValue(
+            format(sql)
+        );
+    }
+
+    toggleAllColumns() {
+        this.allColumns.forEach(col => {
+            col.visible = this.selectAllColumns;
+        });
+
+        this.columnChange();
+    }
+
 
 
     @HostListener('window:resize')
@@ -214,7 +274,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     createTableScript() {
 
-        if (!this.cols || this.cols.length === 0) {
+        if (!this.visibleColumns || this.visibleColumns.length === 0) {
 
             this.countMessage = 'No columns available.';
             this.showCountDialog = true;
@@ -225,7 +285,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         let script = `CREATE TABLE ${this.insertTableName} (\n`;
 
 
-        const columns = this.cols.map(col => {
+        const columns = this.visibleColumns.map(col => {
 
             const field = col.field;
 
@@ -270,7 +330,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                         dataType = 'VARCHAR2(50)';
                     }
                     else if (maxLength <= 200) {
-                        dataType = 'VARCHAR2(200)';
+                        dataType = 'VARCHAR2(250)';
                     }
                     else {
                         dataType = 'CLOB';
@@ -291,13 +351,15 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         script += '\n);';
 
 
-        navigator.clipboard.writeText(script);
+        this.copyToClipboard(script);
 
 
         this.countMessage = 'Create table script copied to clipboard.';
-        this.showCountDialog = true;
+
 
     }
+
+
 
     createInsertScript() {
 
@@ -308,44 +370,47 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             return;
         }
 
-
-        const columns = this.cols.map(col => col.field);
-
+        const columns = this.visibleColumns.map(col => col.field);
 
         let script = '';
 
-
         this.selectedRows.forEach(row => {
 
-            const values = columns.map(col => {
+            const values = this.visibleColumns.map(col => {
 
-                const value = row[col];
+                const value = row[col.field];
 
-
-                if (value === null || value === undefined) {
+                if (value === null || value === undefined || value === '') {
                     return 'NULL';
                 }
 
+                switch (col.sqlType?.toUpperCase()) {
 
-                if (typeof value === 'number') {
-                    return value;
+                    case 'NUMBER':
+                    case 'INTEGER':
+                    case 'DECIMAL':
+                        return value;
+
+                    case 'DATE':
+                        // Assuming value is dd-MM-yyyy
+                        return `TO_DATE('${value}','DD-MM-YYYY')`;
+
+                    case 'TIMESTAMP':
+                        // Assuming value is dd-MM-yyyy HH:mm:ss
+                        return `TO_TIMESTAMP('${value}','DD-MM-YYYY HH24:MI:SS')`;
+
+                    default:
+                        return `'${String(value).replace(/'/g, "''")}'`;
                 }
 
-
-                // escape single quote
-                return `'${String(value).replace(/'/g, "''")}'`;
-
             });
-
 
             script += `INSERT INTO ${this.insertTableName} (${columns.join(', ')})\n`;
             script += `VALUES (${values.join(', ')});\n\n`;
 
         });
 
-
-        navigator.clipboard.writeText(script);
-
+        this.copyToClipboard(script);
 
         this.countMessage = 'Insert script copied to clipboard.';
         this.showCountDialog = true;
@@ -490,8 +555,58 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             return;
         }
 
-        navigator.clipboard.writeText(String(this.selectedCell.value));
 
+        const text = String(this.selectedCell.value ?? '');
+
+        if (navigator.clipboard) {
+
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    // console.log('Copied:', text);
+                })
+                .catch(err => {
+                    console.error('Clipboard error:', err);
+                    this.fallbackCopy(text);
+                });
+
+        } else {
+            this.fallbackCopy(text);
+        }
+
+    }
+
+    fallbackCopy(text: string) {
+
+        // const textarea = document.createElement('textarea');
+
+        // textarea.value = text;
+        // textarea.style.position = 'fixed';
+        // textarea.style.left = '-9999px';
+        // textarea.style.top = '0';
+
+        // document.body.appendChild(textarea);
+
+        // textarea.focus();
+        // textarea.select();
+
+        // const success = document.execCommand('copy');
+
+        // document.body.removeChild(textarea);
+        const textarea = document.createElement('textarea');
+
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+
+        document.body.appendChild(textarea);
+
+        textarea.focus();
+        textarea.select();
+
+        document.execCommand('copy');
+
+        document.body.removeChild(textarea);
     }
 
     copyRow() {
@@ -509,28 +624,41 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         // navigator.clipboard.writeText(headers + '\n' + values);
 
-        if (!this.selectedRows || this.selectedRows.length === 0) {
-            alert("Please select at least one row.");
+
+
+        if (!this.selectedRows?.length) {
             return;
         }
 
-        // Header (only once)
-        const header = this.cols
+        const exportCols = this.visibleColumns;   // <-- don't filter
+
+        const header = exportCols
             .map(c => c.header)
             .join('\t');
 
-        // Data rows
         const rows = this.selectedRows.map(row =>
-            this.cols
+            exportCols
                 .map(c => row[c.field] ?? '')
                 .join('\t')
         );
 
-        const text = header + '\n' + rows.join('\n');
+        const text = header + '\r\n' + rows.join('\r\n');
 
-        navigator.clipboard.writeText(text);
+        // console.log(text);
 
-        console.log(text);
+        this.copyToClipboard(text);
+    }
+
+    copyToClipboard(text: string) {
+        if (navigator.clipboard && window.isSecureContext) {
+
+            navigator.clipboard.writeText(text)
+                .then(() => console.log('Copied'))
+                .catch(() => this.fallbackCopy(text));
+
+        } else {
+            this.fallbackCopy(text);
+        }
     }
 
     onFilter(event: any) {
@@ -555,6 +683,10 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.visibleColumns = this.allColumns.filter(
             col => col.visible
         );
+
+        //update Select All checkbox status
+        this.selectAllColumns =
+            this.allColumns.every(col => col.visibleColumns);
     }
 
 
@@ -749,10 +881,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         this.udfService.getReportData(params, urlSearchParams)
             .subscribe((response: any[]) => {
-                this.databaseObjects = response.map(
-                    x => x.OBJECT_NAME.toUpperCase()
-                );
-                console.log(this.databaseObjects);
+
+                console.log(response);
             });
 
     }
@@ -785,7 +915,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.isShowParaForm = false;
                 this.isShowReport = true;
 
-                console.log(response);
+                // console.log(response);
                 let rows = response.rows;
 
                 // Add temporary unique key for PrimeNG row selection
@@ -827,7 +957,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 }));
 
                 this.visibleColumns = [...this.allColumns];
-                console.log(this.visibleColumns);
+                // console.log(this.visibleColumns);
 
 
 
@@ -856,34 +986,28 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     formatCellValue(value: any, sqlType: string): any {
+        // console.log(value, sqlType);
 
         if (value == null) {
             return '';
         }
-
         switch (sqlType?.toUpperCase()) {
 
-
             case 'DATE':
-
                 return this.datePipe.transform(
                     value,
                     'dd-MMM-yyyy'
                 );
 
-
             case 'TIMESTAMP':
-
                 return this.datePipe.transform(
                     value,
                     'dd-MMM-yyyy HH:mm:ss'
                 );
 
-
             default:
                 return value;
         }
-
     }
 
     onColumnChange() {

@@ -18,7 +18,6 @@ import { AppHomePageComponent } from './app-configuration/app-component/home-pag
 import { LoginFormComponent } from './module/admin/login/login-form/login.form';
 import { DynamicFormComponent } from './dynamic-form/form/dynamic-form';
 import { FloatingLabelDynamicFormComponent } from './dynamic-form/floating-lable-form/floating-label-dynamic-form';
-import { UserRegistrationComponent } from './module/admin/user/form/create-user.form.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatCardModule } from '@angular/material/card';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -30,24 +29,17 @@ import { ErrorInterceptor } from './app-configuration/app.service/http.error.hnd
 import { APPROVAL_FLOW_SERVICE } from './admin/approval-flow/service/approval-flow.token';
 import { ApprovalflowService } from './admin/approval-flow/service/approval-flow-service';
 import { TableModule } from 'primeng/table'; // <-- Import here
-import { ApprovalFlowTaskComponent } from './admin/approval-flow/form/my-task/my-task.componemt';
-import { UserRegistrationViewComponent } from './module/admin/user/view/create-user.view.component';
-import { ApprovalFlowViewButtonComponent } from './admin/approval-flow/form/approvalflow-task-button/approvalflow-task-button';
-import { PendingTaskComponent } from './admin/approval-flow/form/pending-task/pending-task.componemt';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { UserListComponent } from './module/admin/user/list/user-list.componemt';
 import { MenuModule } from 'primeng/menu';
-import { SafeUrlPipe } from './app-configuration/app-security/safe-url.pipe';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SidebarModule } from 'primeng/sidebar';
 import { AppHeaderComponent } from './app-configuration/header-page/header.page';
-import { AdminModule } from './module/admin/admin.module';
 import { AppShareModule } from './app-configuration/app-component/app-share-module/app-share-module';
 import { RouterModule, RouterStateSnapshot } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ResponseInterceptor } from './app-configuration/interceptor/response-Interceptor';
-import { TranslateLoader, TranslateService } from '@ngx-translate/core';
 
 
 
@@ -85,8 +77,6 @@ import { TranslateLoader, TranslateService } from '@ngx-translate/core';
     MenuModule,
     OverlayPanelModule,
     SidebarModule,
-
-
 
 
 

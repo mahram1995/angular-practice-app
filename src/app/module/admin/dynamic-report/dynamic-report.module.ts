@@ -14,8 +14,6 @@ import { QueryExecutorFormComponent } from './query-executor/query-executor.form
 import { ContextMenuModule } from 'primeng/contextmenu';
 
 
-
-
 @NgModule({
     imports: [
         AppShareModule,
@@ -23,21 +21,22 @@ import { ContextMenuModule } from 'primeng/contextmenu';
         DynamicReportRouteModule,
         ProgressSpinnerModule,
         MultiSelectModule,
-        ContextMenuModule
-
+        ContextMenuModule,
+                
 
     ],
 
     declarations: [
-     
-    GenerateDynamicReportUiFormComponent,
-    DynamicReportListComponent,
-    QueryExecutorFormComponent
-   
+
+        GenerateDynamicReportUiFormComponent,
+        DynamicReportListComponent,
+        QueryExecutorFormComponent
+
     ],
 
     providers: [
-        DatePipe, CommandService, UDFService
+        DatePipe, CommandService, UDFService,
+        
     ],
 
 })
