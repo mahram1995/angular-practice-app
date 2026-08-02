@@ -42,9 +42,13 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     reportName: any;
     isShowParaForm: boolean = true
     isShowReport: boolean = false
+    isTableData: boolean = true
     sidebarVisible: boolean = false;
+    selectedObjectName: any = null;
+    selectObjectType: any;
+    isWantToGetScript: boolean = false
 
-    databaseObjects: string[] = [];
+    databaseObjects: any[] = [];
     sortingMode: string = 'ascending';
 
 
@@ -87,6 +91,11 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     selectAllColumns = true;
     selectedColumns: any[] = [];
 
+    objectTypes: string[] = [];
+    selectedObjectType!: string;
+
+    filteredObjects: any[] = []; F
+    searchObjectText = "";
 
     constructor(private fb: FormBuilder,
         protected override location: Location,
@@ -187,8 +196,85 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.sidebarVisible = true
     }
 
+    onObjectTypeChange() {
+
+        this.filteredObjects = this.databaseObjects.filter(
+            x => x.OBJECT_TYPE === this.selectedObjectType
+        );
+
+    }
+
+    filterList() {
+
+        this.filteredObjects = this.databaseObjects.filter(x =>
+
+            x.OBJECT_TYPE === this.selectedObjectType
+            &&
+            x.OBJECT_NAME.toLowerCase()
+                .includes(this.searchObjectText.toLowerCase())
+
+        );
+
+    }
+
+    getObjectScript() {
+        this.isWantToGetScript = true
+        this.isShowReport=false
+        this.isShowParaForm=true
+        let query: string
+        if (this.selectObjectType == 'VIEW' || this.selectObjectType == 'TABLE') {
+            query = `SELECT DBMS_METADATA.GET_DDL('${this.selectObjectType}', '${this.selectedObjectName}') AS SCRIPT FROM DUAL`;
+            this.downloadedData(query)
+        }
+    }
+
+    selectObject(object: any) {
+        let query: string
+        let name = object.OBJECT_NAME;
+        let objectType = object.OBJECT_TYPE;
+        this.selectObjectType = object.OBJECT_TYPE;
+        this.selectedObjectName = object.OBJECT_NAME;
 
 
+
+
+        if (objectType == 'FUNCTION' || objectType == 'PROCEDURE') {
+            this.isTableData = false
+            this.isShowParaForm = true
+            query = `SELECT DBMS_METADATA.GET_DDL('${objectType}', '${name}') AS SCRIPT FROM DUAL`;
+            this.downloadedData(query)
+        }
+
+        if (objectType == 'PACKAGE' || objectType == 'PACKAGE_BODY') {
+            this.isTableData = false
+            this.isShowParaForm = true
+            query = `SELECT DBMS_METADATA.GET_DDL('${objectType}', '${name}') AS SCRIPT FROM DUAL`;
+            this.downloadedData(query)
+        }
+
+        else if (objectType == 'TABLE' || objectType == 'VIEW') {
+            this.isTableData = true
+            query = 'select * from ' + name
+            // set the value in text area
+            this.form.get('queryString')?.setValue(
+                format(query)
+            );
+
+            // call aip for getting data
+            this.downloadedData(query + ' fetch first 50000 row only')
+        }
+
+        this.sidebarVisible = false
+
+
+
+    }
+
+
+
+    loadObjectDetials(objectName, ObjectType) {
+
+    }
 
     sumSelectedColumn() {
         if (this.selectedCell.column.sqlType !== 'NUMBER') {
@@ -428,7 +514,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.selectedRows = [];
         this.selectedCell = null;
         this.dataTable.clear();
-        this.downloadedData();
+        this.downloadedData(null);
 
     }
     filterBySelectedValue() {
@@ -882,38 +968,34 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.udfService.getReportData(params, urlSearchParams)
             .subscribe((response: any[]) => {
 
-                console.log(response);
+                this.databaseObjects = response
+                this.objectTypes = [...new Set(
+                    response.map(x => x.OBJECT_TYPE)
+                )].sort();
             });
 
     }
 
-    downloadedData() {
+    downloadedReportData() {
+        let queryString: string
+
         if (this.form.invalid) {
             this.form.markAllAsTouched();
             return;
         }
-        let data = this.form.value.queryString;
-
-        let result: { [key: string]: any } = {};
-
-
+        queryString = this.form.value.queryString;
 
         let params = {
-            sql: data,
+            sql: queryString,
             params: { id: "abc" }
 
         }
         const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null);
-
-
-
-
-
         this.udfService.executeQueryWithDataType(params, urlSearchParams).subscribe(
             (response: any) => {
-
                 this.isShowParaForm = false;
                 this.isShowReport = true;
+                this.isTableData = true
 
                 // console.log(response);
                 let rows = response.rows;
@@ -927,15 +1009,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.filteredTableData = [...this.tableData];
 
                 if (this.tableData && this.tableData.length > 0) {
-
-                    // this.cols = Object.keys(this.tableData[0])
-                    //     .filter(key => key !== '__rowId') // hide temp column
-                    //     .map(key => ({
-                    //         field: key,
-                    //         header: key.replace(/_/g, ' ')
-                    //     }));
-
-
                     this.cols = response.columns.map((column: any) => ({
 
                         field: column.name,
@@ -957,9 +1030,89 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 }));
 
                 this.visibleColumns = [...this.allColumns];
-                // console.log(this.visibleColumns);
+
+            });
+    }
+
+    downloadedData(query: string) {
+        let queryString: string
+
+        if (!query) {
+            if (this.form.invalid) {
+                this.form.markAllAsTouched();
+                return;
+            }
+            queryString = this.form.value.queryString;
+        }
+        else {
+            queryString = query
+        }
 
 
+        let result: { [key: string]: any } = {};
+
+
+
+        let params = {
+            sql: queryString,
+            params: { id: "abc" }
+
+        }
+        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null);
+
+
+
+
+
+        this.udfService.executeQueryWithDataType(params, urlSearchParams).subscribe(
+            (response: any) => {
+
+                if ((this.selectObjectType == 'TABLE' || this.selectObjectType == 'VIEW') && this.isWantToGetScript == false) {
+                    this.isShowParaForm = false;
+                    this.isShowReport = true;
+                    this.isTableData = true
+
+                    // console.log(response);
+                    let rows = response.rows;
+
+                    // Add temporary unique key for PrimeNG row selection
+                    this.tableData = rows.map((row: any, index: number) => ({
+                        __rowId: index,
+                        ...row
+                    }));
+
+                    this.filteredTableData = [...this.tableData];
+
+                    if (this.tableData && this.tableData.length > 0) {
+                        this.cols = response.columns.map((column: any) => ({
+
+                            field: column.name,
+                            header: column.name.replace(/_/g, ' '),
+                            sqlType: column.sqlType,
+                            jdbcType: column.jdbcType,
+                            align: this.getAlignment(column.sqlType)
+
+                        }));
+
+                        this.selectedPdfColumns = [...this.cols];
+                    }
+
+
+                    this.selectedColumns = [...this.selectedPdfColumns];
+                    this.allColumns = this.selectedColumns.map(col => ({
+                        ...col,
+                        visible: true
+                    }));
+
+                    this.visibleColumns = [...this.allColumns];
+                    // console.log(this.visibleColumns);
+                } else if (this.selectObjectType == 'FUNCTION' || this.selectObjectType == 'PROCEDURE' || this.selectObjectType == 'PACKAGE' || this.selectObjectType == 'PACKAGE_BODY') {
+                    this.form.get('queryString')?.setValue(response.rows[0].SCRIPT);
+                }
+                else if ((this.selectObjectType == 'TABLE' || this.selectObjectType == 'VIEW') && this.isWantToGetScript == true) {
+                    this.form.get('queryString')?.setValue(response.rows[0].SCRIPT);
+                    this.isWantToGetScript = false
+                }
 
             });
 

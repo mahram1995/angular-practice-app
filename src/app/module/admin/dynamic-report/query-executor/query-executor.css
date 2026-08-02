@@ -117,3 +117,30 @@
 
 
 
+
+.object-list{
+    height: calc(100vh);
+    overflow: auto;
+}
+
+.object-item{
+    padding-left:4px;
+    cursor:pointer;
+}
+
+.object-item:hover{
+    background:#bdbaba;
+}
+
+.object-search-filed{
+    border: 1px solid gray;
+    border-radius: 5px;
+    height: 22px;
+    width: 100%;
+}
+
+.object-item.selected {
+    background: #95c5ec;
+    color: white;
+}
+

@@ -3,7 +3,7 @@
         <div style="padding: 0px 10px 4px 10px;">
             <div style="float:left ; margin: 0px; padding: 0px; ">
                 <p class="app-page-header">Query Executor: </p>
-                
+
             </div>
             <div style="float:left ; margin: 0px; padding: 0px;">
                 <button class="app-button" (click)="onRightMenuClick()"><i class="pi pi-database"></i></button>
@@ -14,6 +14,10 @@
                 <button (click)="columnSorting()"><i class="pi pi-sort" style="font-size:12px"></i> </button>
                 <button (click)="columnDialog = true"><i class="pi pi-list-check" style="font-size:12px"></i> </button>
                 <button (click)="sqlFormatar()"  ><i class="pi pi-align-center" style="font-size:12px"></i> </button> -->
+                <button (click)="getObjectScript()" *ngIf="this.selectObjectType == 'VIEW' || this.selectObjectType == 'TABLE'" 
+                 pTooltip="Get select object script" tooltipPosition="top">
+                    <span style="font-size:14px;font-weight:bold;">Script</span>
+                </button>
                 <button (click)="sumSelectedColumn()" pTooltip="Sum the selected column values" tooltipPosition="top">
                     <span style="font-size:14px;font-weight:bold;">Σ</span>
                 </button>
@@ -56,7 +60,7 @@
                     <div class="col-sm-6 col-md-12">
 
                         <textarea id="queryString" class="input-layer" placeholder="Write Query"
-                            formControlName="queryString" [style]="{'width':'100%','height':'200px'}" spellcheck="false"
+                            formControlName="queryString" [style]="{'width':'100%','height':'calc(100vh - 220px)'}" spellcheck="false"
                             [ngClass]="{
                           'is-invalid': form.controls.queryString?.touched &&
                           form.controls.queryString?.errors
@@ -69,7 +73,7 @@
 
 
             <div style="text-align:center; margin-bottom:20px; margin-top:20px;">
-                <button type="submit" class="app-button" (click)="downloadedData()">
+                <button type="submit" class="app-button" (click)="downloadedReportData()">
                     Show Report
                 </button>
             </div>
@@ -79,7 +83,7 @@
 
     </div>
 
-    <div *ngIf="isShowReport" class="app-list">
+    <div *ngIf="isShowReport  && isTableData" class="app-list">
         <div style="padding: 0px 5px 5px 5px;">
             <p-table class=" table-hover table-responsive" #dataTable (onFilter)="onFilter($event)" [value]="tableData"
                 editMode="row" [columns]="visibleColumns" [(selection)]="selectedRows" [paginator]="true"
@@ -193,11 +197,27 @@
         </div>
     </p-dialog>
 
-    <div style=" margin-top: -50px; ">
-        <p-sidebar [(visible)]="sidebarVisible" [showCloseIcon]="false"
-            [style]="{'height':'100%' , 'margin-top':'50px', 'width':'280px' , 'padding':'0px'}">
-            <p>This is Object Viewr</p>
-           
+    <div >
+        <p-sidebar  [(visible)]="sidebarVisible" [showCloseIcon]="false"
+            [style]="{'width':'350px', 'margin-top':'50px' , 'padding':'0px'}" styleClass="object-list">
+            <div class="row" style="padding-left: 10px; padding-right: 10px; margin-bottom: 3px;">
+                <div class="col-sm-12 col-md-6">
+                    <p-dropdown [style]="{'width':'100%'}" [options]="objectTypes" [(ngModel)]="selectedObjectType"
+                        placeholder="Select Object Type" (onChange)="onObjectTypeChange()">
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <input class="object-search-filed"  pInputText placeholder="Search..." [(ngModel)]="searchObjectText" (input)="filterList()">
+                </div>
+            </div> 
+
+            <div style="border: 1px solid gray; " >
+                <div *ngFor="let obj of filteredObjects;" class="object-item" 
+                  (click)="selectObject(obj)"
+                  [class.selected]="selectedObjectName === obj.OBJECT_NAME">
+                    {{obj.OBJECT_NAME}}
+                </div>
+            </div>
         </p-sidebar>
     </div>
 
