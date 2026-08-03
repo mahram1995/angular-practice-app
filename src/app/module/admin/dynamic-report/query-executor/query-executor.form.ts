@@ -97,6 +97,12 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     filteredObjects: any[] = []; F
     searchObjectText = "";
 
+    selectionStart: any = null;
+    selectionEnd: any = null;
+    isDragging = false;
+
+    selectedCells = new Set<string>();
+
     constructor(private fb: FormBuilder,
         protected override location: Location,
         protected override commonService: CommonService,
@@ -130,6 +136,16 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 label: 'Unselect All Rows',
                 icon: 'pi pi-times-circle',
                 command: () => this.unselectAllRows()
+            },
+            {
+                label: 'Hide Column',
+                icon: 'pi pi-eye-slash',
+                command: () => this.hideSelectedColumn()
+            },
+            {
+                label: 'Show All Columns',
+                icon: 'pi pi-eye',
+                command: () => this.showAllColumns()
             },
             {
                 label: 'Refresh',
@@ -192,6 +208,71 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     }
 
+    startSelection(row: number, col: number) {
+        this.selectedRowIndex = null;
+        this.selectedColIndex = null;
+        this.isDragging = true;
+        this.selectionStart = { row, col };
+        this.selectionEnd = { row, col };
+        console.log(this.selectionStart);
+        console.log(this.selectionEnd);
+
+
+    }
+
+    startSelection2(event: MouseEvent) {
+
+        const cell = (event.target as HTMLElement)
+            .closest('td');
+
+        if (!cell) return;
+
+        event.preventDefault(); // important
+
+        this.isDragging = true;
+
+        this.selectedCells.clear();
+
+        const row = cell.getAttribute('data-row');
+        const col = cell.getAttribute('data-col');
+
+        this.selectedCells.add(`${row}-${col}`);
+    }
+
+    selectCell2(event: MouseEvent) {
+
+        if (!this.isDragging) return;
+
+        const cell = (event.target as HTMLElement)
+            .closest('td');
+
+        if (!cell) return;
+
+        const row = cell.getAttribute('data-row');
+        const col = cell.getAttribute('data-col');
+
+        this.selectedCells.add(`${row}-${col}`);
+    }
+
+    endSelection() {
+        this.isDragging = false;
+    }
+
+
+    dragSelection(row: number, col: number) {
+        if (!this.isDragging) {
+            return;
+        }
+        this.selectionEnd = { row, col };
+        console.log(this.selectionEnd);
+
+    }
+
+    @HostListener('document:mouseup')
+    stopSelection() {
+        this.isDragging = false;
+    }
+
     onRightMenuClick() {
         this.sidebarVisible = true
     }
@@ -219,8 +300,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     getObjectScript() {
         this.isWantToGetScript = true
-        this.isShowReport=false
-        this.isShowParaForm=true
+        this.isShowReport = false
+        this.isShowParaForm = true
         let query: string
         if (this.selectObjectType == 'VIEW' || this.selectObjectType == 'TABLE') {
             query = `SELECT DBMS_METADATA.GET_DDL('${this.selectObjectType}', '${this.selectedObjectName}') AS SCRIPT FROM DUAL`;
@@ -241,6 +322,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         if (objectType == 'FUNCTION' || objectType == 'PROCEDURE') {
             this.isTableData = false
             this.isShowParaForm = true
+            this.allColumns = []
             query = `SELECT DBMS_METADATA.GET_DDL('${objectType}', '${name}') AS SCRIPT FROM DUAL`;
             this.downloadedData(query)
         }
@@ -248,6 +330,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         if (objectType == 'PACKAGE' || objectType == 'PACKAGE_BODY') {
             this.isTableData = false
             this.isShowParaForm = true
+            this.allColumns = []
             query = `SELECT DBMS_METADATA.GET_DDL('${objectType}', '${name}') AS SCRIPT FROM DUAL`;
             this.downloadedData(query)
         }
@@ -277,35 +360,62 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     sumSelectedColumn() {
-        if (this.selectedCell.column.sqlType !== 'NUMBER') {
+        let soumAmount: number = 0
 
-            this.countMessage = 'Please select a numeric column.';
-            this.showCountDialog = true;
-            return;
-        }
+        let startRowIndex = this.selectionStart.row
+        let endRowIndex = this.selectionEnd.row
+        let startColIndex=this.selectionStart.col
+        let endColIndex=this.selectionEnd.col
+        // sum if select muliple row of a specific colum
+        if ((startColIndex == endColIndex) && (startRowIndex!=endRowIndex)) {
+            console.log('The value can be sumable');
+            for (let i = startRowIndex; i <= endRowIndex; i++) {
 
-        if (!this.selectedCell) {
+                const row = this.filteredTableData[i];
 
-            this.countMessage = 'Please select a cell first.';
-            this.showCountDialog = true;
-            return;
-        }
+                const columnField = this.cols[this.selectionStart.col].field;
 
-        const field = this.selectedCell.column.field;
+                const value = Number(row[columnField]);
 
-        let sum = 0;
-
-        this.filteredTableData.forEach(row => {
-
-            const value = Number(row[field]);
-
-            if (!isNaN(value)) {
-                sum += value;
+                if (!isNaN(value)) {
+                    soumAmount += value;
+                }
             }
 
-        });
+        } else { // sum selected colum value 
+            if (this.selectedCell.column.sqlType !== 'NUMBER') {
 
-        const formattedSum = sum.toLocaleString('en-US', {
+                this.countMessage = 'Please select a numeric column.';
+                this.showCountDialog = true;
+                return;
+            }
+
+            if (!this.selectedCell) {
+
+                this.countMessage = 'Please select a cell first.';
+                this.showCountDialog = true;
+                return;
+            }
+
+            const field = this.selectedCell.column.field;
+
+
+
+            this.filteredTableData.forEach(row => {
+
+                const value = Number(row[field]);
+
+                if (!isNaN(value)) {
+                    soumAmount += value;
+                }
+
+            });
+        }
+
+
+
+
+        const formattedSum = soumAmount.toLocaleString('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
@@ -346,6 +456,27 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     unselectAllRows() {
 
         this.selectedRows = [];
+
+    }
+
+    hideSelectedColumn() {
+        if (!this.selectedCell) {
+            return;
+        }
+        const col = this.allColumns.find(
+            x => x.field === this.selectedCell.column.field
+        );
+        if (col) {
+            col.visible = false;
+            this.columnChange();
+        }
+    }
+
+    showAllColumns() {
+
+        this.allColumns.forEach(col => col.visible = true);
+
+        this.columnChange();
 
     }
 
@@ -835,12 +966,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
 
-    // selectCell(row: number, field: string) {
-    //     this.selectedCell = { row, field };
-
-
-    // }
-
     @HostListener('window:keydown', ['$event'])
     onKeyDown(event: KeyboardEvent) {
 
@@ -859,24 +984,32 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
             case 'ArrowLeft':
                 if (this.selectedColIndex > 0) {
+                    this.selectionStart = {};
+                    this.selectionEnd = {};
                     this.selectedColIndex--;
                 }
                 break;
 
             case 'ArrowRight':
                 if (this.selectedColIndex < this.cols.length - 1) {
+                    this.selectionStart = {};
+                    this.selectionEnd = {};
                     this.selectedColIndex++;
                 }
                 break;
 
             case 'ArrowUp':
                 if (this.selectedRowIndex > 0) {
+                    this.selectionStart = {};
+                    this.selectionEnd = {};
                     this.selectedRowIndex--;
                 }
                 break;
 
             case 'ArrowDown':
                 if (this.selectedRowIndex < this.tableData.length - 1) {
+                    this.selectionStart = {};
+                    this.selectionEnd = {};
                     this.selectedRowIndex++;
                 }
                 break;
@@ -904,6 +1037,24 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         });
 
+    }
+
+    isRangeSelected(row: number, col: number): boolean {
+
+        if (!this.selectionStart || !this.selectionEnd) {
+            return false;
+        }
+
+        const minRow = Math.min(this.selectionStart.row, this.selectionEnd.row);
+        const maxRow = Math.max(this.selectionStart.row, this.selectionEnd.row);
+
+        const minCol = Math.min(this.selectionStart.col, this.selectionEnd.col);
+        const maxCol = Math.max(this.selectionStart.col, this.selectionEnd.col);
+
+        return row >= minRow &&
+            row <= maxRow &&
+            col >= minCol &&
+            col <= maxCol;
     }
 
 

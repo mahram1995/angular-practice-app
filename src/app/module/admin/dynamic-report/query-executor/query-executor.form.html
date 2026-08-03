@@ -14,8 +14,9 @@
                 <button (click)="columnSorting()"><i class="pi pi-sort" style="font-size:12px"></i> </button>
                 <button (click)="columnDialog = true"><i class="pi pi-list-check" style="font-size:12px"></i> </button>
                 <button (click)="sqlFormatar()"  ><i class="pi pi-align-center" style="font-size:12px"></i> </button> -->
-                <button (click)="getObjectScript()" *ngIf="this.selectObjectType == 'VIEW' || this.selectObjectType == 'TABLE'" 
-                 pTooltip="Get select object script" tooltipPosition="top">
+                <button (click)="getObjectScript()"
+                    *ngIf="this.selectObjectType == 'VIEW' || this.selectObjectType == 'TABLE'"
+                    pTooltip="Get select object script" tooltipPosition="top">
                     <span style="font-size:14px;font-weight:bold;">Script</span>
                 </button>
                 <button (click)="sumSelectedColumn()" pTooltip="Sum the selected column values" tooltipPosition="top">
@@ -60,8 +61,8 @@
                     <div class="col-sm-6 col-md-12">
 
                         <textarea id="queryString" class="input-layer" placeholder="Write Query"
-                            formControlName="queryString" [style]="{'width':'100%','height':'calc(100vh - 220px)'}" spellcheck="false"
-                            [ngClass]="{
+                            formControlName="queryString" [style]="{'width':'100%','height':'calc(100vh - 220px)'}"
+                            spellcheck="false" [ngClass]="{
                           'is-invalid': form.controls.queryString?.touched &&
                           form.controls.queryString?.errors
                         }">
@@ -86,11 +87,12 @@
     <div *ngIf="isShowReport  && isTableData" class="app-list">
         <div style="padding: 0px 5px 5px 5px;">
             <p-table class=" table-hover table-responsive" #dataTable (onFilter)="onFilter($event)" [value]="tableData"
-                editMode="row" [columns]="visibleColumns" [(selection)]="selectedRows" [paginator]="true"
-                [rows]="rowPerPage" selectionMode="multiple" [resizableColumns]="true" dataKey="__rowId"
+                editMode="row" [columns]="visibleColumns" [paginator]="true" [rows]="rowPerPage"
+                selectionMode="multiple" [(selection)]="selectedRows" [resizableColumns]="true" dataKey="__rowId"
                 (onColResize)="columnResize($event)" columnResizeMode="expand" metaKeySelection="true"
                 [scrollable]="true" (contextMenuSelection)]="selectedRow" [contextMenu]="cm">>
-                <ng-template pTemplate="header" let-columns>
+                <ng-template pTemplate="header" let-columns (onMouseDown)="startSelection2($event)"
+                    (onMouseMove)="selectCell2($event)" (onMouseUp)="endSelection()">
 
                     <!-- Header -->
                     <tr>
@@ -112,6 +114,7 @@
 
                                     <input pInputText type="text" [ngModel]="value" (ngModelChange)="filter($event)"
                                         class="filter-input" [placeholder]="'Search'"
+                                        [ngModelOptions]="{ standalone: true }"
                                         style="width:100%; height:24px; padding:0px 0px; font-size:12px; background-color: whitesmoke;" />
 
                                 </ng-template>
@@ -134,7 +137,10 @@
                             [style.background]="isSelected(rowIndex, col.field) ? '#48dbfb' : ''"
                             [style.text-align]="col.align"
                             [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"
-                            [id]="'cell-' + rowIndex + '-' + colIndex" tabindex="0" [style.cursor]="'pointer'">
+                            [id]="'cell-' + rowIndex + '-' + colIndex" tabindex="0" [style.cursor]="'pointer'"
+                            (mousedown)="startSelection(rowIndex, colIndex)"
+                            (mouseenter)="dragSelection(rowIndex, colIndex)"
+                            [class.selected-range-cell]="isRangeSelected(rowIndex, colIndex)">
 
                             {{rowData[col.field]}}
                         </td>
@@ -177,7 +183,8 @@
 
         <!-- Select All Checkbox -->
         <div class="column-item" style="font-weight: bold;">
-            <input type="checkbox" [(ngModel)]="selectAllColumns" (change)="toggleAllColumns()">
+            <input type="checkbox" [(ngModel)]="selectAllColumns" [ngModelOptions]="{ standalone: true }"
+                (change)="toggleAllColumns()">
 
             <span style="padding-left:3px">
                 Select All
@@ -188,7 +195,8 @@
 
         <div class="column-selector">
             <div *ngFor="let col of allColumns" class="column-item">
-                <input type="checkbox" [(ngModel)]="col.visible" (change)="columnChange()">
+                <input type="checkbox" [(ngModel)]="col.visible" [ngModelOptions]="{ standalone: true }"
+                    (change)="columnChange()">
 
                 <span style="padding-left:3px">
                     {{ col.header }}
@@ -197,8 +205,8 @@
         </div>
     </p-dialog>
 
-    <div >
-        <p-sidebar  [(visible)]="sidebarVisible" [showCloseIcon]="false"
+    <div>
+        <p-sidebar [(visible)]="sidebarVisible" [showCloseIcon]="false"
             [style]="{'width':'350px', 'margin-top':'50px' , 'padding':'0px'}" styleClass="object-list">
             <div class="row" style="padding-left: 10px; padding-right: 10px; margin-bottom: 3px;">
                 <div class="col-sm-12 col-md-6">
@@ -207,14 +215,14 @@
                     </p-dropdown>
                 </div>
                 <div class="col-sm-12 col-md-6">
-                    <input class="object-search-filed"  pInputText placeholder="Search..." [(ngModel)]="searchObjectText" (input)="filterList()">
+                    <input class="object-search-filed" pInputText placeholder="Search..." [(ngModel)]="searchObjectText"
+                        [ngModelOptions]="{ standalone: true }" (input)="filterList()">
                 </div>
-            </div> 
+            </div>
 
-            <div style="border: 1px solid gray; " >
-                <div *ngFor="let obj of filteredObjects;" class="object-item" 
-                  (click)="selectObject(obj)"
-                  [class.selected]="selectedObjectName === obj.OBJECT_NAME">
+            <div style="border: 1px solid gray; ">
+                <div *ngFor="let obj of filteredObjects;" class="object-item" (click)="selectObject(obj)"
+                    [class.selected]="selectedObjectName === obj.OBJECT_NAME">
                     {{obj.OBJECT_NAME}}
                 </div>
             </div>
