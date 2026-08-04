@@ -1484,6 +1484,18 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         }
     }
 
+    onColReorder(event: any) {
+        console.log(event);
+
+        // Previous index
+        console.log(event.dragIndex);
+
+        // New index
+        console.log(event.dropIndex);
+
+        console.log(this.cols);
+    }
+
 
 
 }
