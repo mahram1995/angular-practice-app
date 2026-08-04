@@ -91,7 +91,8 @@
                 selectionMode="multiple" [(selection)]="selectedRows" [resizableColumns]="true" dataKey="__rowId"
                 (onColResize)="columnResize($event)" columnResizeMode="expand" metaKeySelection="true"
                 [scrollable]="true" (contextMenuSelection)]="selectedRow" [contextMenu]="cm"
-                 (onColReorder)="onColReorder($event)"   [reorderableColumns]="true">
+                 (onColReorder)="onColReorder($event)"   [reorderableColumns]="true"
+                   >
                 <ng-template pTemplate="header" let-columns (onMouseDown)="startSelection2($event)"
                     (onMouseMove)="selectCell2($event)" (onMouseUp)="endSelection()">
 

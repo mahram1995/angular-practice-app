@@ -1491,37 +1491,11 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     onColReorder(event: any) {
-        const drag = event.dragIndex;
-        const drop = event.dropIndex;
-
-        if (this.selectionStart) {
-            this.selectionStart.col = this.getNewIndex(this.selectionStart.col, drag, drop);
-        }
-
-        if (this.selectionEnd) {
-            this.selectionEnd.col = this.getNewIndex(this.selectionEnd.col, drag, drop);
-        }
+       
+       
     }
-    getNewIndex(index: number, drag: number, drop: number): number {
-
-        if (index === drag) {
-            return drop;
-        }
-
-        if (drag < drop) {
-            // moved right
-            if (index > drag && index <= drop) {
-                return index - 1;
-            }
-        } else {
-            // moved left
-            if (index >= drop && index < drag) {
-                return index + 1;
-            }
-        }
-
-        return index;
-    }
+    
+    
 
 
 
