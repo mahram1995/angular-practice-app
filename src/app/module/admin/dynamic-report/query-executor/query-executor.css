@@ -32,14 +32,14 @@
 .selected-cell {
     outline: none !important;
     box-shadow: none !important;
-    background: #68c6f1 !important;
+    background: #7eb8f5 !important;
     color: #ffffff;
 }
 
 .selected-range-cell {
     outline: none !important;
     box-shadow: none !important;
-   background: #68c6f1 !important;
+    background: #71aef0 !important;
     color: #fffdfd;
 }
 
@@ -58,19 +58,20 @@
 
 
 
-.p-column-filter-menu-button, .p-column-filter-clear-button{
+.p-column-filter-menu-button,
+.p-column-filter-clear-button {
     display: none !important;
 }
 
-.p-datatable .p-datatable-thead > tr > th,
-.p-datatable .p-datatable-tbody > tr > td {
+.p-datatable .p-datatable-thead>tr>th,
+.p-datatable .p-datatable-tbody>tr>td {
     font-size: 11px !important;
     padding: 0px 3px !important;
     border: 1px solid rgb(165, 163, 163);
 }
 
-.p-datatable .p-datatable-thead > tr > th{
-     background-color: #adafbb; 
+.p-datatable .p-datatable-thead>tr>th {
+    background-color: #adafbb;
     text-align: center !important;
 }
 
@@ -81,7 +82,7 @@
     margin: 2px !important;
     border: none;
     outline: none !important;
-    background-color:white !important;
+    background-color: white !important;
     box-shadow: none !important;
     text-align: center !important;
 }
@@ -89,7 +90,7 @@
 /* Focus state */
 .filter-input:focus,
 .filter-input:active {
-    border: solid 2px green !important ;
+    border: solid 2px green !important;
     outline: none !important;
     box-shadow: none !important;
 }
@@ -109,15 +110,16 @@
     white-space: nowrap;
 }
 
-.p-dialog .p-dialog-header{
-    padding: 0px  !important;
+.p-dialog .p-dialog-header {
+    padding: 0px !important;
 }
 
 
-.p-dialog .p-dialog-content{
+.p-dialog .p-dialog-content {
     padding: 2px 10px 10px 10px !important;
 }
-.p-dialog .p-dialog-header{
+
+.p-dialog .p-dialog-header {
     padding-left: 10px !important;
     font-size: 12px !important;
 }
@@ -125,21 +127,21 @@
 
 
 
-.object-list{
+.object-list {
     height: calc(100vh);
     overflow: auto;
 }
 
-.object-item{
-    padding-left:4px;
-    cursor:pointer;
+.object-item {
+    padding-left: 4px;
+    cursor: pointer;
 }
 
-.object-item:hover{
-    background:#bdbaba;
+.object-item:hover {
+    background: #bdbaba;
 }
 
-.object-search-filed{
+.object-search-filed {
     border: 1px solid gray;
     border-radius: 5px;
     height: 22px;
@@ -166,4 +168,9 @@
 
 .p-datatable {
     user-select: none;
+}
+
+.cell-selected {
+    background: #66a7ec !important;
+    color: white;
 }

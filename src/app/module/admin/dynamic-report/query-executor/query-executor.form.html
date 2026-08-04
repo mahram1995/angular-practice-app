@@ -126,7 +126,10 @@
 
                 </ng-template>
 
-
+               <!-- (contextmenu)="onCellClick($event,rowData, col, rowIndex, colIndex)"
+               [class.cell-selected]="isCellSelected(rowIndex,colIndex)" 
+               [style.background]="isSelected(rowIndex, col.field) ? '#48dbfb' : ''"
+               [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"-->
 
                 <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
                     <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData">
@@ -134,13 +137,16 @@
                         <td *ngFor="let col of columns; let colIndex = index" [ngStyle]="{ 'white-space': 'nowrap' }"
                             (click)=" onCellClick($event,rowData, col, rowIndex, colIndex)"
                             (contextmenu)="onCellClick($event,rowData, col, rowIndex, colIndex)"
-                            [style.background]="isSelected(rowIndex, col.field) ? '#48dbfb' : ''"
+                           
                             [style.text-align]="col.align"
                             [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"
                             [id]="'cell-' + rowIndex + '-' + colIndex" tabindex="0" [style.cursor]="'pointer'"
                             (mousedown)="startSelection(rowIndex, colIndex)"
                             (mouseenter)="dragSelection(rowIndex, colIndex)"
-                            [class.selected-range-cell]="isRangeSelected(rowIndex, colIndex)">
+                            [class.selected-range-cell]="isRangeSelected(rowIndex, colIndex)"
+                            [class.cell-selected]="isCellSelected(rowIndex,colIndex)"
+                           >
+                            
 
                             {{rowData[col.field]}}
                         </td>

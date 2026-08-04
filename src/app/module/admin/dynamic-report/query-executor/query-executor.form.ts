@@ -214,10 +214,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.isDragging = true;
         this.selectionStart = { row, col };
         this.selectionEnd = { row, col };
-        console.log(this.selectionStart);
-        console.log(this.selectionEnd);
-
-
     }
 
     startSelection2(event: MouseEvent) {
@@ -263,8 +259,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         if (!this.isDragging) {
             return;
         }
+        this.selectedCells = new Set<string>();
         this.selectionEnd = { row, col };
-        console.log(this.selectionEnd);
 
     }
 
@@ -361,14 +357,14 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     sumSelectedColumn() {
         let soumAmount: number = 0
+        console.log(this.selectedCells);
 
         let startRowIndex = this.selectionStart.row
         let endRowIndex = this.selectionEnd.row
-        let startColIndex=this.selectionStart.col
-        let endColIndex=this.selectionEnd.col
+        let startColIndex = this.selectionStart.col
+        let endColIndex = this.selectionEnd.col
         // sum if select muliple row of a specific colum
-        if ((startColIndex == endColIndex) && (startRowIndex!=endRowIndex)) {
-            console.log('The value can be sumable');
+        if ((startColIndex == endColIndex) && (startRowIndex != endRowIndex)) {
             for (let i = startRowIndex; i <= endRowIndex; i++) {
 
                 const row = this.filteredTableData[i];
@@ -376,6 +372,21 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 const columnField = this.cols[this.selectionStart.col].field;
 
                 const value = Number(row[columnField]);
+
+                if (!isNaN(value)) {
+                    soumAmount += value;
+                }
+            }
+
+        } else if (this.selectedCells.size > 1) {
+            for (const key of this.selectedCells) {
+
+                const [rowIndex, colIndex] = key.split('-').map(Number);
+
+                const row = this.filteredTableData[rowIndex];
+                const field = this.cols[colIndex].field;
+
+                const value = Number(row[field]);
 
                 if (!isNaN(value)) {
                     soumAmount += value;
@@ -420,7 +431,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             maximumFractionDigits: 2
         });
 
-        this.countMessage = `Sum of ${this.selectedCell.column.header}: ${formattedSum}`;
+        this.countMessage = 'Summaiton : ' + formattedSum;
 
         this.showCountDialog = true;
     }
@@ -758,13 +769,31 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     onCellClick(event: MouseEvent, row: any, col: any, rowIndex: any, colIndex: any) {
         event.preventDefault();
-        this.selectedRowIndex = rowIndex;
-        this.selectedColIndex = colIndex;
-        this.selectedCell = {
-            row: row,
-            column: col,
-            value: row[col.field]
-        };
+        const key = `${rowIndex}-${colIndex}`;
+
+        if (event.ctrlKey) {
+
+            if (this.selectedCells.has(key)) {
+                this.selectedCells.delete(key);
+            } else {
+                this.selectedCells.add(key);
+            }
+            console.log(this.selectedCells);
+        } else {
+            this.selectedCells.clear();
+            this.selectedCells.add(key);
+            this.selectedRowIndex = rowIndex;
+            this.selectedColIndex = colIndex;
+            this.selectedCell = {
+                row: row,
+                column: col,
+                value: row[col.field]
+            };
+        }
+
+
+
+
     }
 
     copyCell() {
@@ -1057,12 +1086,20 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             col <= maxCol;
     }
 
+    isCellSelected(row: number, col: number) {
+        // console.log(this.selectedCells);
+
+
+        return this.selectedCells.has(`${row}-${col}`);
+
+
+    }
+
 
 
 
     isSelected(row: number, field: string): boolean {
-        return this.selectedCell?.row === row &&
-            this.selectedCell?.field === field;
+        return this.selectedCell?.row === row && this.selectedCell?.field === field;
     }
     exportPDF() {
         this.isExportPDF = true;
