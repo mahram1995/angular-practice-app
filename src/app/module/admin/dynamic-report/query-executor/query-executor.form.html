@@ -97,8 +97,8 @@
 
                     <!-- Header -->
                     <tr>
-                        <th *ngFor="let col of columns" pResizableColumn pReorderableColumn
-                            style="width: 150px !important ; min-width: 80px;"
+                        <th *ngFor="let col of columns;" pResizableColumn pReorderableColumn
+                            style="width: 150px !important ; min-width: 80px;" 
                             >
 
                             {{ col.header }}
@@ -139,7 +139,6 @@
                         <td *ngFor="let col of columns; let colIndex = index" [ngStyle]="{ 'white-space': 'nowrap' }"
                             (click)=" onCellClick($event,rowData, col, rowIndex, colIndex)"
                             (contextmenu)="onCellClick($event,rowData, col, rowIndex, colIndex)"
-                           
                             [style.text-align]="col.align"
                             [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"
                             [id]="'cell-' + rowIndex + '-' + colIndex" tabindex="0" [style.cursor]="'pointer'"

@@ -102,7 +102,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     isDragging = false;
 
     selectedCells = new Set<string>();
-
+    previousCols = [];
     constructor(private fb: FormBuilder,
         protected override location: Location,
         protected override commonService: CommonService,
@@ -115,7 +115,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     ngOnInit() {
         this.loadDatabaseObjects();
-
+        this.previousCols = [...this.cols];
         this.rowPerPage = this.commonService.getRowsPerPage(17)
         this.pageHeight = this.commonService.getScreenHeight()
         this.route.queryParams.subscribe(params => {
@@ -369,7 +369,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
                 const row = this.filteredTableData[i];
 
-                const columnField = this.cols[this.selectionStart.col].field;
+                const columnField = this.visibleColumns[this.selectionStart.col].field;
 
                 const value = Number(row[columnField]);
 
@@ -384,7 +384,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 const [rowIndex, colIndex] = key.split('-').map(Number);
 
                 const row = this.filteredTableData[rowIndex];
-                const field = this.cols[colIndex].field;
+                const field = this.visibleColumns[colIndex].field;
 
                 const value = Number(row[field]);
 
@@ -431,7 +431,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             maximumFractionDigits: 2
         });
 
-        this.countMessage = 'Summaiton : ' + formattedSum;
+        this.countMessage = 'Summation is : ' + formattedSum;
 
         this.showCountDialog = true;
     }
@@ -487,7 +487,13 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         this.allColumns.forEach(col => col.visible = true);
 
-        this.columnChange();
+         this.visibleColumns = this.allColumns.filter(
+            col => col.visible
+        );
+
+        //update Select All checkbox status
+        this.selectAllColumns =
+            this.allColumns.every(col => col.visibleColumns);
 
     }
 
@@ -926,7 +932,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     columnChange() {
-        this.visibleColumns = this.allColumns.filter(
+        this.visibleColumns = this.visibleColumns.filter(
             col => col.visible
         );
 
@@ -1485,15 +1491,36 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     onColReorder(event: any) {
-        console.log(event);
+        const drag = event.dragIndex;
+        const drop = event.dropIndex;
 
-        // Previous index
-        console.log(event.dragIndex);
+        if (this.selectionStart) {
+            this.selectionStart.col = this.getNewIndex(this.selectionStart.col, drag, drop);
+        }
 
-        // New index
-        console.log(event.dropIndex);
+        if (this.selectionEnd) {
+            this.selectionEnd.col = this.getNewIndex(this.selectionEnd.col, drag, drop);
+        }
+    }
+    getNewIndex(index: number, drag: number, drop: number): number {
 
-        console.log(this.cols);
+        if (index === drag) {
+            return drop;
+        }
+
+        if (drag < drop) {
+            // moved right
+            if (index > drag && index <= drop) {
+                return index - 1;
+            }
+        } else {
+            // moved left
+            if (index >= drop && index < drag) {
+                return index + 1;
+            }
+        }
+
+        return index;
     }
 
 
