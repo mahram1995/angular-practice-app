@@ -116,7 +116,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     ngOnInit() {
         this.loadDatabaseObjects();
 
-        this.rowPerPage = this.commonService.getRowsPerPage(23)
+        this.rowPerPage = this.commonService.getRowsPerPage(17)
         this.pageHeight = this.commonService.getScreenHeight()
         this.route.queryParams.subscribe(params => {
             this.profileId = params.udfProfileId;
