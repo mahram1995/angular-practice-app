@@ -19,6 +19,9 @@
                     pTooltip="Get select object script" tooltipPosition="top">
                     <span style="font-size:14px;font-weight:bold;">Script</span>
                 </button>
+                <button (click)="copySelectedCellsWithHeader()" pTooltip="Copy the selected value with column header" tooltipPosition="top">
+                    <span style="font-size:14px;font-weight:bold;"><i class="pi pi-copy" style="font-size:12px"></i></span>
+                </button>
                 <button (click)="sumSelectedColumn()" pTooltip="Sum the selected column values" tooltipPosition="top">
                     <span style="font-size:14px;font-weight:bold;">Σ</span>
                 </button>
@@ -75,7 +78,7 @@
 
             <div style="text-align:center; margin-bottom:20px; margin-top:20px;">
                 <button type="submit" class="app-button" (click)="downloadedReportData()">
-                    Show Report
+                    Show Report 
                 </button>
             </div>
 
@@ -92,9 +95,9 @@
                 (onColResize)="columnResize($event)" columnResizeMode="expand" metaKeySelection="true"
                 [scrollable]="true" (contextMenuSelection)]="selectedRow" [contextMenu]="cm"
                  (onColReorder)="onColReorder($event)"   [reorderableColumns]="true"
-                   >
+                  (keydown)="handleKeyDown($event)"  >
                 <ng-template pTemplate="header" let-columns (onMouseDown)="startSelection2($event)"
-                    (onMouseMove)="selectCell2($event)" (onMouseUp)="endSelection()">
+                    (onMouseMove)="selectCell2($event)">
 
                     <!-- Header -->
                     <tr>
@@ -143,8 +146,8 @@
                             [style.text-align]="col.align"
                             [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"
                             [id]="'cell-' + rowIndex + '-' + colIndex" tabindex="0" [style.cursor]="'pointer'"
-                            (mousedown)="startSelection(rowIndex, colIndex)"
-                            (mouseenter)="dragSelection(rowIndex, colIndex)"
+                            (mousedown)="startSelection($event,rowIndex, colIndex)"
+                            (mouseenter)="dragSelection($event,rowIndex, colIndex)"
                             [class.selected-range-cell]="isRangeSelected(rowIndex, colIndex)"
                             [class.cell-selected]="isCellSelected(rowIndex,colIndex)"
                            >

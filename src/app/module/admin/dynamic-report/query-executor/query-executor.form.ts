@@ -99,6 +99,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     selectionStart: any = null;
     selectionEnd: any = null;
+    endSelectedIndex: any = null;
     isDragging = false;
 
     selectedCells = new Set<string>();
@@ -208,12 +209,18 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     }
 
-    startSelection(row: number, col: number) {
-        this.selectedRowIndex = null;
-        this.selectedColIndex = null;
-        this.isDragging = true;
-        this.selectionStart = { row, col };
-        this.selectionEnd = { row, col };
+    startSelection(event: any, row: number, col: number) {
+
+        if (!event.ctrlKey) {
+            this.selectedCells.clear()
+            this.selectedRowIndex = null;
+            this.selectedColIndex = null;
+            this.isDragging = true;
+            this.selectionStart = { row, col };
+            this.selectionEnd = { row, col };
+            this.selectedCells.add(`${row}-${col}`);
+        }
+
     }
 
     startSelection2(event: MouseEvent) {
@@ -250,23 +257,26 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.selectedCells.add(`${row}-${col}`);
     }
 
-    endSelection() {
-        this.isDragging = false;
-    }
+    dragSelection(event: any, row: number, col: number) {
+        if (!event.ctrlKey) {
+            if (!this.isDragging) {
+                return;
+            }
+            this.selectionEnd = { row, col };
+            this.endSelectedIndex = `${row}-${col}`
 
-
-    dragSelection(row: number, col: number) {
-        if (!this.isDragging) {
-            return;
         }
-        this.selectedCells = new Set<string>();
-        this.selectionEnd = { row, col };
-
     }
 
     @HostListener('document:mouseup')
     stopSelection() {
+        if (this.isDragging) {
+            this.selectedCells.add(this.endSelectedIndex)
+        }
         this.isDragging = false;
+
+
+
     }
 
     onRightMenuClick() {
@@ -356,14 +366,21 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     sumSelectedColumn() {
+
         let soumAmount: number = 0
         console.log(this.selectedCells);
+
+        const cells = Array.from(this.selectedCells);
+
+        const firstTwo = cells.slice(0, 2);
+        const remainingSelectedCells = cells.slice(2);
+
 
         let startRowIndex = this.selectionStart.row
         let endRowIndex = this.selectionEnd.row
         let startColIndex = this.selectionStart.col
         let endColIndex = this.selectionEnd.col
-        // sum if select muliple row of a specific colum
+        // sum if select muliple cell of a specific colum by drag
         if ((startColIndex == endColIndex) && (startRowIndex != endRowIndex)) {
             for (let i = startRowIndex; i <= endRowIndex; i++) {
 
@@ -378,7 +395,23 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 }
             }
 
-        } else if (this.selectedCells.size > 1) {
+            if (remainingSelectedCells.length > 0) {
+                for (const key of remainingSelectedCells) {
+
+                    const [rowIndex, colIndex] = key.split('-').map(Number);
+
+                    const row = this.filteredTableData[rowIndex];
+                    const field = this.visibleColumns[colIndex].field;
+
+                    const value = Number(row[field]);
+
+                    if (!isNaN(value)) {
+                        soumAmount += value;
+                    }
+                }
+            }
+
+        } else if (this.selectedCells.size > 1) { // sum selected cell value  of same or diferent colum
             for (const key of this.selectedCells) {
 
                 const [rowIndex, colIndex] = key.split('-').map(Number);
@@ -426,7 +459,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
 
 
-        const formattedSum = soumAmount.toLocaleString('en-US', {
+        const formattedSum = soumAmount.toLocaleString('en-BD', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
@@ -487,7 +520,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         this.allColumns.forEach(col => col.visible = true);
 
-         this.visibleColumns = this.allColumns.filter(
+        this.visibleColumns = this.allColumns.filter(
             col => col.visible
         );
 
@@ -778,13 +811,11 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         const key = `${rowIndex}-${colIndex}`;
 
         if (event.ctrlKey) {
-
             if (this.selectedCells.has(key)) {
                 this.selectedCells.delete(key);
             } else {
                 this.selectedCells.add(key);
             }
-            console.log(this.selectedCells);
         } else {
             this.selectedCells.clear();
             this.selectedCells.add(key);
@@ -1017,8 +1048,10 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         switch (event.key) {
 
+
             case 'ArrowLeft':
                 if (this.selectedColIndex > 0) {
+                    this.selectedCells.clear()
                     this.selectionStart = {};
                     this.selectionEnd = {};
                     this.selectedColIndex--;
@@ -1027,6 +1060,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
             case 'ArrowRight':
                 if (this.selectedColIndex < this.cols.length - 1) {
+                    this.selectedCells.clear()
                     this.selectionStart = {};
                     this.selectionEnd = {};
                     this.selectedColIndex++;
@@ -1035,6 +1069,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
             case 'ArrowUp':
                 if (this.selectedRowIndex > 0) {
+                    this.selectedCells.clear()
                     this.selectionStart = {};
                     this.selectionEnd = {};
                     this.selectedRowIndex--;
@@ -1043,6 +1078,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
             case 'ArrowDown':
                 if (this.selectedRowIndex < this.tableData.length - 1) {
+                    this.selectedCells.clear()
                     this.selectionStart = {};
                     this.selectionEnd = {};
                     this.selectedRowIndex++;
@@ -1491,11 +1527,265 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     onColReorder(event: any) {
-       
-       
+
     }
-    
-    
+
+    handleKeyDown(event: KeyboardEvent) {
+
+        if (event.ctrlKey && event.key === 'c') {
+
+            event.preventDefault();
+
+            this.copySelectedCells();
+
+        }
+    }
+
+    copySelectedCells() {
+
+        if (this.selectedCells.size === 0) {
+            return;
+        }
+
+        const cells = Array.from(this.selectedCells)
+            .map(key => {
+                const [row, col] = key.split('-').map(Number);
+                return { row, col };
+            });
+
+        let copyText = '';
+
+        // Single cell
+        if (cells.length === 1) {
+
+            const cell = cells[0];
+            const field = this.visibleColumns[cell.col].field;
+
+            copyText = this.filteredTableData[cell.row][field] ?? '';
+
+            this.copyToClipboard2(copyText);
+            return;
+        }
+
+        // Exactly two cells -> treat as a drag range
+        if (cells.length === 2) {
+
+            const start = cells[0];
+            const end = cells[1];
+
+            const minRow = Math.min(start.row, end.row);
+            const maxRow = Math.max(start.row, end.row);
+
+            const minCol = Math.min(start.col, end.col);
+            const maxCol = Math.max(start.col, end.col);
+
+            const rows: string[] = [];
+
+            for (let r = minRow; r <= maxRow; r++) {
+
+                const values: string[] = [];
+
+                for (let c = minCol; c <= maxCol; c++) {
+
+                    const field = this.visibleColumns[c].field;
+
+                    values.push(this.filteredTableData[r]?.[field] ?? '');
+                }
+
+                rows.push(values.join('\t'));
+            }
+
+            copyText = rows.join('\n');
+
+            this.copyToClipboard2(copyText);
+            return;
+        }
+
+        // Ctrl+Click selection (3 or more individual cells)
+        const rowMap = new Map<number, { col: number, value: any }[]>();
+
+        cells.forEach(cell => {
+
+            const field = this.visibleColumns[cell.col].field;
+            const value = this.filteredTableData[cell.row]?.[field] ?? '';
+
+            if (!rowMap.has(cell.row)) {
+                rowMap.set(cell.row, []);
+            }
+
+            rowMap.get(cell.row)!.push({ col: cell.col, value });
+
+        });
+
+        copyText = Array.from(rowMap.entries())
+            .sort((a, b) => a[0] - b[0])
+            .map(([_, cols]) =>
+                cols
+                    .sort((a, b) => a.col - b.col)
+                    .map(c => c.value)
+                    .join('\t')
+            )
+            .join('\n');
+
+        this.copyToClipboard2(copyText);
+    }
+
+    copySelectedCellsWithHeader() {
+
+        if (this.selectedCells.size === 0) {
+            return;
+        }
+
+        const cells = Array.from(this.selectedCells)
+            .map(key => {
+                const [row, col] = key.split('-').map(Number);
+                return { row, col };
+            });
+
+        let copyText = '';
+
+        // -------------------------
+        // Single Cell
+        // -------------------------
+        if (cells.length === 1) {
+
+            const cell = cells[0];
+            const column = this.visibleColumns[cell.col];
+
+            copyText += column.header + '\n';
+            copyText += this.filteredTableData[cell.row][column.field] ?? '';
+
+            this.copyToClipboard2(copyText);
+            return;
+        }
+
+        // -------------------------
+        // Range Selection
+        // -------------------------
+        if (cells.length === 2) {
+
+            const start = cells[0];
+            const end = cells[1];
+
+            const minRow = Math.min(start.row, end.row);
+            const maxRow = Math.max(start.row, end.row);
+
+            const minCol = Math.min(start.col, end.col);
+            const maxCol = Math.max(start.col, end.col);
+
+            // Header
+            const headers: string[] = [];
+
+            for (let c = minCol; c <= maxCol; c++) {
+                headers.push(this.visibleColumns[c].header);
+            }
+
+            copyText += headers.join('\t') + '\n';
+
+            // Data
+            for (let r = minRow; r <= maxRow; r++) {
+
+                const values: string[] = [];
+
+                for (let c = minCol; c <= maxCol; c++) {
+
+                    const field = this.visibleColumns[c].field;
+
+                    values.push(this.filteredTableData[r]?.[field] ?? '');
+                }
+
+                copyText += values.join('\t');
+
+                if (r < maxRow) {
+                    copyText += '\n';
+                }
+            }
+
+            this.copyToClipboard2(copyText);
+            return;
+        }
+
+        // -------------------------
+        // Ctrl + Click
+        // -------------------------
+
+        const rowMap = new Map<number, Map<number, any>>();
+        const colSet = new Set<number>();
+
+        cells.forEach(cell => {
+
+            colSet.add(cell.col);
+
+            if (!rowMap.has(cell.row)) {
+                rowMap.set(cell.row, new Map());
+            }
+
+            const field = this.visibleColumns[cell.col].field;
+
+            rowMap.get(cell.row)!.set(
+                cell.col,
+                this.filteredTableData[cell.row]?.[field] ?? ''
+            );
+
+        });
+
+        const cols = [...colSet].sort((a, b) => a - b);
+
+        // Header
+        copyText += cols
+            .map(c => this.visibleColumns[c].header)
+            .join('\t');
+
+        copyText += '\n';
+
+        // Data
+        Array.from(rowMap.keys())
+            .sort((a, b) => a - b)
+            .forEach(row => {
+
+                const values = cols.map(col =>
+                    rowMap.get(row)?.get(col) ?? ''
+                );
+
+                copyText += values.join('\t') + '\n';
+
+            });
+
+        this.copyToClipboard2(copyText.trimEnd());
+    }
+
+    copyToClipboard2(text: string) {
+
+        if (navigator.clipboard) {
+
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    console.log('Copied:', text);
+                });
+
+        } else {
+
+            const textarea = document.createElement('textarea');
+
+            textarea.value = text;
+
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+
+            document.body.appendChild(textarea);
+
+            textarea.focus();
+            textarea.select();
+
+            document.execCommand('copy');
+
+            document.body.removeChild(textarea);
+
+            console.log('Copied:', text);
+        }
+    }
+
+
 
 
 

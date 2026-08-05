@@ -25,7 +25,7 @@ export class UDFService extends BaseService {
 
     constructor(private httpclient: HttpClient,
         private http: HttpService
-    ) {
+        ) {
         super()
     }
 
@@ -73,6 +73,8 @@ export class UDFService extends BaseService {
     public executeQueryWithDataType(data: any, urlSearchParams): Observable<any> {
         return this.http.post(executeQueryWithDataType, data, urlSearchParams);
     }
+
+
 
 
 }
