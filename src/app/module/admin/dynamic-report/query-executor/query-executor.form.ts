@@ -494,7 +494,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     selectAllRows() {
 
-        this.selectedRows = [...this.tableData];
+        this.selectedRows = [...this.filteredTableData];
 
     }
     unselectAllRows() {
@@ -557,7 +557,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             const field = col.field;
 
             // Find sample value from data
-            const sampleValue = this.tableData.find(
+            const sampleValue = this.filteredTableData.find(
                 row => row[field] !== null && row[field] !== undefined
             )?.[field];
 
@@ -585,7 +585,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 else {
 
                     const maxLength = Math.max(
-                        ...this.tableData.map(row =>
+                        ...this.filteredTableData.map(row =>
                             row[field]
                                 ? String(row[field]).length
                                 : 0
@@ -688,9 +688,24 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.selectedRows = [];
         this.selectedCell = null;
         this.dataTable.clear();
+        this.selectAllColumn();
         this.filteredTableData = [...this.tableData];
 
     }
+
+    selectAllColumn() {
+        this.allColumns.forEach(col => {
+            col.visible = true;
+        });
+        this.visibleColumns = this.allColumns.filter(
+            col => col.visible
+        );
+
+        //update Select All checkbox status
+        this.selectAllColumns =
+            this.allColumns.every(col => col.visibleColumns);
+    }
+
     refreshReport() {
         this.selectedRows = [];
         this.selectedCell = null;
@@ -733,7 +748,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         const field = this.selectedCell.column.field;
         this.sortingMode = 'descending'
-        this.tableData.sort((a, b) => {
+        this.filteredTableData.sort((a, b) => {
 
             const valueA = a[field];
             const valueB = b[field];
@@ -780,7 +795,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         const field = this.selectedCell.column.field;
         this.sortingMode = 'ascending'
-        this.tableData.sort((a, b) => {
+        this.filteredTableData.sort((a, b) => {
 
             const valueA = a[field];
             const valueB = b[field];
@@ -948,7 +963,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         this.filteredTableData = event.filteredValue
             ? event.filteredValue
-            : this.tableData;
+            : this.filteredTableData;
 
     }
 
@@ -963,7 +978,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     columnChange() {
-        this.visibleColumns = this.visibleColumns.filter(
+        this.visibleColumns = this.allColumns.filter(
             col => col.visible
         );
 
@@ -1077,7 +1092,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 break;
 
             case 'ArrowDown':
-                if (this.selectedRowIndex < this.tableData.length - 1) {
+                if (this.selectedRowIndex < this.filteredTableData.length - 1) {
                     this.selectedCells.clear()
                     this.selectionStart = {};
                     this.selectionEnd = {};
@@ -1242,7 +1257,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                     this.cols = response.columns.map((column: any) => ({
 
                         field: column.name,
-                        header: column.name.replace(/_/g, ' '),
+                        header: this.toHeaderCase(column.name),
                         sqlType: column.sqlType,
                         jdbcType: column.jdbcType,
                         align: this.getAlignment(column.sqlType)
@@ -1262,6 +1277,14 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.visibleColumns = [...this.allColumns];
 
             });
+    }
+
+    toHeaderCase(text: string): string {
+        return text
+            .toLowerCase()
+            .split('_')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
     }
 
     downloadedData(query: string) {
@@ -1404,19 +1427,49 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     exportExcel() {
-        this.isExporting = true
+
+        this.isExporting = true;
+
         setTimeout(() => {
 
             try {
+
                 const workbook = XLSX.utils.book_new();
 
-                const chunkSize = 300000; // 300k rows per sheet
+                const chunkSize = 300000;
 
-                for (let i = 0; i < this.tableData.length; i += chunkSize) {
+                // Visible column fields
+                const fields = this.visibleColumns.map(col => col.field);
 
-                    const chunk = this.tableData.slice(i, i + chunkSize);
+                // Excel headers
+                const headers = this.visibleColumns.map(col => col.header);
 
-                    const worksheet = XLSX.utils.json_to_sheet(chunk);
+                for (let i = 0; i < this.filteredTableData.length; i += chunkSize) {
+
+                    const chunk = this.filteredTableData.slice(i, i + chunkSize);
+
+                    // Keep only visible columns
+                    const exportData = chunk.map(row => {
+
+                        const obj: any = {};
+
+                        fields.forEach(field => {
+                            obj[field] = row[field];
+                        });
+
+                        return obj;
+                    });
+
+                    const worksheet = XLSX.utils.json_to_sheet(exportData, {
+                        header: fields
+                    });
+
+                    // Replace field names with display headers
+                    XLSX.utils.sheet_add_aoa(
+                        worksheet,
+                        [headers],
+                        { origin: 'A1' }
+                    );
 
                     const sheetName = `Report_${Math.floor(i / chunkSize) + 1}`;
 
@@ -1436,12 +1489,12 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 );
 
             } finally {
-                this.isExporting = false
+
+                this.isExporting = false;
+
             }
 
         }, 100);
-
-
 
     }
 
@@ -1463,7 +1516,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 );
 
 
-                const rows = this.tableData.map(row => {
+                const rows = this.filteredTableData.map(row => {
 
                     return this.selectedPdfColumns.map(
                         c => row[c.field]
