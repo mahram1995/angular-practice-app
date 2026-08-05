@@ -367,7 +367,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     sumSelectedColumn() {
 
-        let soumAmount: number = 0
+        let sumAmount: number = 0
         console.log(this.selectedCells);
 
         const cells = Array.from(this.selectedCells);
@@ -391,7 +391,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 const value = Number(row[columnField]);
 
                 if (!isNaN(value)) {
-                    soumAmount += value;
+                    sumAmount += value;
                 }
             }
 
@@ -406,13 +406,45 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                     const value = Number(row[field]);
 
                     if (!isNaN(value)) {
-                        soumAmount += value;
+                        sumAmount += value;
                     }
                 }
             }
 
-        } else if (this.selectedCells.size > 1) { // sum selected cell value  of same or diferent colum
-            for (const key of this.selectedCells) {
+        } else if (cells.length === 2) {
+
+            // Drag selection
+            const [startKey, endKey] = cells;
+
+            const [startRow, startCol] = startKey.split('-').map(Number);
+            const [endRow, endCol] = endKey.split('-').map(Number);
+
+            const minRow = Math.min(startRow, endRow);
+            const maxRow = Math.max(startRow, endRow);
+
+            const minCol = Math.min(startCol, endCol);
+            const maxCol = Math.max(startCol, endCol);
+
+            for (let r = minRow; r <= maxRow; r++) {
+
+                const row = this.filteredTableData[r];
+
+                for (let c = minCol; c <= maxCol; c++) {
+
+                    const field = this.visibleColumns[c].field;
+
+                    const value = Number(row[field]);
+
+                    if (!isNaN(value)) {
+                        sumAmount += value;
+                    }
+                }
+            }
+
+        } else if (cells.length > 2) {
+
+            // Ctrl + Click selection
+            for (const key of cells) {
 
                 const [rowIndex, colIndex] = key.split('-').map(Number);
 
@@ -422,10 +454,9 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 const value = Number(row[field]);
 
                 if (!isNaN(value)) {
-                    soumAmount += value;
+                    sumAmount += value;
                 }
             }
-
         } else { // sum selected colum value 
             if (this.selectedCell.column.sqlType !== 'NUMBER') {
 
@@ -450,16 +481,14 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 const value = Number(row[field]);
 
                 if (!isNaN(value)) {
-                    soumAmount += value;
+                    sumAmount += value;
                 }
 
             });
         }
 
 
-
-
-        const formattedSum = soumAmount.toLocaleString('en-BD', {
+        const formattedSum = sumAmount.toLocaleString('en-BD', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
