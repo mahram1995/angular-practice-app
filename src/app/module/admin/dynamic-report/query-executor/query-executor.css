@@ -43,6 +43,11 @@
     color: #fffdfd;
 }
 
+.p-datatable .p-datatable-thead>tr>th, .selected-range-cell{
+     border: 1px solid rgb(201, 197, 197) !important;
+
+}
+
 /* Remove the focus border */
 :host ::ng-deep .p-datatable td:focus,
 :host ::ng-deep .p-datatable td:focus-visible {
@@ -65,7 +70,7 @@
 
 .p-datatable .p-datatable-thead>tr>th,
 .p-datatable .p-datatable-tbody>tr>td {
-    font-size: 11px !important;
+   /* font-size: 11px !important; */
     padding: 0px 3px !important;
     border: 1px solid rgb(165, 163, 163);
 }
@@ -73,6 +78,11 @@
 .p-datatable .p-datatable-thead>tr>th {
     background-color: #adafbb;
     text-align: center !important;
+}
+
+.excel-table .p-datatable-tbody > tr > td,
+.excel-table .p-datatable-thead > tr > th {
+    font-size: var(--table-font-size) !important;
 }
 
 

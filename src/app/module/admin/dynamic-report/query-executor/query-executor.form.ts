@@ -66,7 +66,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     selectedPdfColumns: any[] = [];
     selectedRow: any;
     rowPerPage = 0; // Default
-    fontSize = 12; // Default
+    tableFontSize = 12; // Default
     selectedCell: any
 
     @ViewChild('dataTable') dataTable!: Table;
@@ -101,6 +101,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     selectionEnd: any = null;
     endSelectedIndex: any = null;
     isDragging = false;
+    isDraggSelection: boolean = false
 
     selectedCells = new Set<string>();
     previousCols = [];
@@ -209,13 +210,28 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     }
 
-    startSelection(event: any, row: number, col: number) {
+    increaseFontSize() {
+        if (this.tableFontSize < 24) {
+            this.tableFontSize += 1;
+        }
+    }
 
-        if (!event.ctrlKey) {
+
+    decreaseFontSize() {
+        if (this.tableFontSize > 8) {
+            this.tableFontSize -= 1;
+        }
+    }
+
+    startSelection(event: any, row: number, col: number) {
+        if (event.shiftKey) {
+            //  this.selectionStart = { row, col };
+        } else if (!event.ctrlKey) {
             this.selectedCells.clear()
             this.selectedRowIndex = null;
             this.selectedColIndex = null;
             this.isDragging = true;
+            this.isDraggSelection = true;
             this.selectionStart = { row, col };
             this.selectionEnd = { row, col };
             this.selectedCells.add(`${row}-${col}`);
@@ -369,6 +385,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         let sumAmount: number = 0
         console.log(this.selectedCells);
+        console.log(this.isDraggSelection);
+
 
         const cells = Array.from(this.selectedCells);
 
@@ -381,81 +399,14 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         let startColIndex = this.selectionStart.col
         let endColIndex = this.selectionEnd.col
         // sum if select muliple cell of a specific colum by drag
-        if ((startColIndex == endColIndex) && (startRowIndex != endRowIndex)) {
-            for (let i = startRowIndex; i <= endRowIndex; i++) {
-
-                const row = this.filteredTableData[i];
-
-                const columnField = this.visibleColumns[this.selectionStart.col].field;
-
-                const value = Number(row[columnField]);
-
-                if (!isNaN(value)) {
-                    sumAmount += value;
-                }
-            }
-
-            if (remainingSelectedCells.length > 0) {
-                for (const key of remainingSelectedCells) {
-
-                    const [rowIndex, colIndex] = key.split('-').map(Number);
-
-                    const row = this.filteredTableData[rowIndex];
-                    const field = this.visibleColumns[colIndex].field;
-
-                    const value = Number(row[field]);
-
-                    if (!isNaN(value)) {
-                        sumAmount += value;
-                    }
-                }
-            }
-
-        } else if (cells.length === 2) {
-
-            // Drag selection
-            const [startKey, endKey] = cells;
-
-            const [startRow, startCol] = startKey.split('-').map(Number);
-            const [endRow, endCol] = endKey.split('-').map(Number);
-
-            const minRow = Math.min(startRow, endRow);
-            const maxRow = Math.max(startRow, endRow);
-
-            const minCol = Math.min(startCol, endCol);
-            const maxCol = Math.max(startCol, endCol);
-
-            for (let r = minRow; r <= maxRow; r++) {
-
-                const row = this.filteredTableData[r];
-
-                for (let c = minCol; c <= maxCol; c++) {
-
-                    const field = this.visibleColumns[c].field;
-
-                    const value = Number(row[field]);
-
-                    if (!isNaN(value)) {
-                        sumAmount += value;
-                    }
-                }
-            }
-
-        } else if (cells.length > 2) {
-
-            // Ctrl + Click selection
-            for (const key of cells) {
-
-                const [rowIndex, colIndex] = key.split('-').map(Number);
-
-                const row = this.filteredTableData[rowIndex];
-                const field = this.visibleColumns[colIndex].field;
-
-                const value = Number(row[field]);
-
-                if (!isNaN(value)) {
-                    sumAmount += value;
-                }
+        if (cells.length >= 2) {
+            // dragg selection and  Ctrl + Click selection
+            if (this.isDraggSelection) {
+                sumAmount += this.sumRangeValue(firstTwo)
+                sumAmount += this.sumDifferentSlectedCellValue(remainingSelectedCells)
+            } else {
+                // Ctrl + Click selection
+                sumAmount += this.sumDifferentSlectedCellValue(cells)
             }
         } else { // sum selected colum value 
             if (this.selectedCell.column.sqlType !== 'NUMBER') {
@@ -496,6 +447,52 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.countMessage = 'Summation is : ' + formattedSum;
 
         this.showCountDialog = true;
+    }
+
+    sumRangeValue(range: any) {
+        let sumAmount: number = 0
+        const [startKey, endKey] = range;
+
+        const [startRow, startCol] = startKey.split('-').map(Number);
+        const [endRow, endCol] = endKey.split('-').map(Number);
+
+        const minRow = Math.min(startRow, endRow);
+        const maxRow = Math.max(startRow, endRow);
+
+        const minCol = Math.min(startCol, endCol);
+        const maxCol = Math.max(startCol, endCol);
+
+        for (let r = minRow; r <= maxRow; r++) {
+
+            const row = this.filteredTableData[r];
+
+            for (let c = minCol; c <= maxCol; c++) {
+
+                const field = this.visibleColumns[c].field;
+
+                const value = Number(row[field]);
+
+                if (!isNaN(value)) {
+                    sumAmount += value;
+                }
+            }
+        }
+        return sumAmount;
+    }
+
+    sumDifferentSlectedCellValue(cells: any) {
+        let sumAmount: number = 0
+        for (const key of cells) {
+            const [rowIndex, colIndex] = key.split('-').map(Number);
+            const row = this.filteredTableData[rowIndex];
+            const field = this.visibleColumns[colIndex].field;
+            const value = Number(row[field]);
+            if (!isNaN(value)) {
+                sumAmount += value;
+            }
+        }
+
+        return sumAmount;
     }
 
     sqlFormatar() {
@@ -850,7 +847,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
 
-    onCellClick(event: MouseEvent, row: any, col: any, rowIndex: any, colIndex: any) {
+    onCellClick(event: MouseEvent, row: any, col: any, rowIndex: number, colIndex: number) {
         event.preventDefault();
         const key = `${rowIndex}-${colIndex}`;
 
@@ -860,9 +857,24 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             } else {
                 this.selectedCells.add(key);
             }
+        } else if (event.shiftKey) {
+            this.isDraggSelection = true;
+            this.selectionEnd = { row: rowIndex, col: colIndex }
+            if (this.selectedCells.has(key)) {
+                this.selectedCells.delete(key);
+            } else {
+                const arr = Array.from(this.selectedCells);
+
+                if (arr.length >= 2) {
+                    this.selectedCells.delete(arr[1]); // Delete the second item
+                }
+                this.selectedCells.add(key);
+            }
         } else {
             this.selectedCells.clear();
             this.selectedCells.add(key);
+            this.selectionStart = { row: rowIndex, col: colIndex };
+            this.isDraggSelection = false;
             this.selectedRowIndex = rowIndex;
             this.selectedColIndex = colIndex;
             this.selectedCell = {

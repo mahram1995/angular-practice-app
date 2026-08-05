@@ -14,13 +14,21 @@
                 <button (click)="columnSorting()"><i class="pi pi-sort" style="font-size:12px"></i> </button>
                 <button (click)="columnDialog = true"><i class="pi pi-list-check" style="font-size:12px"></i> </button>
                 <button (click)="sqlFormatar()"  ><i class="pi pi-align-center" style="font-size:12px"></i> </button> -->
+                <button  pTooltip="Increase font size" (click)="increaseFontSize()">
+                    <i class="pi pi-plus"  style="font-size:10px"></i>
+                </button>
+                <button   pTooltip="Decrease font size" (click)="decreaseFontSize()">
+                       <i class="pi pi-minus"  style="font-size:10px"></i>
+                </button>
                 <button (click)="getObjectScript()"
                     *ngIf="this.selectObjectType == 'VIEW' || this.selectObjectType == 'TABLE'"
                     pTooltip="Get select object script" tooltipPosition="top">
                     <span style="font-size:14px;font-weight:bold;">Script</span>
                 </button>
-                <button (click)="copySelectedCellsWithHeader()" pTooltip="Copy the selected value with column header" tooltipPosition="top">
-                    <span style="font-size:14px;font-weight:bold;"><i class="pi pi-copy" style="font-size:12px"></i></span>
+                <button (click)="copySelectedCellsWithHeader()" pTooltip="Copy the selected value with column header"
+                    tooltipPosition="top">
+                    <span style="font-size:14px;font-weight:bold;"><i class="pi pi-copy"
+                            style="font-size:12px"></i></span>
                 </button>
                 <button (click)="sumSelectedColumn()" pTooltip="Sum the selected cells value" tooltipPosition="top">
                     <span style="font-size:14px;font-weight:bold;">Σ</span>
@@ -78,7 +86,7 @@
 
             <div style="text-align:center; margin-bottom:20px; margin-top:20px;">
                 <button type="submit" class="app-button" (click)="downloadedReportData()">
-                    Show Report 
+                    Show Report
                 </button>
             </div>
 
@@ -89,21 +97,20 @@
 
     <div *ngIf="isShowReport  && isTableData" class="app-list">
         <div style="padding: 0px 5px 5px 5px;">
-            <p-table class=" table-hover table-responsive" #dataTable (onFilter)="onFilter($event)" [value]="filteredTableData"
-                editMode="row" [columns]="visibleColumns" [paginator]="true" [rows]="rowPerPage"
-                selectionMode="multiple" [(selection)]="selectedRows" [resizableColumns]="true" dataKey="__rowId"
-                (onColResize)="columnResize($event)" columnResizeMode="expand" metaKeySelection="true"
+            <p-table class=" table-hover table-responsive" #dataTable (onFilter)="onFilter($event)"
+                [value]="filteredTableData" editMode="row" [columns]="visibleColumns" [paginator]="true"
+                [rows]="rowPerPage" selectionMode="multiple" [(selection)]="selectedRows" [resizableColumns]="true"
+                dataKey="__rowId" (onColResize)="columnResize($event)" columnResizeMode="expand" metaKeySelection="true"
                 [scrollable]="true" (contextMenuSelection)]="selectedRow" [contextMenu]="cm"
-                 (onColReorder)="onColReorder($event)"   [reorderableColumns]="true"
-                  (keydown)="handleKeyDown($event)"  >
+                (onColReorder)="onColReorder($event)" [reorderableColumns]="true" (keydown)="handleKeyDown($event)"
+                styleClass="excel-table" [ngStyle]="{'--table-font-size': tableFontSize  + 'px'}">
                 <ng-template pTemplate="header" let-columns (onMouseDown)="startSelection2($event)"
                     (onMouseMove)="selectCell2($event)">
 
                     <!-- Header -->
                     <tr>
                         <th *ngFor="let col of columns;" pResizableColumn pReorderableColumn
-                            style="width: 150px !important ; min-width: 80px;" 
-                            >
+                            style="width: 150px !important ; min-width: 80px;">
 
                             {{ col.header }}
 
@@ -132,7 +139,7 @@
 
                 </ng-template>
 
-               <!-- (contextmenu)="onCellClick($event,rowData, col, rowIndex, colIndex)"
+                <!-- (contextmenu)="onCellClick($event,rowData, col, rowIndex, colIndex)"
                [class.cell-selected]="isCellSelected(rowIndex,colIndex)" 
                [style.background]="isSelected(rowIndex, col.field) ? '#48dbfb' : ''"
                [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"-->
@@ -149,9 +156,8 @@
                             (mousedown)="startSelection($event,rowIndex, colIndex)"
                             (mouseenter)="dragSelection($event,rowIndex, colIndex)"
                             [class.selected-range-cell]="isRangeSelected(rowIndex, colIndex)"
-                            [class.cell-selected]="isCellSelected(rowIndex,colIndex)"
-                           >
-                            
+                            [class.cell-selected]="isCellSelected(rowIndex,colIndex)">
+
 
                             {{rowData[col.field]}}
                         </td>
