@@ -12,6 +12,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { QueryExecutorFormComponent } from './query-executor/query-executor.form';
 import { ContextMenuModule } from 'primeng/contextmenu';
+import { TextareaHighlightComponent } from './textarea-highlight/textarea-highlight.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { ContextMenuModule } from 'primeng/contextmenu';
 
         GenerateDynamicReportUiFormComponent,
         DynamicReportListComponent,
-        QueryExecutorFormComponent
+        QueryExecutorFormComponent,
+        TextareaHighlightComponent 
 
     ],
 

@@ -14,11 +14,11 @@
                 <button (click)="columnSorting()"><i class="pi pi-sort" style="font-size:12px"></i> </button>
                 <button (click)="columnDialog = true"><i class="pi pi-list-check" style="font-size:12px"></i> </button>
                 <button (click)="sqlFormatar()"  ><i class="pi pi-align-center" style="font-size:12px"></i> </button> -->
-                <button  pTooltip="Increase font size" (click)="increaseFontSize()">
-                    <i class="pi pi-plus"  style="font-size:10px"></i>
+                <button pTooltip="Increase font size" (click)="increaseFontSize()">
+                    <i class="pi pi-plus" style="font-size:10px"></i>
                 </button>
-                <button   pTooltip="Decrease font size" (click)="decreaseFontSize()">
-                       <i class="pi pi-minus"  style="font-size:10px"></i>
+                <button pTooltip="Decrease font size" (click)="decreaseFontSize()">
+                    <i class="pi pi-minus" style="font-size:10px"></i>
                 </button>
                 <button (click)="getObjectScript()"
                     *ngIf="this.selectObjectType == 'VIEW' || this.selectObjectType == 'TABLE'"
@@ -65,9 +65,9 @@
 
 
     <div *ngIf="isShowParaForm" style=" margin: 2px 20px 10px 20px; ">
-        <form [formGroup]="form" class="app-card">
+        <!-- <form [formGroup]="form" class="app-card">
 
-            <div class="row" style="padding: 10px 25px 0px 25px;">
+           <div class="row" style="padding: 10px 25px 0px 25px;">
                 <div class="form-group">
                     <div class="col-sm-6 col-md-12">
 
@@ -77,20 +77,24 @@
                           'is-invalid': form.controls.queryString?.touched &&
                           form.controls.queryString?.errors
                         }">
-                </textarea>
+                        </textarea>
 
                     </div>
                 </div>
-            </div>
+            </div> -->
+        <app-textarea-highlight [(text)]="queryString" [LogicalOperators]="LogicalOperators"
+            [ConditionalClause]="ConditionalClause" [functionNames]="functionNames"
+            [dataBaseObject]="dataBaseObjectsList">
+        </app-textarea-highlight>
 
 
-            <div style="text-align:center; margin-bottom:20px; margin-top:20px;">
-                <button type="submit" class="app-button" (click)="downloadedReportData()">
-                    Show Report
-                </button>
-            </div>
+        <div style="text-align:center; margin-bottom:20px; margin-top:20px;">
+            <button type="submit" class="app-button" (click)="downloadedReportData()">
+                Show Report
+            </button>
+        </div>
 
-        </form>
+        <!-- </form> -->
 
 
     </div>
@@ -246,4 +250,10 @@
         </p-sidebar>
     </div>
 
+
 </div>
+
+
+
+<!-- <app-textarea-highlight [(ngModel)]="txt" [LogicalOperators]="LogicalOperators" [ConditionalClause]="ConditionalClause"
+    [functionNames]="functionNames" [dataBaseObject]="dataBaseObjectsList"></app-textarea-highlight> -->

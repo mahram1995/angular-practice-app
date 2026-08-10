@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, VERSION, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DatePipe, Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -18,6 +18,8 @@ import { MenuItem } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { ViewEncapsulation } from '@angular/core';
 import { format } from 'sql-formatter';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { CONDITIONAL_CLAUSE, FUNCTION_NAMES, LOGICAL_OPERATORS } from '../textarea-highlight/domain';
 
 
 
@@ -28,6 +30,7 @@ import { format } from 'sql-formatter';
     templateUrl: 'query-executor.form.html',
     styleUrls: ['./query-executor.css'],
     encapsulation: ViewEncapsulation.None
+
 
 })
 export class QueryExecutorFormComponent extends FormBaseComponent {
@@ -105,6 +108,17 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     selectedCells = new Set<string>();
     previousCols = [];
+    LogicalOperators = LOGICAL_OPERATORS;
+    ConditionalClause = CONDITIONAL_CLAUSE;
+    functionNames = FUNCTION_NAMES;
+    dataBaseObjectsList: any[] = [];
+
+    queryString :string='select * from budget_data'
+    highlightedText: SafeHtml = '';
+
+    @ViewChild('backdrop') backdrop!: ElementRef<HTMLDivElement>;
+
+
     constructor(private fb: FormBuilder,
         protected override location: Location,
         protected override commonService: CommonService,
@@ -125,7 +139,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         });
         this.form = this.fb.group({
             //queryString: ["select *  from inv_accounts where customer_id=80750", Validators.required]
-            queryString: ["select *  from budget_transaction ", Validators.required]
+            queryString: ["select *  from budget_transaction fetch first 500 row only ", Validators.required]
         });
 
         this.menuItems = [
@@ -208,6 +222,17 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             }
         ];
 
+    }
+
+
+
+    // Sync scrolling between the invisible textarea and the colored backdrop
+    handleScroll(event: Event) {
+        const textarea = event.target as HTMLTextAreaElement;
+        if (this.backdrop) {
+            this.backdrop.nativeElement.scrollTop = textarea.scrollTop;
+            this.backdrop.nativeElement.scrollLeft = textarea.scrollLeft;
+        }
     }
 
     increaseFontSize() {
@@ -359,14 +384,9 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         else if (objectType == 'TABLE' || objectType == 'VIEW') {
             this.isTableData = true
-            query = 'select * from ' + name
-            // set the value in text area
-            this.form.get('queryString')?.setValue(
-                format(query)
-            );
-
+            this.queryString = 'select * from ' + name
             // call aip for getting data
-            this.downloadedData(query + ' fetch first 50000 row only')
+            this.downloadedData(this.queryString + ' fetch first 500 row only')
         }
 
         this.sidebarVisible = false
@@ -384,9 +404,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     sumSelectedColumn() {
 
         let sumAmount: number = 0
-        console.log(this.selectedCells);
-        console.log(this.isDraggSelection);
-
 
         const cells = Array.from(this.selectedCells);
 
@@ -496,11 +513,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     sqlFormatar() {
-        const sql = this.form.get('queryString')?.value;
-
-        this.form.get('queryString')?.setValue(
-            format(sql)
-        );
+        this.queryString=format(this.queryString)
+       
     }
 
     toggleAllColumns() {
@@ -1255,6 +1269,10 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             .subscribe((response: any[]) => {
 
                 this.databaseObjects = response
+                this.dataBaseObjectsList = [
+                    ...new Set(response.map((item: any) => item.OBJECT_NAME))
+                ];
+             
                 this.objectTypes = [...new Set(
                     response.map(x => x.OBJECT_TYPE)
                 )].sort();
@@ -1265,14 +1283,14 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     downloadedReportData() {
         let queryString: string
 
-        if (this.form.invalid) {
-            this.form.markAllAsTouched();
-            return;
+        if (this.queryString==null) {
+            
+            return this.notificationService.sendInfo('please add query');
         }
         queryString = this.form.value.queryString;
 
         let params = {
-            sql: queryString,
+            sql: this.queryString,
             params: { id: "abc" }
 
         }
@@ -1401,7 +1419,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                     this.visibleColumns = [...this.allColumns];
                     // console.log(this.visibleColumns);
                 } else if (this.selectObjectType == 'FUNCTION' || this.selectObjectType == 'PROCEDURE' || this.selectObjectType == 'PACKAGE' || this.selectObjectType == 'PACKAGE_BODY') {
-                    this.form.get('queryString')?.setValue(response.rows[0].SCRIPT);
+                     this.queryString=response.rows[0].SCRIPT;
                 }
                 else if ((this.selectObjectType == 'TABLE' || this.selectObjectType == 'VIEW') && this.isWantToGetScript == true) {
                     this.form.get('queryString')?.setValue(response.rows[0].SCRIPT);
@@ -1854,7 +1872,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
             navigator.clipboard.writeText(text)
                 .then(() => {
-                    console.log('Copied:', text);
+                   // console.log('Copied:', text);
                 });
 
         } else {
@@ -1875,7 +1893,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
             document.body.removeChild(textarea);
 
-            console.log('Copied:', text);
+           // console.log('Copied:', text);
         }
     }
 

@@ -1,0 +1,82 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.container,
+.backdrop,
+textarea {
+  width: 90%;
+  height: 500px;
+}
+
+.highlights,
+textarea {
+  padding: 10px;
+  font: 20px/28px 'Open Sans', sans-serif;
+  letter-spacing: 1px;
+}
+
+.container {
+  display: block;
+  margin: 0 auto;
+  transform: translateZ(0);
+  -webkit-text-size-adjust: none;
+}
+
+.backdrop {
+  position: absolute;
+  z-index: 2;
+  border: 2px solid #685972;
+  background: transparent;
+  overflow: auto;
+  pointer-events: none;
+  transition: transform 1s;
+}
+
+.highlights {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: transparent;
+  font-size: 14px;
+  line-height: 1.2;
+  font-family: sans-serif
+}
+
+textarea {
+  display: block;
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+  border: 2px solid #74637f;
+  border-radius: 0;
+  color: #444;
+  background-color: transparent;
+  overflow: auto;
+  resize: none;
+  transition: transform 1s;
+  font-size: 14px;
+  line-height: 1.2;
+  font-family: sans-serif;
+}
+
+mark {
+  border-radius: 2px;
+  color: transparent;
+}
+
+.perspective textarea {
+  transform: perspective(1500px) translateX(155px) rotateY(45deg) scale(1.1);
+}
+
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
+span.test {
+  border: 1px solid red;
+  color: red;
+  font-family: sans-serif;
+}

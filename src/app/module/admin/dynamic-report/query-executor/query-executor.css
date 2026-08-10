@@ -184,3 +184,34 @@
     background: #66a7ec !important;
     color: white;
 }
+
+
+/* Add application styles & imports to this file! */
+app-textarea-highlight .highlights span.logical_operators {
+  background: none !important;
+  color: #228be7;
+}
+app-textarea-highlight .highlights span.conditional_clause {
+  background: none !important;
+  color: #fca346;
+}
+
+app-textarea-highlight .highlights span.function_names {
+  background: none !important;
+  color: #df84ae;
+}
+
+app-textarea-highlight .highlights span.database_objects {
+  background: none !important;
+  color: #f1ce2f;
+}
+
+
+app-textarea-highlight .highlights span.quoted_words {
+  background: none !important;
+  color: #f34949;
+}
+app-textarea-highlight .highlights span.sql_comment  {
+  color: #6a9955  !important;
+  font-style: italic;
+}
