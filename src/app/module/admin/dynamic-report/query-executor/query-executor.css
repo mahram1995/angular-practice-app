@@ -215,3 +215,11 @@ app-textarea-highlight .highlights span.sql_comment  {
   color: #6a9955  !important;
   font-style: italic;
 }
+
+.ace_scroller, .ace_content {
+    background-color: #ffffff; /* Or your editor's theme background color */
+}
+
+.CodeMirror-lines {
+    background-color: #ffffff; 
+}

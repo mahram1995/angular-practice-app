@@ -9,6 +9,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+import { format } from 'sql-formatter';
 import {
   ControlValueAccessor,
   NG_VALIDATORS,
@@ -56,11 +57,16 @@ export class TextareaHighlightComponent implements ControlValueAccessor {
     const textarea = event.target as HTMLTextAreaElement;
     const newText = textarea.value;
 
-    // Send the new text back to the parent component!
+    // Update local value
+    this.text = newText;
+
+    // Send to parent
     this.textChange.emit(newText);
 
-    // (Optional) Call your highlighting function here
-    // this.updateHighlights(newText);
+    // Notify Angular forms
+    if (this.onChanges) {
+      this.onChanges(newText);
+    }
   }
 
 
@@ -219,4 +225,393 @@ export class TextareaHighlightComponent implements ControlValueAccessor {
   registerOnTouched(fn: any): void {
     this.onTouched = fn;
   }
+
+  syncScroll(event: Event) {
+    const textarea = event.target as HTMLTextAreaElement;
+
+    const highlights = document.querySelector(
+      '.highlights'
+    ) as HTMLElement;
+
+    if (highlights) {
+      highlights.scrollTop = textarea.scrollTop;
+      highlights.scrollLeft = textarea.scrollLeft;
+    }
+  }
+
+  fixOracleKeywords(sql: string): string {
+
+    return sql
+
+      // CREATE OR REPLACE
+      .replace(
+        /\bCREATE\s*\n\s*OR\s+REPLACE\b/gi,
+        'CREATE OR REPLACE'
+      )
+
+      // INSERT INTO
+      .replace(
+        /\bINSERT\s*\n\s*INTO\b/gi,
+        'INSERT INTO'
+      )
+
+      // INSERT INTO + table
+      .replace(
+        /\bINSERT\s+INTO\s*\n\s*([A-Za-z0-9_$#."']+)/gi,
+        'INSERT INTO $1'
+      )
+
+      // UPDATE remains together naturally
+      // DELETE FROM
+      .replace(
+        /\bDELETE\s*\n\s*FROM\b/gi,
+        'DELETE FROM'
+      )
+
+      // SELECT INTO
+      .replace(
+        /\bSELECT\s*\n\s*INTO\b/gi,
+        'SELECT INTO'
+      );
+  }
+
+  sqlFormatar() {
+
+    const sql = this.text?.trim();
+
+    if (!sql) {
+      return;
+    }
+
+    if (
+      /^\s*CREATE\s+(OR\s+REPLACE\s+)?(NONEDITIONABLE\s+)?(FUNCTION|PROCEDURE|PACKAGE|TRIGGER)\b/i
+        .test(sql)
+    ) {
+
+      this.text = this.formatOraclePLSQL(sql);
+
+    } else {
+
+      this.text = format(sql, {
+        language: 'plsql'
+      });
+
+    }
+  }
+
+ formatOraclePLSQL(sql: string): string {
+
+  const INDENT = '        '; // 8 spaces
+
+  let level = 0;
+  let parenLevel = 0;
+
+  // Keep track of opening blocks
+  const blockStack: string[] = [];
+
+  const result: string[] = [];
+
+  // -----------------------------------------
+  // Normalize line endings
+  // -----------------------------------------
+
+  sql = sql
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .trim();
+
+  const lines = sql.split('\n');
+
+  for (let rawLine of lines) {
+
+    let line = rawLine.trim();
+
+    if (!line) {
+      result.push('');
+      continue;
+    }
+
+    // -----------------------------------------
+    // Comments
+    // -----------------------------------------
+
+    if (/^--/.test(line)) {
+      result.push(
+        INDENT.repeat(level) + line
+      );
+      continue;
+    }
+
+
+    // =========================================
+    // CLOSING BLOCKS
+    // =========================================
+
+    if (/^END\s+IF\b/i.test(line)) {
+
+      level = Math.max(0, level - 1);
+
+      result.push(
+        INDENT.repeat(level) + line
+      );
+
+      if (blockStack.length) {
+        blockStack.pop();
+      }
+
+      continue;
+    }
+
+
+    if (/^END\s+LOOP\b/i.test(line)) {
+
+      level = Math.max(0, level - 1);
+
+      result.push(
+        INDENT.repeat(level) + line
+      );
+
+      if (blockStack.length) {
+        blockStack.pop();
+      }
+
+      continue;
+    }
+
+
+    if (/^END\s+CASE\b/i.test(line)) {
+
+      level = Math.max(0, level - 1);
+
+      result.push(
+        INDENT.repeat(level) + line
+      );
+
+      if (blockStack.length) {
+        blockStack.pop();
+      }
+
+      continue;
+    }
+
+
+    // END PROCEDURE / FUNCTION / PACKAGE
+    if (
+      /^END\s+[A-Za-z_][A-Za-z0-9_$#]*\s*;/i.test(line)
+    ) {
+
+      level = Math.max(0, level - 1);
+
+      result.push(
+        INDENT.repeat(level) + line
+      );
+
+      if (blockStack.length) {
+        blockStack.pop();
+      }
+
+      continue;
+    }
+
+
+    // END;
+    if (/^END\s*;/i.test(line)) {
+
+      level = Math.max(0, level - 1);
+
+      result.push(
+        INDENT.repeat(level) + line
+      );
+
+      if (blockStack.length) {
+        blockStack.pop();
+      }
+
+      continue;
+    }
+
+
+    // =========================================
+    // ELSE / ELSIF
+    // =========================================
+
+    if (
+      /^ELSE\b/i.test(line) ||
+      /^ELSIF\b/i.test(line)
+    ) {
+
+      // Close previous IF branch
+      level = Math.max(0, level - 1);
+
+      result.push(
+        INDENT.repeat(level) + line
+      );
+
+      // Open new branch
+      level++;
+
+      continue;
+    }
+
+
+    // =========================================
+    // EXCEPTION
+    // =========================================
+
+    if (/^EXCEPTION\b/i.test(line)) {
+
+      level = Math.max(0, level - 1);
+
+      result.push(
+        INDENT.repeat(level) + line
+      );
+
+      level++;
+
+      continue;
+    }
+
+
+    // =========================================
+    // Closing parenthesis
+    // =========================================
+
+    if (line.startsWith(')')) {
+      parenLevel = Math.max(0, parenLevel - 1);
+    }
+
+
+    // =========================================
+    // INSERT INTO
+    // =========================================
+
+    if (/^INSERT\s+INTO\b/i.test(line)) {
+
+      result.push(
+        INDENT.repeat(level) + line
+      );
+
+      if (line.includes('(')) {
+        parenLevel++;
+      }
+
+      continue;
+    }
+
+
+    // =========================================
+    // VALUES
+    // =========================================
+
+    if (/^VALUES\b/i.test(line)) {
+
+      result.push(
+        INDENT.repeat(level) + line
+      );
+
+      if (line.includes('(')) {
+        parenLevel++;
+      }
+
+      continue;
+    }
+
+
+    // =========================================
+    // Normal line
+    // =========================================
+
+    result.push(
+      INDENT.repeat(level + parenLevel) + line
+    );
+
+
+    // =========================================
+    // Parentheses
+    // =========================================
+
+    if (
+      !/^INSERT\s+INTO\b/i.test(line) &&
+      !/^VALUES\b/i.test(line)
+    ) {
+
+      const openCount =
+        (line.match(/\(/g) || []).length;
+
+      const closeCount =
+        (line.match(/\)/g) || []).length;
+
+      parenLevel += openCount - closeCount;
+
+      if (parenLevel < 0) {
+        parenLevel = 0;
+      }
+    }
+
+
+    // =========================================
+    // BEGIN
+    // =========================================
+
+    if (/^BEGIN\b/i.test(line)) {
+
+      blockStack.push('BEGIN');
+
+      level++;
+
+      continue;
+    }
+
+
+    // =========================================
+    // IF ... THEN
+    // =========================================
+
+    if (
+      /^IF\b/i.test(line) &&
+      /\bTHEN\b/i.test(line)
+    ) {
+
+      blockStack.push('IF');
+
+      level++;
+
+      continue;
+    }
+
+
+    // =========================================
+    // LOOP
+    // =========================================
+
+    if (
+      /\bLOOP\b/i.test(line) &&
+      !/^END\s+LOOP/i.test(line)
+    ) {
+
+      blockStack.push('LOOP');
+
+      level++;
+
+      continue;
+    }
+
+
+    // =========================================
+    // CASE
+    // =========================================
+
+    if (/^CASE\b/i.test(line)) {
+
+      blockStack.push('CASE');
+
+      level++;
+
+      continue;
+    }
+  }
+
+  return result.join('\n');
+}
+
 }

@@ -113,7 +113,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     functionNames = FUNCTION_NAMES;
     dataBaseObjectsList: any[] = [];
 
-    queryString :string='select * from budget_data'
+    queryString: string = ''
     highlightedText: SafeHtml = '';
 
     @ViewChild('backdrop') backdrop!: ElementRef<HTMLDivElement>;
@@ -349,10 +349,9 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.isWantToGetScript = true
         this.isShowReport = false
         this.isShowParaForm = true
-        let query: string
         if (this.selectObjectType == 'VIEW' || this.selectObjectType == 'TABLE') {
-            query = `SELECT DBMS_METADATA.GET_DDL('${this.selectObjectType}', '${this.selectedObjectName}') AS SCRIPT FROM DUAL`;
-            this.downloadedData(query)
+            let queryString = `SELECT DBMS_METADATA.GET_DDL('${this.selectObjectType}', '${this.selectedObjectName}') AS SCRIPT FROM DUAL`;
+            this.downloadedData(queryString)
         }
     }
 
@@ -513,8 +512,10 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     sqlFormatar() {
-        this.queryString=format(this.queryString)
-       
+        this.queryString = format(this.queryString, {
+            language: 'plsql'
+        });
+
     }
 
     toggleAllColumns() {
@@ -1272,7 +1273,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.dataBaseObjectsList = [
                     ...new Set(response.map((item: any) => item.OBJECT_NAME))
                 ];
-             
+
                 this.objectTypes = [...new Set(
                     response.map(x => x.OBJECT_TYPE)
                 )].sort();
@@ -1281,12 +1282,22 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     downloadedReportData() {
+
+        if (this.queryString == null) {
+
+            return this.notificationService.sendInfo('please add query');
+        } 
+
+        if (this.isWantToGetScript) {
+            this.isShowReport = true;
+            this.isShowParaForm = false;
+            this.queryString = 'select * from ' + this.selectedObjectName + 'fetch first 500 row only'
+            return;
+        }
+
         let queryString: string
 
-        if (this.queryString==null) {
-            
-            return this.notificationService.sendInfo('please add query');
-        }
+
         queryString = this.form.value.queryString;
 
         let params = {
@@ -1347,26 +1358,12 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     downloadedData(query: string) {
-        let queryString: string
 
-        if (!query) {
-            if (this.form.invalid) {
-                this.form.markAllAsTouched();
-                return;
-            }
-            queryString = this.form.value.queryString;
-        }
-        else {
-            queryString = query
-        }
-
-
-        let result: { [key: string]: any } = {};
 
 
 
         let params = {
-            sql: queryString,
+            sql: query,
             params: { id: "abc" }
 
         }
@@ -1419,10 +1416,10 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                     this.visibleColumns = [...this.allColumns];
                     // console.log(this.visibleColumns);
                 } else if (this.selectObjectType == 'FUNCTION' || this.selectObjectType == 'PROCEDURE' || this.selectObjectType == 'PACKAGE' || this.selectObjectType == 'PACKAGE_BODY') {
-                     this.queryString=response.rows[0].SCRIPT;
+                    this.queryString = response.rows[0].SCRIPT;
                 }
                 else if ((this.selectObjectType == 'TABLE' || this.selectObjectType == 'VIEW') && this.isWantToGetScript == true) {
-                    this.form.get('queryString')?.setValue(response.rows[0].SCRIPT);
+                    this.queryString = response.rows[0].SCRIPT;;
                     this.isWantToGetScript = false
                 }
 
@@ -1872,7 +1869,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
             navigator.clipboard.writeText(text)
                 .then(() => {
-                   // console.log('Copied:', text);
+                    // console.log('Copied:', text);
                 });
 
         } else {
@@ -1893,7 +1890,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
             document.body.removeChild(textarea);
 
-           // console.log('Copied:', text);
+            // console.log('Copied:', text);
         }
     }
 
