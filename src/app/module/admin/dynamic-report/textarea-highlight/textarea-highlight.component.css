@@ -8,8 +8,10 @@
 .backdrop,
 textarea {
   width: 100%;
-  height: calc(100vh - 150px)
+  height:  calc(100vh - 350px) 
 }
+
+/* calc(100vh - 150px) */
 
 .highlights,
 textarea {

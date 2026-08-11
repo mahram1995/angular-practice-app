@@ -226,18 +226,7 @@ export class TextareaHighlightComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  syncScroll(event: Event) {
-    const textarea = event.target as HTMLTextAreaElement;
 
-    const highlights = document.querySelector(
-      '.highlights'
-    ) as HTMLElement;
-
-    if (highlights) {
-      highlights.scrollTop = textarea.scrollTop;
-      highlights.scrollLeft = textarea.scrollLeft;
-    }
-  }
 
   fixOracleKeywords(sql: string): string {
 

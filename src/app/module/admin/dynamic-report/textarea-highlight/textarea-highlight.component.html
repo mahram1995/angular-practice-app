@@ -2,6 +2,6 @@
   <div #backdrop class="backdrop">
     <div class="highlights" [innerHTML]="highlightedText"></div>
   </div>
-  <textarea [value]="text" spellcheck="false" (scroll)="handleScroll()" #textarea  (keydown.control.shift.f)="sqlFormatar()"
-    (scroll)="syncScroll($event)"  (input)="onTextareaInput($event)"></textarea>
+  <textarea [value]="text" spellcheck="false" (scroll)="handleScroll()" #textarea
+    (keydown.control.shift.f)="sqlFormatar()" (input)="onTextareaInput($event)"></textarea>
 </div>
