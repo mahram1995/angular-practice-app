@@ -87,7 +87,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
 
     filteredTableData: any[] = [];
-    pageHeight: number
+    pageHeight: string
     showFIlterRow: boolean = false;
 
     allColumns: any[] = [];
@@ -113,7 +113,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     functionNames = FUNCTION_NAMES;
     dataBaseObjectsList: any[] = [];
 
-    queryString: string = ''
+    queryString: string = 'select * from branch'
     highlightedText: SafeHtml = '';
 
     @ViewChild('backdrop') backdrop!: ElementRef<HTMLDivElement>;
@@ -1286,7 +1286,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         if (this.queryString == null) {
 
             return this.notificationService.sendInfo('please add query');
-        } 
+        }
 
         if (this.isWantToGetScript) {
             this.isShowReport = true;
@@ -1302,7 +1302,9 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         let params = {
             sql: this.queryString,
-            params: { id: "abc" }
+            params: { id: "abc" },
+            "page": 0,
+            "size": 50
 
         }
         const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null);

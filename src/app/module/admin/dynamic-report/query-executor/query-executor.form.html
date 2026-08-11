@@ -90,7 +90,7 @@
 
         <div style="text-align:center; margin-bottom:20px; margin-top:20px;">
             <button type="submit" class="app-button" (click)="downloadedReportData()">
-             {{ isShowReport ? 'Execute Script' : 'Show Data' }}
+                {{ isShowReport ? 'Execute Script' : 'Show Data' }}
             </button>
         </div>
 
@@ -102,12 +102,13 @@
     <div *ngIf="isShowReport  && isTableData" class="app-list">
         <div style="padding: 0px 5px 5px 5px;">
             <p-table class=" table-hover table-responsive" #dataTable (onFilter)="onFilter($event)"
-                [value]="filteredTableData" editMode="row" [columns]="visibleColumns" [paginator]="true"
-                [rows]="rowPerPage" selectionMode="multiple" [(selection)]="selectedRows" [resizableColumns]="true"
-                dataKey="__rowId" (onColResize)="columnResize($event)" columnResizeMode="expand" metaKeySelection="true"
-                [scrollable]="true" (contextMenuSelection)]="selectedRow" [contextMenu]="cm"
-                (onColReorder)="onColReorder($event)" [reorderableColumns]="true" (keydown)="handleKeyDown($event)"
-                styleClass="excel-table" [ngStyle]="{'--table-font-size': tableFontSize  + 'px'}">
+                [value]="filteredTableData" [scrollable]="true" editMode="row" [columns]="visibleColumns" 
+                scrollHeight="400px"  selectionMode="multiple" [(selection)]="selectedRows"
+                [resizableColumns]="true" dataKey="__rowId" (onColResize)="columnResize($event)"
+                columnResizeMode="expand" metaKeySelection="true" 
+                (contextMenuSelection)]="selectedRow" [contextMenu]="cm" (onColReorder)="onColReorder($event)"
+                [reorderableColumns]="true" (keydown)="handleKeyDown($event)" styleClass="excel-table"
+                [ngStyle]="{'--table-font-size': tableFontSize  + 'px'}">
                 <ng-template pTemplate="header" let-columns (onMouseDown)="startSelection2($event)"
                     (onMouseMove)="selectCell2($event)">
 

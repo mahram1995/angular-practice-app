@@ -123,9 +123,9 @@ export class CommonService {
         );
     }
 
-    getScreenHeight( ): number {
+    getScreenHeight( ): string {
         let reservedHeight: number = 120
-        return (window.innerHeight - reservedHeight)
+        return (window.innerHeight - reservedHeight).toLocaleString()
     }
 
 
