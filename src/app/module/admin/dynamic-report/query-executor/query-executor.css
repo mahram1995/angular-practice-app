@@ -223,3 +223,78 @@ app-textarea-highlight .highlights span.sql_comment  {
 .CodeMirror-lines {
     background-color: #ffffff; 
 }
+
+
+.table-container {
+    position: relative;
+    width: 100%;
+}
+
+.custom-scrollbar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 15px;
+    height: 400px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.scroll-content {
+    width: 1px;
+}
+
+
+
+
+
+.custom-scroll-controls {
+    position: fixed;
+
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    z-index: 99999;
+}
+
+.scroll-btn {
+    width: 32px;
+    height: 32px;
+
+    padding: 0;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+
+    background: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-btn:hover {
+    background: #f2f2f2;
+}
+
+
+:host ::ng-deep .excel-table .p-datatable-thead > tr {
+    position: sticky;
+    z-index: 100;
+}
+
+:host ::ng-deep .excel-table .p-datatable-thead > tr:first-child {
+    top: 0;
+}
+
+:host ::ng-deep .excel-table .p-datatable-thead > tr.table-filter-row {
+    top: 35px;
+}

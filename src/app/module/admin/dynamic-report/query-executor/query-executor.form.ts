@@ -20,6 +20,8 @@ import { ViewEncapsulation } from '@angular/core';
 import { format } from 'sql-formatter';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CONDITIONAL_CLAUSE, FUNCTION_NAMES, LOGICAL_OPERATORS } from '../textarea-highlight/domain';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 
 
@@ -113,11 +115,18 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     functionNames = FUNCTION_NAMES;
     dataBaseObjectsList: any[] = [];
 
-    queryString: string = 'select * from branch'
+    queryString: string = 'select * from budget_transaction'
     highlightedText: SafeHtml = '';
 
     @ViewChild('backdrop') backdrop!: ElementRef<HTMLDivElement>;
 
+
+    pageSize = 100;
+    page = 0;
+    totalRecords = 0;
+    totalPages = 0;
+
+    rowHeight = 10;
 
     constructor(private fb: FormBuilder,
         protected override location: Location,
@@ -1015,13 +1024,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         }
     }
 
-    onFilter(event: any) {
-
-        this.filteredTableData = event.filteredValue
-            ? event.filteredValue
-            : this.filteredTableData;
-
-    }
 
 
     countRow() {
@@ -1281,7 +1283,76 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     }
 
-    downloadedReportData() {
+    get totalScrollHeight(): number {
+        return this.totalRecords * this.rowHeight;
+    }
+
+    scrollUp(): void {
+
+        const element = this.getScrollElement();
+
+        element?.scrollBy({
+            top: -200,
+            behavior: 'smooth'
+        });
+    }
+
+    scrollDown(): void {
+        const element = this.getScrollElement();
+
+        if (!element) {
+            return;
+        }
+
+        element.scrollBy({
+            top: 200,
+            behavior: 'smooth'
+        });
+
+        // Wait for smooth scrolling to finish
+        setTimeout(() => {
+            this.checkLastRow(element);
+        }, 300);
+    }
+
+    private checkLastRow(element: HTMLElement): void {
+
+        const reachedBottom =
+            element.scrollTop + element.clientHeight >=
+            element.scrollHeight - 5;
+
+        console.log('scrollTop:', element.scrollTop);
+        console.log('clientHeight:', element.clientHeight);
+        console.log('scrollHeight:', element.scrollHeight);
+        console.log('Reached last row:', reachedBottom);
+
+
+        if (reachedBottom) {
+            this.page += 1
+            if (this.page >= this.totalPages) {
+                this.notificationService.sendInfo('No more records')
+                return;
+            }
+            this.downloadedReportData(true)
+        }
+    }
+
+    private getScrollElement(): HTMLElement | null {
+
+        const tableElement = this.dataTable.el.nativeElement;
+
+        return tableElement.querySelector(
+            '.p-datatable-wrapper'
+        ) as HTMLElement;
+    }
+
+    downloadedReportData(isloadingNextPage: boolean) {
+        if (!isloadingNextPage) {
+            this.page = 0
+            this.selectedRows = [];
+            this.selectedCell = null;
+            this.filteredTableData = []
+        }
 
         if (this.queryString == null) {
 
@@ -1291,20 +1362,15 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         if (this.isWantToGetScript) {
             this.isShowReport = true;
             this.isShowParaForm = false;
-            this.queryString = 'select * from ' + this.selectedObjectName + 'fetch first 500 row only'
             return;
         }
-
-        let queryString: string
-
-
-        queryString = this.form.value.queryString;
 
         let params = {
             sql: this.queryString,
             params: { id: "abc" },
-            "page": 0,
-            "size": 50
+            page: this.page,
+            size: this.pageSize,
+            asPage: 1 //true
 
         }
         const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null);
@@ -1313,6 +1379,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.isShowParaForm = false;
                 this.isShowReport = true;
                 this.isTableData = true
+                this.totalRecords = response.totalRows
+                this.totalPages = response.totalPages
 
                 // console.log(response);
                 let rows = response.rows;
@@ -1323,7 +1391,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                     ...row
                 }));
 
-                this.filteredTableData = [...this.tableData];
+                this.filteredTableData = [...this.filteredTableData, ...this.tableData];
 
                 if (this.tableData && this.tableData.length > 0) {
                     this.cols = response.columns.map((column: any) => ({
@@ -1351,6 +1419,52 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             });
     }
 
+    downloadedExcelData(): Observable<any[]> | undefined {
+
+        if (this.queryString == null || this.queryString.trim() === '') {
+            this.notificationService.sendInfo('Please add query');
+            return undefined;
+        }
+
+        const params = {
+            sql: this.queryString,
+            params: {
+                id: 'abc'
+            },
+            page: 0,
+            size: 0,
+            asPage: 0 //false
+        };
+
+        const urlSearchParams =
+            this.getQueryParamMapForApprovalFlow(
+                null,
+                this.taskId,
+                null,
+                null
+            );
+
+        return this.udfService
+            .executeQueryWithDataType(
+                params,
+                urlSearchParams
+            )
+            .pipe(
+                map((response: any) => {
+
+                    const rows = response?.rows ?? [];
+
+                    const tableData = rows.map(
+                        (row: any, index: number) => ({
+                            __rowId: index,
+                            ...row
+                        })
+                    );
+
+                    return tableData;
+                })
+            );
+    }
     toHeaderCase(text: string): string {
         return text
             .toLowerCase()
@@ -1502,49 +1616,67 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 // Excel headers
                 const headers = this.visibleColumns.map(col => col.header);
 
-                for (let i = 0; i < this.filteredTableData.length; i += chunkSize) {
 
-                    const chunk = this.filteredTableData.slice(i, i + chunkSize);
+                this.downloadedExcelData()?.subscribe({
+                    next: (tableData: any[]) => {
 
-                    // Keep only visible columns
-                    const exportData = chunk.map(row => {
+                        for (let i = 0; i < tableData.length; i += chunkSize) {
 
-                        const obj: any = {};
+                            const chunk = tableData.slice(i, i + chunkSize);
 
-                        fields.forEach(field => {
-                            obj[field] = row[field];
-                        });
+                            // Keep only visible columns
+                            const exportData = chunk.map(row => {
 
-                        return obj;
-                    });
+                                const obj: any = {};
 
-                    const worksheet = XLSX.utils.json_to_sheet(exportData, {
-                        header: fields
-                    });
+                                fields.forEach(field => {
+                                    obj[field] = row[field];
+                                });
 
-                    // Replace field names with display headers
-                    XLSX.utils.sheet_add_aoa(
-                        worksheet,
-                        [headers],
-                        { origin: 'A1' }
-                    );
+                                return obj;
+                            });
 
-                    const sheetName = `Report_${Math.floor(i / chunkSize) + 1}`;
+                            const worksheet = XLSX.utils.json_to_sheet(exportData, {
+                                header: fields
+                            });
 
-                    XLSX.utils.book_append_sheet(
-                        workbook,
-                        worksheet,
-                        sheetName
-                    );
-                }
+                            // Replace field names with display headers
+                            XLSX.utils.sheet_add_aoa(
+                                worksheet,
+                                [headers],
+                                { origin: 'A1' }
+                            );
 
-                XLSX.writeFile(
-                    workbook,
-                    'Budget_Report.xlsx',
-                    {
-                        compression: true
+                            const sheetName = `Report_${Math.floor(i / chunkSize) + 1}`;
+
+                            XLSX.utils.book_append_sheet(
+                                workbook,
+                                worksheet,
+                                sheetName
+                            );
+                        }
+
+                        XLSX.writeFile(
+                            workbook,
+                            'Budget_Report.xlsx',
+                            {
+                                compression: true
+                            }
+                        );
+                    },
+
+                    error: (error) => {
+                        console.error('Error loading Excel data:', error);
+                        this.notificationService.sendError(
+                            'Failed to load data'
+                        );
                     }
-                );
+                });
+
+
+
+
+
 
             } finally {
 
@@ -1622,6 +1754,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     }
 
+
     columnResize(event: any) {
 
         const column = event.element;
@@ -1637,9 +1770,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         }
     }
 
-    onColReorder(event: any) {
 
-    }
 
     handleKeyDown(event: KeyboardEvent) {
 

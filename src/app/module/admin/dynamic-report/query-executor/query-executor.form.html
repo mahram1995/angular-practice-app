@@ -50,7 +50,7 @@
                 <button (click)="sqlFormatar()" pTooltip="Format the SQL query" tooltipPosition="top">
                     <i class="pi pi-align-center" style="font-size:12px"></i>
                 </button>
-                <button (click)="showFilterRow()" [disabled]="tableData.length==0">Filter</button>
+                <!-- <button (click)="showFilterRow()" [disabled]="tableData.length==0">Filter</button> -->
                 <button (click)="exportPDF()" [disabled]="tableData.length==0">Export PDF</button>
                 <button (click)="exportExcel()" [disabled]="tableData.length==0">Export Excel</button>
                 <button (click)="showParaForm()"> {{!isShowParaForm? 'Show':'Hide' }} Query </button>
@@ -89,7 +89,7 @@
 
 
         <div style="text-align:center; margin-bottom:20px; margin-top:20px;">
-            <button type="submit" class="app-button" (click)="downloadedReportData()">
+            <button type="submit" class="app-button" (click)="downloadedReportData(false)">
                 {{ isShowReport ? 'Execute Script' : 'Show Data' }}
             </button>
         </div>
@@ -101,14 +101,23 @@
 
     <div *ngIf="isShowReport  && isTableData" class="app-list">
         <div style="padding: 0px 5px 5px 5px;">
-            <p-table class=" table-hover table-responsive" #dataTable (onFilter)="onFilter($event)"
-                [value]="filteredTableData" [scrollable]="true" editMode="row" [columns]="visibleColumns" 
-                scrollHeight="400px"  selectionMode="multiple" [(selection)]="selectedRows"
-                [resizableColumns]="true" dataKey="__rowId" (onColResize)="columnResize($event)"
-                columnResizeMode="expand" metaKeySelection="true" 
-                (contextMenuSelection)]="selectedRow" [contextMenu]="cm" (onColReorder)="onColReorder($event)"
-                [reorderableColumns]="true" (keydown)="handleKeyDown($event)" styleClass="excel-table"
-                [ngStyle]="{'--table-font-size': tableFontSize  + 'px'}">
+
+            <div class="custom-scroll-controls">
+                <button type="button" class="scroll-btn" (click)="scrollUp()">
+                    <i class="pi pi-chevron-up"></i>
+                </button>
+
+                <button type="button" class="scroll-btn" (click)="scrollDown()">
+                    <i class="pi pi-chevron-down"></i>
+                </button>
+            </div>
+            <p-table class=" table-hover table-responsive" #dataTable 
+                [value]="filteredTableData" editMode="row" [columns]="visibleColumns" selectionMode="multiple"
+                [(selection)]="selectedRows" [resizableColumns]="true" dataKey="__rowId" [scrollHeight]="pageHeight +'px'"
+                (onColResize)="columnResize($event)" columnResizeMode="expand" metaKeySelection="true"
+                  (contextMenuSelection)]="selectedRow" [contextMenu]="cm"
+                 [reorderableColumns]="true" (keydown)="handleKeyDown($event)"
+                styleClass="excel-table" [ngStyle]="{'--table-font-size': tableFontSize  + 'px'}">
                 <ng-template pTemplate="header" let-columns (onMouseDown)="startSelection2($event)"
                     (onMouseMove)="selectCell2($event)">
 
@@ -170,6 +179,9 @@
                 </ng-template>
 
             </p-table>
+            <div>
+                <div>{{ 'Viewing '+ filteredTableData.length +' row of '+ totalRecords + ' total rows'}}</div>
+            </div>
 
         </div>
     </div>
