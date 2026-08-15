@@ -19,13 +19,15 @@ const GET_REPORT = URL + 'reports/get-report'
 
 const EXECUTE_REPORT_QUERY = URL + 'admin/query-executor/execute'
 const executeQueryWithDataType = URL + 'admin/query-executor/execute-with-column-type'
+const getTotalRecords = URL + 'admin/query-executor/get-total-records'
+const exportExcel = URL + 'admin/query-executor/export-excel'
 
 @Injectable()
 export class UDFService extends BaseService {
 
     constructor(private httpclient: HttpClient,
         private http: HttpService
-        ) {
+    ) {
         super()
     }
 
@@ -75,9 +77,20 @@ export class UDFService extends BaseService {
         return this.http.post(executeQueryWithDataType, data, urlSearchParams);
     }
 
-      public executeQueryWithDataTypeNoLoading(data: any, urlSearchParams): Observable<any> {
+    public executeQueryWithDataTypeNoLoading(data: any, urlSearchParams): Observable<any> {
         return this.http.postWithoutLoading(executeQueryWithDataType, data, urlSearchParams);
     }
+    
+    public getTotalRecords(data: any, urlSearchParams): Observable<any> {
+        return this.http.postWithoutLoading(getTotalRecords, data, urlSearchParams);
+    }
+
+
+    public exportQueryToExcel(data: any, urlSearchParams): Observable<any> {
+        return this.http.post(exportExcel, data, urlSearchParams);
+    }
+
+
 
 
 

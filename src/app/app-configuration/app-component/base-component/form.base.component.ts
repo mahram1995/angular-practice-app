@@ -75,13 +75,15 @@ export class FormBaseComponent extends BaseComponent implements AfterViewInit {
         verifier: string,
         taskId: number,
         detailsUI: string,
-        correctionUI: string
+        correctionUI: string,
+        responseType?: string
     ): Map<string, any> {
         const params = new Map<string, any>();
         params.set('verifier', verifier != null ? verifier : null);
         params.set('taskId', taskId != null ? taskId : null);
         params.set('detailsUI', detailsUI != null ? detailsUI : null);
         params.set('correctionUI', correctionUI != null ? correctionUI : null);
+        params.set('responseType', responseType != null ? responseType : null);
         return params;
     }
 

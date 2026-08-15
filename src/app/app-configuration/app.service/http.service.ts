@@ -48,6 +48,7 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
 
     getHttpHeader(urlSearchParam: any, data: any): any {
         let token = this.getToken();
+        let responseType;
         let headers = new HttpHeaders()
             .set('Authorization', `Bearer ${token}`)
             .set('Content-Type', 'application/json');
@@ -86,6 +87,7 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
                 if (correctionUI != null) {
                     headers = headers.set('correctionUI', correctionUI);
                 }
+                responseType = urlSearchParam.get("responseType");
 
             }
             const terminalIp = this.commonService.getClientIp();
@@ -94,10 +96,12 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
             }
         }
 
+        
+
         return {
             headers: headers,
             params: httpParams,
-            //   responseType: 'json'
+            responseType: responseType? responseType : 'json'
         };
     }
 
@@ -116,9 +120,9 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
         this.showLoadingModal();
         return this.interceptRequest(super.post(url, data, this.getHttpHeader(options, data)));
     }
-    
+
     public postWithoutLoading(url: string, data: any, options?: any): Observable<any> {
-        return this.interceptRequest(super.post(url, data, this.getHttpHeader(options, data)));
+        return super.post(url, data, this.getHttpHeader(options, data));
     }
     
 

@@ -64,6 +64,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     tableData: any[] = [];
 
     isExporting = false;
+    message: string;
     isExportPDF = false;
 
     udfProfileData: UDFDomain; // Paste your JSON here
@@ -82,6 +83,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     showCountDialog = false;
     countMessage = '';
+    isCountingTotalRecors: boolean = false
     insertTableName = 'PLESE_REPLACE_YOUR_TABLE';
 
     selectedRowIndex = null;
@@ -124,7 +126,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     isLoadingData: boolean = false;
     currentRow: number = 0
-    pageSize = 50;
+    pageSize = 300;
     page = 0;
     totalRecords = 0;
     totalPages = 0;
@@ -1028,12 +1030,35 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
 
     countRow() {
-        const count = this.filteredTableData.length;
+        let params = {
+            sql: this.queryString,
+            params: null,
+            page: this.page,
+            size: this.pageSize,
+            asPage: 0 //false
+        }
+        if (this.totalRecords > 0) {
 
-        this.countMessage = `Total Rows: ${count}`;
 
-        this.showCountDialog = true;
 
+            const formatedRecords = this.totalRecords.toLocaleString('en-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            this.countMessage = 'Total records ' + formatedRecords;
+            this.showCountDialog = true;
+            return
+        }
+        this.isCountingTotalRecors = true
+
+        this.udfService.getTotalRecords(params, null).subscribe(
+            (response: any) => {
+
+                setTimeout(() => {
+                    const formatedRecords = response.totalRows.toLocaleString('en-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    this.totalRecords = formatedRecords
+                }, 1000);
+
+                this.isCountingTotalRecors = false;
+
+            });
     }
 
     columnChange() {
@@ -1255,12 +1280,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             (
                 'TABLE',
                 'VIEW',
-                'FUNCTION',
-                'PROCEDURE',
-                'PACKAGE',
-                'PACKAGE BODY',
-                'SEQUENCE',
-                'SYNONYM'
+                'FUNCTION'
+               
             )
             ORDER BY OBJECT_TYPE, OBJECT_NAME
         `,
@@ -1296,6 +1317,10 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             top: -200,
             behavior: 'smooth'
         });
+          // Wait for smooth scrolling to finish
+        setTimeout(() => {
+            this.checkLastRow(element);
+        }, 10);
     }
 
     scrollDown(): void {
@@ -1346,18 +1371,21 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             element.scrollTop / rowHeight
         );
 
+
         // Current last visible row
         const currentLastRow =
             currentFirstRow + visibleRows;
-
+        this.currentRow = currentLastRow
         // Remaining rows
-        const remainingRows =
-            totalRows - currentLastRow;
+        const remainingRows = totalRows - currentLastRow;
+        if (this.totalRecords <= this.pageSize) {
+            return
+        }
 
         // Load next page when only 20 rows remain
         if (remainingRows <= 20) {
 
-            if (this.isLoadingData) {
+            if (this.isLoadingData || this.filteredTableData.length < 300) {
                 return;
             }
 
@@ -1398,11 +1426,12 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         let lentghDif = loadingDataLength - rowIndex
 
 
-
+        if (this.filteredTableData.length < 300) {
+            return;
+        }
 
         if (lentghDif < 20 && this.isLoadingData == false && loadingDataLength != this.totalRecords) {
             this.isLoadingData = true
-            console.log('DATA IS LOADING');
             this.page += 1
             this.loadAdditionalNextRows(true)
         } else {
@@ -1467,13 +1496,15 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
 
     downloadedReportData(isloadingNextPage: boolean) {
+
         if (!isloadingNextPage) {
             this.page = 0
             this.selectedRows = [];
             this.selectedCell = null;
             this.filteredTableData = []
         }
-        this.page=0
+        this.page = 0
+
 
         if (this.queryString == null) {
 
@@ -1484,6 +1515,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             this.isShowReport = true;
             this.isShowParaForm = false;
             return;
+        } else {
+            this.totalRecords = 0
         }
 
         let params = {
@@ -1494,6 +1527,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             asPage: 1 //true
 
         }
+
         const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null);
         this.udfService.executeQueryWithDataType(params, urlSearchParams).subscribe(
             (response: any) => {
@@ -1538,35 +1572,11 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.visibleColumns = [...this.allColumns];
 
             });
+        this.countRow()
+
     }
 
-    downloadedExcelData(): Observable<any[]> | undefined {
 
-        if (this.queryString == null || this.queryString.trim() === '') {
-            this.notificationService.sendInfo('Please add query');
-            return undefined;
-        }
-
-        const params = {
-            sql: this.queryString,
-            params: null,
-            page: 0,
-            size: 0,
-            asPage: 0 //false
-        };
-
-        return this.udfService.executeQueryWithDataTypeNoLoading(params, null)
-            .pipe(
-                map((response: any) => {
-
-                    const rows = response?.rows ?? [];
-
-
-                    this.isExporting = false;
-                    return rows;
-                })
-            );
-    }
 
     toHeaderCase(text: string): string {
         return text
@@ -1703,90 +1713,43 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     exportExcel() {
 
-
         if (this.totalRecords > 300000) {
-            return this.notificationService.sendInfo('Too may rows. You can export highest 300000 rows at a time')
+            //   return this.notificationService.sendInfo('Too may rows. You can export highest 300000 rows at a time')
         }
         this.isExporting = true;
-        setTimeout(() => {
 
-            try {
+        const workbook = XLSX.utils.book_new();
 
-                const workbook = XLSX.utils.book_new();
+        const chunkSize = 300000;
 
-                const chunkSize = 300000;
+        // Visible column fields
+        const fields = this.visibleColumns.map(col => col.field);
 
-                // Visible column fields
-                const fields = this.visibleColumns.map(col => col.field);
+        // Excel headers
+        const headers = this.visibleColumns.map(col => col.header);
 
-                // Excel headers
-                const headers = this.visibleColumns.map(col => col.header);
+        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null, 'blob');
+        let params = {
+            sql: this.queryString,
+            params: { id: "abc" }
+        }
+        this.udfService.exportQueryToExcel(params, urlSearchParams).subscribe((response: Blob) => {
 
-                this.downloadedExcelData()?.subscribe({
-                    next: (tableData: any[]) => {
+            const url =
+                window.URL.createObjectURL(response);
 
-                        for (let i = 0; i < tableData.length; i += chunkSize) {
+            const link =
+                document.createElement('a');
 
-                            const chunk = tableData.slice(i, i + chunkSize);
+            link.href = url;
+            link.download = 'query-result.xlsx';
 
-                            // Keep only visible columns
-                            const exportData = chunk.map(row => {
+            link.click();
 
-                                const obj: any = {};
+            window.URL.revokeObjectURL(url);
+        });
 
-                                fields.forEach(field => {
-                                    obj[field] = row[field];
-                                });
-
-                                return obj;
-                            });
-
-                            const worksheet = XLSX.utils.json_to_sheet(exportData, {
-                                header: fields
-                            });
-
-                            // Replace field names with display headers
-                            XLSX.utils.sheet_add_aoa(
-                                worksheet,
-                                [headers],
-                                { origin: 'A1' }
-                            );
-
-                            const sheetName = `Report_${Math.floor(i / chunkSize) + 1}`;
-
-                            XLSX.utils.book_append_sheet(
-                                workbook,
-                                worksheet,
-                                sheetName
-                            );
-                        }
-
-                        XLSX.writeFile(
-                            workbook,
-                            'Budget_Report.xlsx',
-                            {
-                                compression: true
-                            }
-                        );
-                    },
-
-
-                    error: (error) => {
-                        console.error('Error loading Excel data:', error);
-                        this.notificationService.sendError(
-                            'Failed to load data'
-                        );
-                    }
-                }
-
-                );
-
-
-
-            } finally {
-            }
-
-        }, 100);
+        this.isExporting = false;
 
     }
 

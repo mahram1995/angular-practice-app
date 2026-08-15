@@ -181,10 +181,23 @@
             </p-table>
             <div style="display: flex; align-items: center; gap: 20px;">
                 <div>
-                    {{ 'Row ' + currentRow + ' of ' + filteredTableData.length + ', Total ' + totalRecords +' rows' }}
+                    {{ 'Row ' + currentRow + ' of ' + filteredTableData.length +' rows, ' }}
                 </div>
+
+
+                <div *ngIf="!isCountingTotalRecors">
+                    Total:
+                    {{ totalRecords || 0 }} rows
+                </div>
+
+                <div *ngIf="isCountingTotalRecors">
+                    <i class="pi pi-spin pi-spinner"></i> Calculating total...
+                </div>
+
+
                 <div>
-                    <i *ngIf="isLoadingData" class="pi pi-spin pi-spinner" style="margin-right: 6px; font-size: 12px;"></i>
+                    <i *ngIf="isLoadingData" class="pi pi-spin pi-spinner"
+                        style="margin-right: 6px; font-size: 12px;"></i>
 
                     <span *ngIf="isLoadingData">
                         Data is loading...
@@ -208,7 +221,7 @@
 
     <div class="export-overlay" *ngIf="isExporting">
         <p-progressSpinner></p-progressSpinner>
-        <span>Preparing Excel file...</span>
+        <span>{{message}}</span>
     </div>
     <p-contextMenu [style]="{  'width': '250px', 'font-size': '14px'}" #cm [model]="menuItems"
         styleClass="custom-context-menu"></p-contextMenu>
