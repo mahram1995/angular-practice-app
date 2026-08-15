@@ -54,7 +54,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     isWantToGetScript: boolean = false
 
     databaseObjects: any[] = [];
-    sortingMode: string = 'ascending';
+    sortingMode: string = '';
+    orderField: string = ''
 
 
     cols: any[] = [];
@@ -116,12 +117,14 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     dataBaseObjectsList: any[] = [];
 
     queryString: string = 'select * from budget_transaction'
+    orderByString: string = ''
     highlightedText: SafeHtml = '';
 
     @ViewChild('backdrop') backdrop!: ElementRef<HTMLDivElement>;
 
-
-    pageSize = 100;
+    isLoadingData: boolean = false;
+    currentRow: number = 0
+    pageSize = 50;
     page = 0;
     totalRecords = 0;
     totalPages = 0;
@@ -292,18 +295,15 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.selectedCells.add(`${row}-${col}`);
     }
 
+
     selectCell2(event: MouseEvent) {
 
         if (!this.isDragging) return;
-
         const cell = (event.target as HTMLElement)
             .closest('td');
-
         if (!cell) return;
-
         const row = cell.getAttribute('data-row');
         const col = cell.getAttribute('data-col');
-
         this.selectedCells.add(`${row}-${col}`);
     }
 
@@ -394,7 +394,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             this.isTableData = true
             this.queryString = 'select * from ' + name
             // call aip for getting data
-            this.downloadedData(this.queryString + ' fetch first 500 row only')
+            this.downloadedReportData(false)
         }
 
         this.sidebarVisible = false
@@ -450,17 +450,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
             const field = this.selectedCell.column.field;
 
-
-
-            this.filteredTableData.forEach(row => {
-
-                const value = Number(row[field]);
-
-                if (!isNaN(value)) {
-                    sumAmount += value;
-                }
-
-            });
+            let sumQuery = 'select sum(' + field + ') as summation  from (' + this.queryString + ')'
+            return this.getSummationOfSelectedColumn(sumQuery);
         }
 
 
@@ -472,6 +463,34 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.countMessage = 'Summation is : ' + formattedSum;
 
         this.showCountDialog = true;
+    }
+
+    getSummationOfSelectedColumn(query: string) {
+
+        let params = {
+            sql: query,
+            params: null,
+            page: this.page,
+            size: this.pageSize,
+            asPage: 0 //false
+
+        }
+        this.udfService.executeQueryWithDataTypeNoLoading(params, null).subscribe(
+            (response: any) => {
+
+                console.log(response.rows[0].summation);
+                let sumAmount = response.rows[0].SUMMATION
+
+                const formattedSum = sumAmount.toLocaleString('en-BD', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+                this.countMessage = 'Summation is : ' + formattedSum;
+
+                this.showCountDialog = true;
+
+            });
     }
 
     sumRangeValue(range: any) {
@@ -782,78 +801,60 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     columnSorting() {
-        if (this.sortingMode == 'descending') {
-            return this.sortDescending()
-        } {
-            return this.sortAscending()
+        if (this.sortingMode != 'desc') {
+            this.sortDescending();
         }
-
+        else {
+            this.sortAscending();
+        }
     }
 
     sortAscending() {
 
-        if (!this.selectedCell) {
-            return;
-        }
+        this.sortingMode = 'asc'
 
-        const field = this.selectedCell.column.field;
-        this.sortingMode = 'descending'
-        this.filteredTableData.sort((a, b) => {
+        this.queryString = this.getOrderByString(this.queryString, this.orderByString, this.sortingMode)
 
-            const valueA = a[field];
-            const valueB = b[field];
 
-            return this.compare(valueA, valueB);
+        this.downloadedReportData(false);
 
-        });
 
     }
 
-    compare(a: any, b: any): number {
 
-        if (a == null) return -1;
-        if (b == null) return 1;
+    getOrderByString(queryString: string, orderByString: string, orderType: string): string {
 
+        const query = queryString.trim();
+        const orderBy = orderByString.trim();
 
-        // Number sorting
-        if (!isNaN(a) && !isNaN(b)) {
-            return Number(a) - Number(b);
+        if (query.toLowerCase().endsWith(orderBy.toLowerCase())) {
+            queryString = query.substring(0, query.length - orderBy.length).trim();
+        }
+
+        if (this.selectedCell) {
+            this.orderField = this.selectedCell.column.field;
+        }
+
+        if (this.orderField == null) {
+            return queryString
+        } else {
+            this.orderByString = ' order by ' + this.orderField + ' ' + orderType
         }
 
 
-        // Date sorting
-        const dateA = Date.parse(a);
-        const dateB = Date.parse(b);
-
-        if (!isNaN(dateA) && !isNaN(dateB)) {
-            return dateA - dateB;
-        }
-
-
-        // String sorting
-        return String(a).localeCompare(String(b));
-
+        return queryString + ' ' + this.orderByString;
     }
-
 
 
     sortDescending() {
 
-        if (!this.selectedCell) {
-            return;
-        }
+        // if (!this.selectedCell) {
+        //     return;
+        // }
+        this.sortingMode = 'desc'
 
-        const field = this.selectedCell.column.field;
-        this.sortingMode = 'ascending'
-        this.filteredTableData.sort((a, b) => {
-
-            const valueA = a[field];
-            const valueB = b[field];
-
-            return this.compare(valueB, valueA);
-
-        });
-
+        this.queryString = this.getOrderByString(this.queryString, this.orderByString, this.sortingMode)
+        this.downloadedReportData(false);
     }
 
 
@@ -1312,30 +1313,104 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         // Wait for smooth scrolling to finish
         setTimeout(() => {
             this.checkLastRow(element);
-        }, 300);
+        }, 10);
     }
 
     private checkLastRow(element: HTMLElement): void {
 
-        const reachedBottom =
-            element.scrollTop + element.clientHeight >=
-            element.scrollHeight - 5;
+        // Get table body rows
+        const rows = element.querySelectorAll('tbody > tr');
 
-        console.log('scrollTop:', element.scrollTop);
-        console.log('clientHeight:', element.clientHeight);
-        console.log('scrollHeight:', element.scrollHeight);
-        console.log('Reached last row:', reachedBottom);
+        if (!rows.length) {
+            return;
+        }
 
+        // Height of one row
+        const firstRow = rows[0] as HTMLElement;
+        const rowHeight = firstRow.offsetHeight;
 
-        if (reachedBottom) {
-            this.page += 1
-            if (this.page >= this.totalPages) {
-                this.notificationService.sendInfo('No more records')
+        if (!rowHeight) {
+            return;
+        }
+
+        // How many rows are currently visible
+        const visibleRows = Math.ceil(
+            element.clientHeight / rowHeight
+        );
+
+        // Total rows currently loaded
+        const totalRows = rows.length;
+
+        // Current first visible row
+        const currentFirstRow = Math.floor(
+            element.scrollTop / rowHeight
+        );
+
+        // Current last visible row
+        const currentLastRow =
+            currentFirstRow + visibleRows;
+
+        // Remaining rows
+        const remainingRows =
+            totalRows - currentLastRow;
+
+        // Load next page when only 20 rows remain
+        if (remainingRows <= 20) {
+
+            if (this.isLoadingData) {
                 return;
             }
-            this.downloadedReportData(true)
+
+            if (this.page >= this.totalPages - 1) {
+                this.notificationService.sendInfo(
+                    'No more records'
+                );
+                return;
+            }
+
+            this.page++;
+
+            this.loadAdditionalNextRows(true);
         }
     }
+
+    onMouseMove(event: MouseEvent): void {
+        const target = event.target as HTMLElement;
+
+        const row = target.closest('tr');
+
+        if (!row) {
+            return;
+        }
+
+        const rows = Array.from(
+            row.closest('tbody')?.querySelectorAll('tr') || []
+        );
+
+        const rowIndex = rows.indexOf(row);
+        this.currentRow = rowIndex
+
+        if (rowIndex === -1) {
+            return;
+        }
+
+        let loadingDataLength = this.filteredTableData.length
+        let lentghDif = loadingDataLength - rowIndex
+
+
+
+
+        if (lentghDif < 20 && this.isLoadingData == false && loadingDataLength != this.totalRecords) {
+            this.isLoadingData = true
+            console.log('DATA IS LOADING');
+            this.page += 1
+            this.loadAdditionalNextRows(true)
+        } else {
+            return;
+        }
+
+    }
+
 
     private getScrollElement(): HTMLElement | null {
 
@@ -1346,6 +1421,51 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         ) as HTMLElement;
     }
 
+    loadAdditionalNextRows(isloadingNextPage: boolean) {
+        if (!isloadingNextPage) {
+            this.page = 0
+            this.selectedRows = [];
+            this.selectedCell = null;
+            this.filteredTableData = []
+        }
+
+        if (this.queryString == null) {
+
+            return this.notificationService.sendInfo('please add query');
+        }
+
+        if (this.isWantToGetScript) {
+            this.isShowReport = true;
+            this.isShowParaForm = false;
+            return;
+        }
+
+        let params = {
+            sql: this.queryString,
+            params: { id: "abc" },
+            page: this.page,
+            size: this.pageSize,
+            asPage: 1 //true
+
+        }
+        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null);
+        this.udfService.executeQueryWithDataTypeNoLoading(params, urlSearchParams).subscribe(
+            (response: any) => {
+                this.isShowParaForm = false;
+                this.isShowReport = true;
+                this.isTableData = true
+                // Add temporary unique key for PrimeNG row selection
+                this.tableData = response.rows.map((row: any, index: number) => ({
+                    __rowId: index,
+                    ...row
+                }));
+
+                this.filteredTableData = [...this.filteredTableData, ...this.tableData];
+                this.isLoadingData = false
+            });
+    }
+
+
     downloadedReportData(isloadingNextPage: boolean) {
         if (!isloadingNextPage) {
             this.page = 0
@@ -1353,6 +1473,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             this.selectedCell = null;
             this.filteredTableData = []
         }
+        this.page=0
 
         if (this.queryString == null) {
 
@@ -1428,43 +1549,25 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         const params = {
             sql: this.queryString,
-            params: {
-                id: 'abc'
-            },
+            params: null,
             page: 0,
             size: 0,
             asPage: 0 //false
         };
 
-        const urlSearchParams =
-            this.getQueryParamMapForApprovalFlow(
-                null,
-                this.taskId,
-                null,
-                null
-            );
-
-        return this.udfService
-            .executeQueryWithDataType(
-                params,
-                urlSearchParams
-            )
+        return this.udfService.executeQueryWithDataTypeNoLoading(params, null)
             .pipe(
                 map((response: any) => {
 
                     const rows = response?.rows ?? [];
 
-                    const tableData = rows.map(
-                        (row: any, index: number) => ({
-                            __rowId: index,
-                            ...row
-                        })
-                    );
 
-                    return tableData;
+                    this.isExporting = false;
+                    return rows;
                 })
             );
     }
+
     toHeaderCase(text: string): string {
         return text
             .toLowerCase()
@@ -1600,8 +1703,11 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     exportExcel() {
 
-        this.isExporting = true;
 
+        if (this.totalRecords > 300000) {
+            return this.notificationService.sendInfo('Too may rows. You can export highest 300000 rows at a time')
+        }
+        this.isExporting = true;
         setTimeout(() => {
 
             try {
@@ -1615,7 +1721,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
                 // Excel headers
                 const headers = this.visibleColumns.map(col => col.header);
-
 
                 this.downloadedExcelData()?.subscribe({
                     next: (tableData: any[]) => {
@@ -1665,23 +1770,20 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                         );
                     },
 
+
                     error: (error) => {
                         console.error('Error loading Excel data:', error);
                         this.notificationService.sendError(
                             'Failed to load data'
                         );
                     }
-                });
+                }
 
-
-
+                );
 
 
 
             } finally {
-
-                this.isExporting = false;
-
             }
 
         }, 100);

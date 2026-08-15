@@ -111,13 +111,13 @@
                     <i class="pi pi-chevron-down"></i>
                 </button>
             </div>
-            <p-table class=" table-hover table-responsive" #dataTable 
-                [value]="filteredTableData" editMode="row" [columns]="visibleColumns" selectionMode="multiple"
-                [(selection)]="selectedRows" [resizableColumns]="true" dataKey="__rowId" [scrollHeight]="pageHeight +'px'"
+            <p-table class=" table-hover table-responsive" #dataTable [value]="filteredTableData" editMode="row"
+                [columns]="visibleColumns" selectionMode="multiple" [(selection)]="selectedRows"
+                [resizableColumns]="true" dataKey="__rowId" [scrollHeight]="pageHeight +'px'"
                 (onColResize)="columnResize($event)" columnResizeMode="expand" metaKeySelection="true"
-                  (contextMenuSelection)]="selectedRow" [contextMenu]="cm"
-                 [reorderableColumns]="true" (keydown)="handleKeyDown($event)"
-                styleClass="excel-table" [ngStyle]="{'--table-font-size': tableFontSize  + 'px'}">
+                (contextMenuSelection)]="selectedRow" [contextMenu]="cm" [reorderableColumns]="true"
+                (keydown)="handleKeyDown($event)" (mousemove)="onMouseMove($event)" styleClass="excel-table"
+                [ngStyle]="{'--table-font-size': tableFontSize  + 'px'}">
                 <ng-template pTemplate="header" let-columns (onMouseDown)="startSelection2($event)"
                     (onMouseMove)="selectCell2($event)">
 
@@ -179,8 +179,17 @@
                 </ng-template>
 
             </p-table>
-            <div>
-                <div>{{ 'Viewing '+ filteredTableData.length +' row of '+ totalRecords + ' total rows'}}</div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div>
+                    {{ 'Row ' + currentRow + ' of ' + filteredTableData.length + ', Total ' + totalRecords +' rows' }}
+                </div>
+                <div>
+                    <i *ngIf="isLoadingData" class="pi pi-spin pi-spinner" style="margin-right: 6px; font-size: 12px;"></i>
+
+                    <span *ngIf="isLoadingData">
+                        Data is loading...
+                    </span>
+                </div>
             </div>
 
         </div>

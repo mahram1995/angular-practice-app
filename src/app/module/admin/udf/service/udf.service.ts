@@ -70,8 +70,13 @@ export class UDFService extends BaseService {
     public getReportData(data: any, urlSearchParams): Observable<any> {
         return this.http.post(EXECUTE_REPORT_QUERY, data, urlSearchParams);
     }
+
     public executeQueryWithDataType(data: any, urlSearchParams): Observable<any> {
         return this.http.post(executeQueryWithDataType, data, urlSearchParams);
+    }
+
+      public executeQueryWithDataTypeNoLoading(data: any, urlSearchParams): Observable<any> {
+        return this.http.postWithoutLoading(executeQueryWithDataType, data, urlSearchParams);
     }
 
 

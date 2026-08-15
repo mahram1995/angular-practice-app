@@ -116,6 +116,12 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
         this.showLoadingModal();
         return this.interceptRequest(super.post(url, data, this.getHttpHeader(options, data)));
     }
+    
+    public postWithoutLoading(url: string, data: any, options?: any): Observable<any> {
+        return this.interceptRequest(super.post(url, data, this.getHttpHeader(options, data)));
+    }
+    
+
 
     public override put(url: string, data: any, options?: any): Observable<any> {
         this.showLoadingModal();
