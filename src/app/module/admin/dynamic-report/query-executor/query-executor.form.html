@@ -113,11 +113,11 @@
             </div>
             <p-table class=" table-hover table-responsive" #dataTable [value]="filteredTableData" editMode="row"
                 [columns]="visibleColumns" selectionMode="multiple" [(selection)]="selectedRows"
-                [resizableColumns]="true" dataKey="__rowId" [scrollHeight]="pageHeight +'px'"
+                [resizableColumns]="true" dataKey="__rowId" [scrollHeight]="pageHeight +'px'"  [scrollable]="true"
                 (onColResize)="columnResize($event)" columnResizeMode="expand" metaKeySelection="true"
                 (contextMenuSelection)]="selectedRow" [contextMenu]="cm" [reorderableColumns]="true"
                 (keydown)="handleKeyDown($event)" (mousemove)="onMouseMove($event)" styleClass="excel-table"
-                [ngStyle]="{'--table-font-size': tableFontSize  + 'px'}">
+                [ngStyle]="{'--table-font-size': tableFontSize  + 'px'}" scoll> 
                 <ng-template pTemplate="header" let-columns (onMouseDown)="startSelection2($event)"
                     (onMouseMove)="selectCell2($event)">
 
