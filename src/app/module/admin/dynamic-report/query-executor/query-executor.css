@@ -281,20 +281,3 @@ app-textarea-highlight .highlights span.sql_comment  {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.scroll-btn:hover {
-    background: #f2f2f2;
-}
-
-
-:host ::ng-deep .excel-table .p-datatable-thead > tr {
-    position: sticky;
-    z-index: 100;
-}
-
-:host ::ng-deep .excel-table .p-datatable-thead > tr:first-child {
-    top: 0;
-}
-
-:host ::ng-deep .excel-table .p-datatable-thead > tr.table-filter-row {
-    top: 35px;
-}
