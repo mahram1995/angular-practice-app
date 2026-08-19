@@ -102,7 +102,7 @@
     <div *ngIf="isShowReport  && isTableData" class="app-list">
         <div style="padding: 0px 5px 5px 5px;">
 
-            <div class="custom-scroll-controls">
+            <div *ngIf="filteredTableData.length > rowPerPage" class="custom-scroll-controls">
                 <button type="button" class="scroll-btn" (click)="scrollUp()">
                     <i class="pi pi-chevron-up"></i>
                 </button>
@@ -118,8 +118,7 @@
                 (contextMenuSelection)]="selectedRow" [contextMenu]="cm" [reorderableColumns]="true"
                 (keydown)="handleKeyDown($event)" (mousemove)="onMouseMove($event)" styleClass="excel-table"
                 [ngStyle]="{'--table-font-size': tableFontSize  + 'px'}" scoll> 
-                <ng-template pTemplate="header" let-columns (onMouseDown)="startSelection2($event)"
-                    (onMouseMove)="selectCell2($event)">
+                <ng-template pTemplate="header" let-columns>
 
                     <!-- Header -->
                     <tr>
@@ -156,23 +155,24 @@
                 <!-- (contextmenu)="onCellClick($event,rowData, col, rowIndex, colIndex)"
                [class.cell-selected]="isCellSelected(rowIndex,colIndex)" 
                [style.background]="isSelected(rowIndex, col.field) ? '#48dbfb' : ''"
-               [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"-->
+               [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"
+                 [id]="'cell-' + rowIndex + '-' + colIndex" tabindex="0" [style.cursor]="'pointer'"
+                            (mousedown)="startSelection($event,rowIndex, colIndex)"
+                            (mouseenter)="dragSelection($event,rowIndex, colIndex)"
+                            [class.selected-range-cell]="isRangeSelected(rowIndex, colIndex)"
+                            [class.cell-selected]="isCellSelected(rowIndex,colIndex)"-->
 
                 <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
                     <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData">
 
                         <td *ngFor="let col of columns; let colIndex = index" [ngStyle]="{ 'white-space': 'nowrap' }"
                             (click)=" onCellClick($event,rowData, col, rowIndex, colIndex)"
-                            (contextmenu)="onCellClick($event,rowData, col, rowIndex, colIndex)"
-                            [style.text-align]="col.align"
-                            [class.selected-cell]="selectedRowIndex === rowIndex && selectedColIndex === colIndex"
+                            [style.text-align]="col.align" 
                             [id]="'cell-' + rowIndex + '-' + colIndex" tabindex="0" [style.cursor]="'pointer'"
                             (mousedown)="startSelection($event,rowIndex, colIndex)"
                             (mouseenter)="dragSelection($event,rowIndex, colIndex)"
                             [class.selected-range-cell]="isRangeSelected(rowIndex, colIndex)"
                             [class.cell-selected]="isCellSelected(rowIndex,colIndex)">
-
-
                             {{rowData[col.field]}}
                         </td>
                     </tr>
@@ -181,19 +181,13 @@
             </p-table>
             <div style="display: flex; align-items: center; gap: 20px;">
                 <div>
-                    {{ 'Row ' + currentRow + ' of ' + filteredTableData.length +' rows, ' }}
+                    {{ 'Row ' + currentRow + ' of ' + filteredTableData.length}}
                 </div>
 
+                <div *ngIf="totalRowMessage && totalRecords==0">
+                    {{totalRowMessage}}
 
-                <div *ngIf="!isCountingTotalRecors">
-                    Total:
-                    {{ totalRecords || 0 }} rows
                 </div>
-
-                <div *ngIf="isCountingTotalRecors">
-                    <i class="pi pi-spin pi-spinner"></i> Calculating total...
-                </div>
-
 
                 <div>
                     <i *ngIf="isLoadingData" class="pi pi-spin pi-spinner"

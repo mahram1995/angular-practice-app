@@ -126,9 +126,10 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     isLoadingData: boolean = false;
     currentRow: number = 0
-    pageSize = 300;
+    pageSize = 50;
     page = 0;
     totalRecords = 0;
+    totalRowMessage:string;
     totalPages = 0;
 
     rowHeight = 10;
@@ -263,6 +264,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     startSelection(event: any, row: number, col: number) {
+        let key = `${row}-${col}`
         if (event.shiftKey) {
             //  this.selectionStart = { row, col };
         } else if (!event.ctrlKey) {
@@ -278,36 +280,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     }
 
-    startSelection2(event: MouseEvent) {
-
-        const cell = (event.target as HTMLElement)
-            .closest('td');
-
-        if (!cell) return;
-
-        event.preventDefault(); // important
-
-        this.isDragging = true;
-
-        this.selectedCells.clear();
-
-        const row = cell.getAttribute('data-row');
-        const col = cell.getAttribute('data-col');
-
-        this.selectedCells.add(`${row}-${col}`);
-    }
-
-
-    selectCell2(event: MouseEvent) {
-
-        if (!this.isDragging) return;
-        const cell = (event.target as HTMLElement)
-            .closest('td');
-        if (!cell) return;
-        const row = cell.getAttribute('data-row');
-        const col = cell.getAttribute('data-col');
-        this.selectedCells.add(`${row}-${col}`);
-    }
 
     dragSelection(event: any, row: number, col: number) {
         if (!event.ctrlKey) {
@@ -315,9 +287,9 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 return;
             }
             this.selectionEnd = { row, col };
-            this.endSelectedIndex = `${row}-${col}`
-
+           this.endSelectedIndex = `${row}-${col}`
         }
+       
     }
 
     @HostListener('document:mouseup')
@@ -885,6 +857,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.selectedCells.add(key);
             }
         } else if (event.shiftKey) {
+
             this.isDraggSelection = true;
             this.selectionEnd = { row: rowIndex, col: colIndex }
             if (this.selectedCells.has(key)) {
@@ -898,12 +871,14 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.selectedCells.add(key);
             }
         } else {
+            
             this.selectedCells.clear();
             this.selectedCells.add(key);
             this.selectionStart = { row: rowIndex, col: colIndex };
             this.isDraggSelection = false;
             this.selectedRowIndex = rowIndex;
             this.selectedColIndex = colIndex;
+            
             this.selectedCell = {
                 row: row,
                 column: col,
@@ -1228,9 +1203,12 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     isCellSelected(row: number, col: number) {
-        // console.log(this.selectedCells);
-
-
+        
+        // its use for highlight the cell when left right up and down errow key navigation
+        if (this.selectedRowIndex === row && this.selectedColIndex === col) {
+            return true
+        }
+        
         return this.selectedCells.has(`${row}-${col}`);
 
 
@@ -1317,7 +1295,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             top: -200,
             behavior: 'smooth'
         });
-          // Wait for smooth scrolling to finish
+        // Wait for smooth scrolling to finish
         setTimeout(() => {
             this.checkLastRow(element);
         }, 10);
@@ -1375,21 +1353,23 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         // Current last visible row
         const currentLastRow =
             currentFirstRow + visibleRows;
-        this.currentRow = currentLastRow
+        this.currentRow = currentLastRow+1
         // Remaining rows
         const remainingRows = totalRows - currentLastRow;
         if (this.totalRecords <= this.pageSize) {
             return
         }
+        console.log(remainingRows);
+
 
         // Load next page when only 20 rows remain
         if (remainingRows <= 20) {
 
-            if (this.isLoadingData || this.filteredTableData.length < 300) {
+            if (this.isLoadingData || this.filteredTableData.length < this.pageSize) {
                 return;
             }
 
-            if (this.page >= this.totalPages - 1) {
+            if (this.page == this.totalPages - 1) {
                 this.notificationService.sendInfo(
                     'No more records'
                 );
@@ -1397,6 +1377,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             }
 
             this.page++;
+            this.isLoadingData = true
 
             this.loadAdditionalNextRows(true);
         }
@@ -1416,7 +1397,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         );
 
         const rowIndex = rows.indexOf(row);
-        this.currentRow = rowIndex
+        this.currentRow = rowIndex+1
 
         if (rowIndex === -1) {
             return;
@@ -1426,9 +1407,10 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         let lentghDif = loadingDataLength - rowIndex
 
 
-        if (this.filteredTableData.length < 300) {
+        if (this.filteredTableData.length < this.pageSize) {
             return;
         }
+
 
         if (lentghDif < 20 && this.isLoadingData == false && loadingDataLength != this.totalRecords) {
             this.isLoadingData = true
@@ -1490,6 +1472,9 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 }));
 
                 this.filteredTableData = [...this.filteredTableData, ...this.tableData];
+                if(response.rows.length<this.pageSize){
+                     this.totalRecords=this.filteredTableData.length
+                }
                 this.isLoadingData = false
             });
     }
@@ -1546,7 +1531,12 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                     ...row
                 }));
 
-                this.filteredTableData = [...this.filteredTableData, ...this.tableData];
+                this.filteredTableData = [...this.tableData];
+                if(this.filteredTableData.length ==this.pageSize){
+                    this.totalRowMessage=' fetched so far(more rows exist)'
+                } if(this.filteredTableData.length<this.pageSize){
+                    this.totalRecords=this.filteredTableData.length
+                }
 
                 if (this.tableData && this.tableData.length > 0) {
                     this.cols = response.columns.map((column: any) => ({
@@ -1572,7 +1562,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.visibleColumns = [...this.allColumns];
 
             });
-        this.countRow()
+      //  this.countRow()
 
     }
 
