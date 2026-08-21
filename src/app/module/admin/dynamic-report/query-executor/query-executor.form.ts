@@ -112,6 +112,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     isDraggSelection: boolean = false
 
     selectedCells = new Set<string>();
+    selectedCellsRange = new Set<string>();
     previousCols = [];
     LogicalOperators = LOGICAL_OPERATORS;
     ConditionalClause = CONDITIONAL_CLAUSE;
@@ -129,7 +130,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     pageSize = 50;
     page = 0;
     totalRecords = 0;
-    totalRowMessage:string;
+    totalRowMessage: string;
     totalPages = 0;
 
     rowHeight = 10;
@@ -268,39 +269,39 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         if (event.shiftKey) {
             //  this.selectionStart = { row, col };
         } else if (!event.ctrlKey) {
-            this.selectedCells.clear()
+
+            this.selectedCellsRange.clear()
             this.selectedRowIndex = null;
             this.selectedColIndex = null;
             this.isDragging = true;
             this.isDraggSelection = true;
             this.selectionStart = { row, col };
             this.selectionEnd = { row, col };
-            this.selectedCells.add(`${row}-${col}`);
+            this.selectedCellsRange.add(`${row}-${col}`);
         }
-
     }
 
 
     dragSelection(event: any, row: number, col: number) {
         if (!event.ctrlKey) {
             if (!this.isDragging) {
+
                 return;
             }
             this.selectionEnd = { row, col };
-           this.endSelectedIndex = `${row}-${col}`
+            this.selectedCells.clear();
+            this.endSelectedIndex = `${row}-${col}`
         }
-       
+
+
     }
 
     @HostListener('document:mouseup')
     stopSelection() {
-        if (this.isDragging) {
-            this.selectedCells.add(this.endSelectedIndex)
+        if (this.isDragging && this.selectionStart && this.selectionEnd) {
+            this.selectedCellsRange.add(this.endSelectedIndex)
         }
         this.isDragging = false;
-
-
-
     }
 
     onRightMenuClick() {
@@ -387,47 +388,36 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         let sumAmount: number = 0
 
-        const cells = Array.from(this.selectedCells);
+        const selectedCells = Array.from(this.selectedCells);
+        let selectedRage = this.selectedCellsRange;
 
-        const firstTwo = cells.slice(0, 2);
-        const remainingSelectedCells = cells.slice(2);
+        if (!this.selectedCell && !selectedRage) {
+            this.countMessage = 'Please select a cell first.';
+            this.showCountDialog = true;
+            return;
+        }
+
+        // if (this.selectedCell.column.sqlType !== 'NUMBER') {
+
+        //     this.countMessage = 'Please select a numeric column.';
+        //     this.showCountDialog = true;
+        //     return;
+        // }
 
 
-        let startRowIndex = this.selectionStart.row
-        let endRowIndex = this.selectionEnd.row
-        let startColIndex = this.selectionStart.col
-        let endColIndex = this.selectionEnd.col
-        // sum if select muliple cell of a specific colum by drag
-        if (cells.length >= 2) {
-            // dragg selection and  Ctrl + Click selection
-            if (this.isDraggSelection) {
-                sumAmount += this.sumRangeValue(firstTwo)
-                sumAmount += this.sumDifferentSlectedCellValue(remainingSelectedCells)
-            } else {
-                // Ctrl + Click selection
-                sumAmount += this.sumDifferentSlectedCellValue(cells)
+        if (selectedRage.size == 2 && this.isDraggSelection == true) {
+            sumAmount += this.sumRangeValue(selectedRage)
+            if (selectedCells.length > 0) {
+                sumAmount += this.sumDifferentSlectedCellValue(selectedCells)
             }
-        } else { // sum selected colum value 
-            if (this.selectedCell.column.sqlType !== 'NUMBER') {
-
-                this.countMessage = 'Please select a numeric column.';
-                this.showCountDialog = true;
-                return;
-            }
-
-            if (!this.selectedCell) {
-
-                this.countMessage = 'Please select a cell first.';
-                this.showCountDialog = true;
-                return;
-            }
-
+        } else if (selectedCells.length > 0 && this.isDraggSelection == false) {
+            sumAmount += this.sumDifferentSlectedCellValue(selectedCells)
+        } else {
             const field = this.selectedCell.column.field;
 
             let sumQuery = 'select sum(' + field + ') as summation  from (' + this.queryString + ')'
             return this.getSummationOfSelectedColumn(sumQuery);
         }
-
 
         const formattedSum = sumAmount.toLocaleString('en-BD', {
             minimumFractionDigits: 2,
@@ -871,14 +861,13 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.selectedCells.add(key);
             }
         } else {
-            
             this.selectedCells.clear();
             this.selectedCells.add(key);
-            this.selectionStart = { row: rowIndex, col: colIndex };
+            this.selectedCellsRange.clear()
+            //  this.selectionStart = { row: rowIndex, col: colIndex };
             this.isDraggSelection = false;
             this.selectedRowIndex = rowIndex;
             this.selectedColIndex = colIndex;
-            
             this.selectedCell = {
                 row: row,
                 column: col,
@@ -1203,15 +1192,11 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     }
 
     isCellSelected(row: number, col: number) {
-        
         // its use for highlight the cell when left right up and down errow key navigation
         if (this.selectedRowIndex === row && this.selectedColIndex === col) {
             return true
         }
-        
         return this.selectedCells.has(`${row}-${col}`);
-
-
     }
 
 
@@ -1353,7 +1338,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         // Current last visible row
         const currentLastRow =
             currentFirstRow + visibleRows;
-        this.currentRow = currentLastRow+1
+        this.currentRow = currentLastRow + 1
         // Remaining rows
         const remainingRows = totalRows - currentLastRow;
         if (this.totalRecords <= this.pageSize) {
@@ -1397,7 +1382,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         );
 
         const rowIndex = rows.indexOf(row);
-        this.currentRow = rowIndex+1
+        this.currentRow = rowIndex + 1
 
         if (rowIndex === -1) {
             return;
@@ -1472,8 +1457,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 }));
 
                 this.filteredTableData = [...this.filteredTableData, ...this.tableData];
-                if(response.rows.length<this.pageSize){
-                     this.totalRecords=this.filteredTableData.length
+                if (response.rows.length < this.pageSize) {
+                    this.totalRecords = this.filteredTableData.length
                 }
                 this.isLoadingData = false
             });
@@ -1532,10 +1517,10 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 }));
 
                 this.filteredTableData = [...this.tableData];
-                if(this.filteredTableData.length ==this.pageSize){
-                    this.totalRowMessage=' fetched so far(more rows exist)'
-                } if(this.filteredTableData.length<this.pageSize){
-                    this.totalRecords=this.filteredTableData.length
+                if (this.filteredTableData.length == this.pageSize) {
+                    this.totalRowMessage = ' fetched so far(more rows exist)'
+                } if (this.filteredTableData.length < this.pageSize) {
+                    this.totalRecords = this.filteredTableData.length
                 }
 
                 if (this.tableData && this.tableData.length > 0) {
@@ -1562,7 +1547,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.visibleColumns = [...this.allColumns];
 
             });
-      //  this.countRow()
+        //  this.countRow()
 
     }
 
@@ -1840,11 +1825,17 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     copySelectedCells() {
 
-        if (this.selectedCells.size === 0) {
-            return;
-        }
+        // if (this.selectedCells.size === 0) {
+        //     return;
+        // }
 
         const cells = Array.from(this.selectedCells)
+            .map(key => {
+                const [row, col] = key.split('-').map(Number);
+                return { row, col };
+            });
+
+        const cellsRange = Array.from(this.selectedCellsRange)
             .map(key => {
                 const [row, col] = key.split('-').map(Number);
                 return { row, col };
@@ -1865,10 +1856,10 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         }
 
         // Exactly two cells -> treat as a drag range
-        if (cells.length === 2) {
+        if (cellsRange.length === 2) {
 
-            const start = cells[0];
-            const end = cells[1];
+            const start = cellsRange[0];
+            const end = cellsRange[1];
 
             const minRow = Math.min(start.row, end.row);
             const maxRow = Math.max(start.row, end.row);

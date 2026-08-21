@@ -171,8 +171,9 @@
                             [id]="'cell-' + rowIndex + '-' + colIndex" tabindex="0" [style.cursor]="'pointer'"
                             (mousedown)="startSelection($event,rowIndex, colIndex)"
                             (mouseenter)="dragSelection($event,rowIndex, colIndex)"
-                            [class.selected-range-cell]="isRangeSelected(rowIndex, colIndex)"
-                            [class.cell-selected]="isCellSelected(rowIndex,colIndex)">
+                            [ngClass]="{'selected-range-cell': isRangeSelected(rowIndex, colIndex)}"
+                            [ngClass]="{'cell-selected': isCellSelected(rowIndex, colIndex)}"
+                           >
                             {{rowData[col.field]}}
                         </td>
                     </tr>
