@@ -1842,6 +1842,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             });
 
         let copyText = '';
+        console.log(cellsRange);
+
 
         // Single cell
         if (cells.length === 1) {
@@ -1867,8 +1869,18 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             const minCol = Math.min(start.col, end.col);
             const maxCol = Math.max(start.col, end.col);
 
-            const rows: string[] = [];
+            let copyText = '';
 
+            // Header
+            const headers: string[] = [];
+
+            for (let c = minCol; c <= maxCol; c++) {
+                headers.push(this.visibleColumns[c].header);
+            }
+
+            copyText += headers.join('\t') + '\n';
+
+            // Data
             for (let r = minRow; r <= maxRow; r++) {
 
                 const values: string[] = [];
@@ -1877,16 +1889,21 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
                     const field = this.visibleColumns[c].field;
 
-                    values.push(this.filteredTableData[r]?.[field] ?? '');
+                    values.push(
+                        this.filteredTableData[r]?.[field] ?? ''
+                    );
                 }
 
-                rows.push(values.join('\t'));
+                copyText += values.join('\t');
+
+                if (r < maxRow) {
+                    copyText += '\n';
+                }
             }
 
-            copyText = rows.join('\n');
+            console.log(copyText);
 
             this.copyToClipboard2(copyText);
-            return;
         }
 
         // Ctrl+Click selection (3 or more individual cells)
@@ -1918,129 +1935,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.copyToClipboard2(copyText);
     }
 
-    copySelectedCellsWithHeader() {
-
-        if (this.selectedCells.size === 0) {
-            return;
-        }
-
-        const cells = Array.from(this.selectedCells)
-            .map(key => {
-                const [row, col] = key.split('-').map(Number);
-                return { row, col };
-            });
-
-        let copyText = '';
-
-        // -------------------------
-        // Single Cell
-        // -------------------------
-        if (cells.length === 1) {
-
-            const cell = cells[0];
-            const column = this.visibleColumns[cell.col];
-
-            copyText += column.header + '\n';
-            copyText += this.filteredTableData[cell.row][column.field] ?? '';
-
-            this.copyToClipboard2(copyText);
-            return;
-        }
-
-        // -------------------------
-        // Range Selection
-        // -------------------------
-        if (cells.length === 2) {
-
-            const start = cells[0];
-            const end = cells[1];
-
-            const minRow = Math.min(start.row, end.row);
-            const maxRow = Math.max(start.row, end.row);
-
-            const minCol = Math.min(start.col, end.col);
-            const maxCol = Math.max(start.col, end.col);
-
-            // Header
-            const headers: string[] = [];
-
-            for (let c = minCol; c <= maxCol; c++) {
-                headers.push(this.visibleColumns[c].header);
-            }
-
-            copyText += headers.join('\t') + '\n';
-
-            // Data
-            for (let r = minRow; r <= maxRow; r++) {
-
-                const values: string[] = [];
-
-                for (let c = minCol; c <= maxCol; c++) {
-
-                    const field = this.visibleColumns[c].field;
-
-                    values.push(this.filteredTableData[r]?.[field] ?? '');
-                }
-
-                copyText += values.join('\t');
-
-                if (r < maxRow) {
-                    copyText += '\n';
-                }
-            }
-
-            this.copyToClipboard2(copyText);
-            return;
-        }
-
-        // -------------------------
-        // Ctrl + Click
-        // -------------------------
-
-        const rowMap = new Map<number, Map<number, any>>();
-        const colSet = new Set<number>();
-
-        cells.forEach(cell => {
-
-            colSet.add(cell.col);
-
-            if (!rowMap.has(cell.row)) {
-                rowMap.set(cell.row, new Map());
-            }
-
-            const field = this.visibleColumns[cell.col].field;
-
-            rowMap.get(cell.row)!.set(
-                cell.col,
-                this.filteredTableData[cell.row]?.[field] ?? ''
-            );
-
-        });
-
-        const cols = [...colSet].sort((a, b) => a - b);
-
-        // Header
-        copyText += cols
-            .map(c => this.visibleColumns[c].header)
-            .join('\t');
-
-        copyText += '\n';
-
-        // Data
-        Array.from(rowMap.keys())
-            .sort((a, b) => a - b)
-            .forEach(row => {
-
-                const values = cols.map(col =>
-                    rowMap.get(row)?.get(col) ?? ''
-                );
-
-                copyText += values.join('\t') + '\n';
-
-            });
-
-        this.copyToClipboard2(copyText.trimEnd());
-    }
+    
 
     copyToClipboard2(text: string) {
 
