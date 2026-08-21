@@ -61,9 +61,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     cols: any[] = [];
     visibleColumns: any[] = [];
     columnDialog: boolean = false
-    tableData: any[] = [];
 
-    isExporting = false;
+    isLoading = false;
     message: string;
     isExportPDF = false;
 
@@ -81,9 +80,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     menuItems: MenuItem[] = [];
     selectedRows: any[] = [];
 
-    showCountDialog = false;
-    countMessage = '';
-    isCountingTotalRecors: boolean = false
     insertTableName = 'PLESE_REPLACE_YOUR_TABLE';
 
     selectedRowIndex = null;
@@ -392,17 +388,15 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         let selectedRage = this.selectedCellsRange;
 
         if (!this.selectedCell && !selectedRage) {
-            this.countMessage = 'Please select a cell first.';
-            this.showCountDialog = true;
+            this.notificationService.sendInfo('Please select a cell first.');
             return;
         }
 
-        // if (this.selectedCell.column.sqlType !== 'NUMBER') {
+        if (this.selectedCell.column.sqlType !== 'NUMBER') {
 
-        //     this.countMessage = 'Please select a numeric column.';
-        //     this.showCountDialog = true;
-        //     return;
-        // }
+            this.notificationService.sendInfo('Please select a numeric column.');
+            return;
+        }
 
 
         if (selectedRage.size == 2 && this.isDraggSelection == true) {
@@ -410,9 +404,11 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             if (selectedCells.length > 0) {
                 sumAmount += this.sumDifferentSlectedCellValue(selectedCells)
             }
-        } else if (selectedCells.length > 0 && this.isDraggSelection == false) {
+        } else if (selectedCells.length > 1 && this.isDraggSelection == false) {
             sumAmount += this.sumDifferentSlectedCellValue(selectedCells)
         } else {
+            this.isLoading = true;
+            this.message = 'Calculating summation...';
             const field = this.selectedCell.column.field;
 
             let sumQuery = 'select sum(' + field + ') as summation  from (' + this.queryString + ')'
@@ -424,9 +420,9 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             maximumFractionDigits: 2
         });
 
-        this.countMessage = 'Summation is : ' + formattedSum;
+        this.message = 'Summation is : ' + formattedSum;
 
-        this.showCountDialog = true;
+        this.isLoading = true;
     }
 
     getSummationOfSelectedColumn(query: string) {
@@ -450,10 +446,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                     maximumFractionDigits: 2
                 });
 
-                this.countMessage = 'Summation is : ' + formattedSum;
-
-                this.showCountDialog = true;
-
+                this.message = 'Summation is : ' + formattedSum;
             });
     }
 
@@ -575,9 +568,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     createTableScript() {
 
         if (!this.visibleColumns || this.visibleColumns.length === 0) {
-
-            this.countMessage = 'No columns available.';
-            this.showCountDialog = true;
+            this.notificationService.sendInfo(this.message = 'No columns available.');
             return;
         }
 
@@ -654,7 +645,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.copyToClipboard(script);
 
 
-        this.countMessage = 'Create table script copied to clipboard.';
+        this.message = 'Create table script copied to clipboard.';
 
 
     }
@@ -665,8 +656,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         if (!this.selectedRows || this.selectedRows.length === 0) {
 
-            this.countMessage = 'Please select at least one row.';
-            this.showCountDialog = true;
+            this.notificationService.sendInfo('Please select at least one row.');
+
             return;
         }
 
@@ -712,8 +703,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
         this.copyToClipboard(script);
 
-        this.countMessage = 'Insert script copied to clipboard.';
-        this.showCountDialog = true;
+        this.message = 'Insert script copied to clipboard.';
+        this.isLoading = true;
 
     }
 
@@ -722,7 +713,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         this.selectedCell = null;
         this.dataTable.clear();
         this.selectAllColumn();
-        this.filteredTableData = [...this.tableData];
 
     }
 
@@ -1002,26 +992,21 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             asPage: 0 //false
         }
         if (this.totalRecords > 0) {
-
-
-
             const formatedRecords = this.totalRecords.toLocaleString('en-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            this.countMessage = 'Total records ' + formatedRecords;
-            this.showCountDialog = true;
+            this.message = 'Total records ' + formatedRecords;
+            this.isLoading = true;
             return
         }
-        this.isCountingTotalRecors = true
+        this.isLoading = true
+        this.message = 'Statement is processing,\n please wait...';
 
         this.udfService.getTotalRecords(params, null).subscribe(
             (response: any) => {
 
                 setTimeout(() => {
                     const formatedRecords = response.totalRows.toLocaleString('en-BD', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    this.totalRecords = formatedRecords
+                    this.message = 'Total records ' + formatedRecords;
                 }, 1000);
-
-                this.isCountingTotalRecors = false;
-
             });
     }
 
@@ -1041,8 +1026,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
     exportSelectedRowsToExcel() {
 
         if (!this.selectedRows || this.selectedRows.length === 0) {
-            this.countMessage = 'Please select at least one row.';
-            this.showCountDialog = true;
+            this.notificationService.sendInfo('Please select at least one row.');
             return;
         }
 
@@ -1451,12 +1435,12 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.isShowReport = true;
                 this.isTableData = true
                 // Add temporary unique key for PrimeNG row selection
-                this.tableData = response.rows.map((row: any, index: number) => ({
+                const additionalData = response.rows.map((row: any, index: number) => ({
                     __rowId: index,
                     ...row
                 }));
 
-                this.filteredTableData = [...this.filteredTableData, ...this.tableData];
+                this.filteredTableData = [...this.filteredTableData, ...additionalData];
                 if (response.rows.length < this.pageSize) {
                     this.totalRecords = this.filteredTableData.length
                 }
@@ -1511,19 +1495,19 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 let rows = response.rows;
 
                 // Add temporary unique key for PrimeNG row selection
-                this.tableData = rows.map((row: any, index: number) => ({
+                this.filteredTableData = rows.map((row: any, index: number) => ({
                     __rowId: index,
                     ...row
                 }));
 
-                this.filteredTableData = [...this.tableData];
+                //this.filteredTableData = [...this.tableData];
                 if (this.filteredTableData.length == this.pageSize) {
                     this.totalRowMessage = ' fetched so far(more rows exist)'
                 } if (this.filteredTableData.length < this.pageSize) {
                     this.totalRecords = this.filteredTableData.length
                 }
 
-                if (this.tableData && this.tableData.length > 0) {
+                if (this.filteredTableData && this.filteredTableData.length > 0) {
                     this.cols = response.columns.map((column: any) => ({
 
                         field: column.name,
@@ -1563,18 +1547,12 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     downloadedData(query: string) {
 
-
-
-
         let params = {
             sql: query,
             params: { id: "abc" }
 
         }
         const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null);
-
-
-
 
 
         this.udfService.executeQueryWithDataType(params, urlSearchParams).subscribe(
@@ -1589,14 +1567,13 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                     let rows = response.rows;
 
                     // Add temporary unique key for PrimeNG row selection
-                    this.tableData = rows.map((row: any, index: number) => ({
+                    this.filteredTableData = rows.map((row: any, index: number) => ({
                         __rowId: index,
                         ...row
                     }));
 
-                    this.filteredTableData = [...this.tableData];
 
-                    if (this.tableData && this.tableData.length > 0) {
+                    if (this.filteredTableData && this.filteredTableData.length > 0) {
                         this.cols = response.columns.map((column: any) => ({
 
                             field: column.name,
@@ -1691,7 +1668,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         if (this.totalRecords > 300000) {
             //   return this.notificationService.sendInfo('Too may rows. You can export highest 300000 rows at a time')
         }
-        this.isExporting = true;
+        this.isLoading = true;
 
         const workbook = XLSX.utils.book_new();
 
@@ -1724,8 +1701,6 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             window.URL.revokeObjectURL(url);
         });
 
-        this.isExporting = false;
-
     }
 
 
@@ -1733,7 +1708,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     exportPdfReport() {
 
-        this.isExporting = true
+        this.isLoading = true
         setTimeout(() => {
 
             try {
@@ -1785,7 +1760,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 doc.save('Report.pdf');
 
             } finally {
-                this.isExporting = false
+                this.isLoading = false
             }
 
         }, 100);
@@ -1906,36 +1881,40 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
             this.copyToClipboard2(copyText);
         }
 
-        // Ctrl+Click selection (3 or more individual cells)
-        const rowMap = new Map<number, { col: number, value: any }[]>();
+        if (this.selectedCells.size > 1) {
+            // Ctrl+Click selection (3 or more individual cells)
+            const rowMap = new Map<number, { col: number, value: any }[]>();
 
-        cells.forEach(cell => {
+            cells.forEach(cell => {
 
-            const field = this.visibleColumns[cell.col].field;
-            const value = this.filteredTableData[cell.row]?.[field] ?? '';
+                const field = this.visibleColumns[cell.col].field;
+                const value = this.filteredTableData[cell.row]?.[field] ?? '';
 
-            if (!rowMap.has(cell.row)) {
-                rowMap.set(cell.row, []);
-            }
+                if (!rowMap.has(cell.row)) {
+                    rowMap.set(cell.row, []);
+                }
 
-            rowMap.get(cell.row)!.push({ col: cell.col, value });
+                rowMap.get(cell.row)!.push({ col: cell.col, value });
 
-        });
+            });
 
-        copyText = Array.from(rowMap.entries())
-            .sort((a, b) => a[0] - b[0])
-            .map(([_, cols]) =>
-                cols
-                    .sort((a, b) => a.col - b.col)
-                    .map(c => c.value)
-                    .join('\t')
-            )
-            .join('\n');
+            copyText = Array.from(rowMap.entries())
+                .sort((a, b) => a[0] - b[0])
+                .map(([_, cols]) =>
+                    cols
+                        .sort((a, b) => a.col - b.col)
+                        .map(c => c.value)
+                        .join('\t')
+                )
+                .join('\n');
 
-        this.copyToClipboard2(copyText);
+            this.copyToClipboard2(copyText);
+        }
+
+
     }
 
-    
+
 
     copyToClipboard2(text: string) {
 
