@@ -123,7 +123,8 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
     isLoadingData: boolean = false;
     currentRow: number = 0
-    pageSize = 50;
+    remainingRowForCallAIP=40;
+    pageSize = 100;
     page = 0;
     totalRecords = 0;
     totalRowMessage: string;
@@ -837,23 +838,23 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
                 this.selectedCells.add(key);
             }
         } else if (event.shiftKey) {
-
+            this.selectedCells.clear();
             this.isDraggSelection = true;
             this.selectionEnd = { row: rowIndex, col: colIndex }
-            if (this.selectedCells.has(key)) {
-                this.selectedCells.delete(key);
+            if (this.selectedCellsRange.has(key)) {
+                this.selectedCellsRange.delete(key);
             } else {
-                const arr = Array.from(this.selectedCells);
+                const arr = Array.from(this.selectedCellsRange);
 
                 if (arr.length >= 2) {
-                    this.selectedCells.delete(arr[1]); // Delete the second item
+                    this.selectedCellsRange.delete(arr[1]); // Delete the second item
                 }
-                this.selectedCells.add(key);
+                this.selectedCellsRange.add(key);
             }
         } else {
             this.selectedCells.clear();
             this.selectedCells.add(key);
-            this.selectedCellsRange.clear()
+            this.selectedCellsRange.add(key);
             //  this.selectionStart = { row: rowIndex, col: colIndex };
             this.isDraggSelection = false;
             this.selectedRowIndex = rowIndex;
@@ -1332,7 +1333,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
 
 
         // Load next page when only 20 rows remain
-        if (remainingRows <= 20) {
+        if (remainingRows <= this.remainingRowForCallAIP) {
 
             if (this.isLoadingData || this.filteredTableData.length < this.pageSize) {
                 return;
@@ -1381,7 +1382,7 @@ export class QueryExecutorFormComponent extends FormBaseComponent {
         }
 
 
-        if (lentghDif < 20 && this.isLoadingData == false && loadingDataLength != this.totalRecords) {
+        if (lentghDif < this.remainingRowForCallAIP && this.isLoadingData == false && loadingDataLength != this.totalRecords) {
             this.isLoadingData = true
             this.page += 1
             this.loadAdditionalNextRows(true)
