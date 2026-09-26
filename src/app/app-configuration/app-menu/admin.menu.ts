@@ -29,7 +29,17 @@ export const AdminMenuList = [
             { name: 'Panel Menu', url: '#', routerLink: "/admin/demo-panel-manue" },
             { name: 'Dynamic Report', url: '#', routerLink: "/admin/dynamic-report" },
             { name: 'Query Executor', url: '#', routerLink: "/admin/dynamic-report/query-executor" },
+            { name: 'Upload Jasper', url: '#', routerLink: "/admin/dynamic-report/upload-jasper" },
 
+        ]
+    },
+    {
+        name: 'Jasper Report',
+        icon: 'pi pi-qrcode',
+        active: false,
+        submenu: [
+            { name: 'Data Source', url: '#', routerLink: "/admin/jasper-report/data-source" },
+            { name: 'Upload Jasper', url: '#', routerLink: "/admin/jasper-report/report-list" },
         ]
     },
     {

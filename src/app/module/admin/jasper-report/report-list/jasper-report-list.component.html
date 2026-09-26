@@ -1,0 +1,132 @@
+<div class="app-page">
+    <div>
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left  ">
+                <p class="app-page-header">Jasper Reports</p>
+            </div>
+            <div class="app-button-group">
+
+                <button (click)="op.show($event)"><i class="pi pi-search" style="font-size:10px"></i> Search</button>
+                <button (click)="addReport()"><i class="pi pi-plus" style="font-size:10px"></i> upload</button>
+                <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+            </div>
+        </div>
+    </div>
+
+    <hr style="margin-top: 5px; margin-bottom: 2px;">
+    <div class="app-list">
+        <div style="padding: 0px 5px 5px 5px">
+            <p-table class=" table-hover table-responsive" #dataTable [value]="jasperReport" dataKey="id" editMode="row"
+                [paginator]="true" [rows]="20" [totalRecords]="totalRecords" 
+                [(selection)]="selectedCustomer"  styleClass="p-datatable-sm"
+                (onRowSelect)="onRowSelect($event)" selectionMode="single">
+                <ng-template pTemplate="header">
+                    <tr style="font-size: 14px;">
+
+                        <th style="min-width: 200px;">Report Name</th>
+                        <th style="min-width: 200px;">Data Source</th>
+
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-data let-editing="editing" let-ri="rowIndex">
+                    <tr [pSelectableRow]="data" style="font-size: 14px;">
+
+                        <td>{{ data.reportFileName }}</td>
+                        <td>{{ data.dataSource }}</td>
+
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+    </div>
+
+
+    <p-overlayPanel #op [style]="{ width: '350px' }" showCloseIcon="true">
+        <form [formGroup]="searchForm">
+            <div style="margin: 20px 10px 10px 10px;">
+                <div class="row app-row">
+                    <div class="col-sm-6  col-md-12 ">
+                        <div class="app-input-field">
+                            <input type="text" id="reportName" placeholder=" " formControlName="reportName">
+                            <label for="reportName">Report Name</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="text-align: center;">
+                    <button class="app-button" (click)="search(null);op.hide()">Search</button>
+                </div>
+            </div>
+        </form>
+    </p-overlayPanel>
+
+    <p-dialog header="Upload Report" [(visible)]="displayUploadDialog" [modal]="true" [style]="{ width: '500px' } "
+        [closable]="true" [resizable]="false" [draggable]="false">
+        <div class="container mt-4">
+
+            <div>
+
+                <div>
+
+                    <form (ngSubmit)="saveReport()">
+
+                        <!-- Report File Name -->
+                        <div class="mb-3">
+                            <label for="reportFileName" class="form-label">
+                                Report File Name
+                            </label>
+
+                            <input type="text" id="reportFileName" class="form-control" [(ngModel)]="reportFileName"
+                                name="reportFileName" placeholder="Enter report file name" required />
+                        </div>
+                        <br>
+                        <!-- File -->
+                        <div class="mb-3">
+                            <label for="reportFile" class="form-label">
+                                Select Report File
+                            </label>
+
+                            <input type="file" id="reportFile" class="form-control" (change)="onFileSelected($event)"
+                                accept=".jrxml,.jasper" required />
+                        </div>
+                        <br>
+                        <!-- Selected file -->
+                        <div class="mb-3">
+                            <label for="dataSource" class="form-label">
+                                Select Data Source
+                            </label>
+
+                            <select  id="dataSource" class="form-select" [(ngModel)]="selectedDataSource" name="selectedDataSource"
+                                required placeholder="Select Data Source">
+                                <option *ngFor="let option of dataSourceOptions" [value]="option.value">
+                                    {{ option.label }}
+                                </option>
+                            </select>
+                        </div>
+                        <br>
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 text-center">
+
+                            <button type="submit" class="btn btn-primary" [disabled]="!selectedFile || !reportFileName">
+                                Upload
+                            </button>
+
+                            <button type="button" class="btn btn-secondary" (click)="resetForm()">
+                                Reset
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </p-dialog>
+
+</div>

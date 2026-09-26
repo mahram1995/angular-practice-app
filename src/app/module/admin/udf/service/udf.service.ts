@@ -22,6 +22,10 @@ const executeQueryWithDataType = URL + 'admin/query-executor/execute-with-column
 const getTotalRecords = URL + 'admin/query-executor/get-total-records'
 const exportExcel = URL + 'admin/query-executor/export-excel'
 
+const RUN_REPORT = URL + 'admin/jasper-reports/run-report'
+const GET_JASPER_REPORT = URL + 'admin/jasper-reports/get-jasper-reports'
+
+
 @Injectable()
 export class UDFService extends BaseService {
 
@@ -53,6 +57,13 @@ export class UDFService extends BaseService {
             params: urlSearchParams,
             responseType: 'blob' // important
         })
+    }
+
+    public runReport(data: any, urlSearchParams): Observable<any> {
+        return this.http.post(RUN_REPORT, data, urlSearchParams);
+    }
+      public getJapserReportList(urlSearchParams): Observable<any> {
+        return this.http.get(GET_JASPER_REPORT, urlSearchParams);
     }
 
     public getUdfById(urlSearchParams): Observable<any> {

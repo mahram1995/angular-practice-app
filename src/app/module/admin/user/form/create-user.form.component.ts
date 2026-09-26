@@ -78,7 +78,7 @@ export class UserRegistrationComponent extends FormBaseComponent implements OnIn
         let param = new Map();
         param.set('userName', userName);
         this.adminService.fetchUsers(param).subscribe(data => {
-            this.prepareForm(data.content[0])
+            this.prepareForm(data[0])
             if (this.isEdit) {
                 this.userForm.get('userName')?.disable();
                 this.userForm.get('password')?.clearValidators();

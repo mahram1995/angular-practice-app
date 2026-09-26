@@ -47,13 +47,16 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
     }
 
     getHttpHeader(urlSearchParam: any, data: any): any {
-        let token = this.getToken();
+        let token = this.getToken();        
         let responseType;
         let headers = new HttpHeaders()
             .set('Authorization', `Bearer ${token}`)
-            .set('Content-Type', 'application/json');
 
         let httpParams = new HttpParams();
+
+        if (!(data instanceof FormData)) {
+            headers = headers.set('Content-Type', 'application/json');
+        }
 
         if (urlSearchParam) {
             if (data === null) {
@@ -96,12 +99,12 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
             }
         }
 
-        
+
 
         return {
             headers: headers,
             params: httpParams,
-            responseType: responseType? responseType : 'json'
+            responseType: responseType ? responseType : 'json'
         };
     }
 
@@ -124,7 +127,7 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
     public postWithoutLoading(url: string, data: any, options?: any): Observable<any> {
         return super.post(url, data, this.getHttpHeader(options, data));
     }
-    
+
 
 
     public override put(url: string, data: any, options?: any): Observable<any> {

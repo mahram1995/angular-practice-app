@@ -56,6 +56,12 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./dynamic-report/dynamic-report.module').then(m => m.DynamicReportModule)
       },
+        {
+        path: 'jasper-report',
+        canActivate: [AuthGuard],
+        loadChildren: () =>
+          import('./jasper-report/jasper-report.module').then(m => m.JasperReportModule)
+      },
     ]
   },
 

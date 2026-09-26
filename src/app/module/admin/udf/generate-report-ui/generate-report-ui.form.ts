@@ -10,6 +10,7 @@ import { UDFDomain, UserDefinedField, UserDefinedFieldDomainData } from '../serv
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 
 
@@ -47,7 +48,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
     reportTypeList = [
         { label: "PDF", value: 'pdf' },
-        { label: "DOCX", value: 'docx' },
+        { label: "DOCS", value: 'docs' },
         { label: "XLS", value: 'xls' },
         { label: "XLSX", value: 'xlsx' },
         { label: "CSV", value: 'csv' },
@@ -55,13 +56,26 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
     ];
 
-    udfProfileData: UDFDomain; // Paste your JSON here
-    profileId: number
+    quarterList=[
+        { label: "Q1", value: 1 },
+        { label: "Q2", value: 2 },
+        { label: "Q3", value: 3 },
+        { label: "Q4", value: 4 }
+    ]
 
+    udfProfileData: UDFDomain; // Paste your JSON here
+    profileId: number;
+
+    pdfUrl: SafeResourceUrl | null = null;
+
+    private objectUrl: string | null = null;
+
+    loading = false;
     constructor(private fb: FormBuilder,
         protected override location: Location,
         protected override commonService: CommonService,
         private notificationService: NotificationService,
+        private sanitizer: DomSanitizer,
         protected override router: Router,
         private datePipe: DatePipe,
         private udfService: UDFService,
@@ -87,9 +101,10 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         for (let year = startYear; year <= currentYear; year++) {
             years.push({ label: year.toString(), value: year });
         }
-
+        
         // Sort descending
-        return years.sort((a, b) => b.value - a.value);
+        let sortedYears = years.sort((a, b) => b.value - a.value);
+         return sortedYears;
     }
 
 
@@ -405,6 +420,75 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
     }
 
+    downloadedReportFromDatabase() {
+        if (this.form.invalid) {
+            this.form.markAllAsTouched();
+            return;
+        }
+        let data = this.form.value;
+
+        let result: { [key: string]: any } = {};
+        Object.entries(data).forEach(([key, value]) => {
+            if (value === null || value === undefined || value === '') {
+                return; // Skip this key-value pair
+            }
+
+            let dataType = this.fields.find(f => f.name === key)?.dataType
+            if (dataType === 'DATE' && value) {
+                const date = new Date(value as string);
+                result[key] = this.datePipe.transform(date, 'yyyy-MM-dd');
+            } else { result[key] = value; }
+        });
+
+        let reportFileName = this.getReportFIleName(data)
+        const reportExtension = data.reportExtension; // or 'html', 'txt'
+        
+        if (reportFileName === "") {
+            this.notificationService.sendError('Report file name is not found, Please check the report file name or expresion')
+            return;
+        }
+
+
+        let reportData = {
+            //"jasperFileName": "CL4_XLSX_OLD.jrxml", //"CL1_TOPSHEET_OLD.jrxml"
+            "jasperFileName": reportFileName + '.jrxml',
+            "databaseId": 101,
+            "reportFormat": reportExtension,
+            "parameters": result
+        }
+       
+
+        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null, 'blob');
+        this.udfService.runReport(reportData, urlSearchParams).subscribe({
+            next: (blob) => {
+
+               
+
+                // Remove previous PDF URL
+                if (this.reportUrl) {
+                    URL.revokeObjectURL(this.objectUrl);
+                }
+
+                // Create browser URL for PDF
+                this.objectUrl = URL.createObjectURL(blob);
+
+                this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+                    this.objectUrl
+                );
+                this.isShowParaForm = false;
+            },
+
+            error: (err: HttpErrorResponse) => {
+                // this.notificationService.sendError(error.message + ' Please check the server log for more details');
+                console.log(err.error?.message);
+                
+            }
+        });
+
+
+    }
+
+
     downloadedReport() {
         if (this.form.invalid) {
             this.form.markAllAsTouched();
@@ -489,6 +573,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         )
 
     }
+
 
     getReportFIleName(data: any) {
         let expression = this.udfProfileData.reportFileName; // could be a string or an expression
@@ -617,7 +702,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
                 if (parameters[param]) {
                     fullURL = fullURL.replace('{' + param + '}', parameters[param])
                 } else {
-                    // console.log(param + " not found.");
+
                     throw new Error(`Parameter ${param} was not provided`);
                 }
             }
@@ -640,7 +725,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
                 if (parameters[param]) {
                     fullURL = fullURL.replace('{' + param + '}', parameters[param])
                 } else {
-                    // console.log(param + " not found.");
+              
                     throw new Error(`Parameter ${param} was not provided`);
                 }
             }
