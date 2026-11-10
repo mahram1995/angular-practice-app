@@ -11,8 +11,8 @@ import { UDFService } from '../../udf/service/udf.service';
 import { JasperReportService } from '../service/JasperReportService';
 import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
 
-const DETAILS_UI = 'admin/udf-details';
-const CORRECTION_UI = 'admin/create-udf';
+const DETAILS_UI = 'admin/jasper-report-log';
+const CORRECTION_UI = 'admin/jasepr-report-log';
 @Component({
     selector: 'jasper-report-list',
     templateUrl: './jasper-report-list.component.html',

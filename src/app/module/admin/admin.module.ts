@@ -51,7 +51,6 @@ import { JasperReportComponent } from './daynamic-data-source-in-jasper-report/j
         JasperReportComponent
 
 
-
     ],
 
     providers: [

@@ -46,8 +46,8 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
         }
     }
 
-    getHttpHeader(urlSearchParam: any, data: any): any {
-        let token = this.getToken();        
+    getHttpHeaderBackup(urlSearchParam: any, data: any): any {
+        let token = this.getToken();
         let responseType;
         let headers = new HttpHeaders()
             .set('Authorization', `Bearer ${token}`)
@@ -108,15 +108,101 @@ export class HttpService extends HttpClient implements HttpServiceInterface {
         };
     }
 
+
+    getHttpHeader(urlSearchParam: any, data: any): any {
+
+        const token = this.getToken();
+        let responseType = 'json';
+
+        let headers = new HttpHeaders()
+            .set('Authorization', `Bearer ${token}`);
+
+        let httpParams = new HttpParams();
+
+        if (!(data instanceof FormData)) {
+            headers = headers.set('Content-Type', 'application/json');
+        }
+
+        if (urlSearchParam) {
+
+            // Read responseType for both GET and other requests
+            if (urlSearchParam instanceof Map) {
+                const requestedResponseType = urlSearchParam.get('responseType');
+
+                if (requestedResponseType) {
+                    responseType = requestedResponseType;
+                }
+            }
+
+            if (data === null) {
+
+                // Add query parameters, excluding responseType
+                if (urlSearchParam instanceof Map) {
+                    urlSearchParam.forEach((value: any, key: string) => {
+
+                        if (
+                            key !== 'responseType' &&
+                            value !== null &&
+                            value !== undefined
+                        ) {
+                            httpParams = httpParams.set(key, value);
+                        }
+
+                    });
+                }
+
+            } else {
+
+                const taskId = urlSearchParam.get('taskId');
+                if (taskId != null) {
+                    headers = headers.set('taskId', taskId);
+                }
+
+                const verifier = urlSearchParam.get('verifier');
+                if (verifier != null) {
+                    headers = headers.set('verifier', verifier);
+                }
+
+                const maker = urlSearchParam.get('maker');
+                if (maker != null) {
+                    headers = headers.set('maker', maker);
+                }
+
+                const detailsUI = urlSearchParam.get('detailsUI');
+                if (detailsUI != null) {
+                    headers = headers.set('detailsUI', detailsUI);
+                }
+
+                const correctionUI = urlSearchParam.get('correctionUI');
+                if (correctionUI != null) {
+                    headers = headers.set('correctionUI', correctionUI);
+                }
+            }
+
+            const terminalIp = this.commonService.getClientIp();
+
+            if (terminalIp) {
+                headers = headers.set('terminalIp', terminalIp);
+            }
+        }
+
+        return {
+            headers: headers,
+            params: httpParams,
+            responseType: responseType
+        };
+    }
+
     public override get(url: string, options?: any): Observable<any> {
+        this.showLoadingModal();
         const mergedOptions = this.getHttpHeader(options?.params, null);
 
-        return super.get(url, {
+        return this.interceptRequest(super.get(url, {
             ...mergedOptions,
             ...options, // keep responseType, etc.
             headers: mergedOptions.headers, // overwrite headers properly
             params: mergedOptions.params    // overwrite params properly
-        });
+        }));
     }
 
     public override post(url: string, data: any, options?: any): Observable<any> {

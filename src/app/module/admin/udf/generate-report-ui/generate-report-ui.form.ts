@@ -56,7 +56,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
     ];
 
-    quarterList=[
+    quarterList = [
         { label: "Q1", value: 1 },
         { label: "Q2", value: 2 },
         { label: "Q3", value: 3 },
@@ -101,10 +101,10 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         for (let year = startYear; year <= currentYear; year++) {
             years.push({ label: year.toString(), value: year });
         }
-        
+
         // Sort descending
         let sortedYears = years.sort((a, b) => b.value - a.value);
-         return sortedYears;
+        return sortedYears;
     }
 
 
@@ -442,7 +442,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
 
         let reportFileName = this.getReportFIleName(data)
         const reportExtension = data.reportExtension; // or 'html', 'txt'
-        
+
         if (reportFileName === "") {
             this.notificationService.sendError('Report file name is not found, Please check the report file name or expresion')
             return;
@@ -452,20 +452,19 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
         let reportData = {
             //"jasperFileName": "CL4_XLSX_OLD.jrxml", //"CL1_TOPSHEET_OLD.jrxml"
             "jasperFileName": reportFileName + '.jrxml',
+            "reportName": this.reportName,
             "databaseId": 101,
             "reportFormat": reportExtension,
             "parameters": result
         }
-       
+
 
         const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null, 'blob');
         this.udfService.runReport(reportData, urlSearchParams).subscribe({
             next: (blob) => {
 
-               
-
                 // Remove previous PDF URL
-                if (this.reportUrl) {
+                if (this.objectUrl) {
                     URL.revokeObjectURL(this.objectUrl);
                 }
 
@@ -475,13 +474,27 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
                 this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
                     this.objectUrl
                 );
+
                 this.isShowParaForm = false;
             },
 
-            error: (err: HttpErrorResponse) => {
-                // this.notificationService.sendError(error.message + ' Please check the server log for more details');
-                console.log(err.error?.message);
-                
+            error: async (error) => {
+                let errorMessage = 'Report generation failed.';
+
+                try {
+                    if (error.error instanceof Blob) {
+                        const responseText = await error.error.text();
+                        const responseJson = JSON.parse(responseText);
+
+                        errorMessage = responseJson.message || errorMessage;
+                    } else {
+                        errorMessage = error.error?.message || error.message || errorMessage;
+                    }
+                } catch {
+                    errorMessage = 'Unable to generate report. Please check the server log.';
+                }
+
+                this.notificationService.sendError(errorMessage);
             }
         });
 
@@ -725,7 +738,7 @@ export class GenerateReportUiFormComponent extends FormBaseComponent {
                 if (parameters[param]) {
                     fullURL = fullURL.replace('{' + param + '}', parameters[param])
                 } else {
-              
+
                     throw new Error(`Parameter ${param} was not provided`);
                 }
             }

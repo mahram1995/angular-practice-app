@@ -7,8 +7,9 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { JasperReportRouteModule } from './jasper-report.routes.module';
-import { JasperReportListComponent } from './report-list/jasper-report-list.componemt';
 import { JasperReportService } from './service/JasperReportService';
+import { JasperReportListComponent } from './report-list/jasper-report-list.componemt';
+import { JasperReportLogComponent } from './jasper-report-log/jasper-report-log.componemt';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import { JasperReportService } from './service/JasperReportService';
 
     declarations: [
         JasperReportListComponent,
+        JasperReportLogComponent,
 
     ],
 

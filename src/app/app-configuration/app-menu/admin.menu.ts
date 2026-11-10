@@ -40,6 +40,7 @@ export const AdminMenuList = [
         submenu: [
             { name: 'Data Source', url: '#', routerLink: "/admin/jasper-report/data-source" },
             { name: 'Upload Jasper', url: '#', routerLink: "/admin/jasper-report/report-list" },
+            { name: 'Jasper Report Log', url: '#', routerLink: "/admin/jasper-report/report-log" },
         ]
     },
     {

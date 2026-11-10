@@ -62,7 +62,7 @@ export class UDFService extends BaseService {
     public runReport(data: any, urlSearchParams): Observable<any> {
         return this.http.post(RUN_REPORT, data, urlSearchParams);
     }
-      public getJapserReportList(urlSearchParams): Observable<any> {
+    public getJapserReportList(urlSearchParams): Observable<any> {
         return this.http.get(GET_JASPER_REPORT, urlSearchParams);
     }
 
