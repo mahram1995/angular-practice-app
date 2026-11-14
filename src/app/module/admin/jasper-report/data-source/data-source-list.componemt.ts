@@ -20,9 +20,10 @@ const CORRECTION_UI = 'admin/jasepr-report-log';
 })
 export class DataSourceListComponent extends FormBaseComponent implements OnInit {
     required_field: any = {
-        userName: 'code',
-        password: 'name',
-        email: 'module',
+        dbName: 'Data Source Name',
+        password: 'Password',
+        url: 'Database URL',
+        username: 'Username',
     };
     dataSources: DatabaseConfig[] = [];
     urlSearchMap: Map<string, any> = new Map();
@@ -178,16 +179,25 @@ export class DataSourceListComponent extends FormBaseComponent implements OnInit
             formData = this.dataSourceForm.value
 
         }
+
+        if (this.commonService.isFormInvalid(this.dataSourceForm, this.required_field)) {
+            return;
+        }
         let urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, CORRECTION_UI, 'text');
         this.jasperReportService.testDataSourceConnection(formData, urlSearchParams)
             .subscribe((response) => {
                 this.notificationService.sendSuccess('Data source connection test successful.', null);
+
             });
     }
 
     saveDataSource(): void {
 
         const formData = this.dataSourceForm.value
+
+        if (this.commonService.isFormInvalid(this.dataSourceForm, this.required_field)) {
+            return;
+        }
 
         let urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, CORRECTION_UI, 'text');
         this.jasperReportService.saveDataSource(formData, urlSearchParams)

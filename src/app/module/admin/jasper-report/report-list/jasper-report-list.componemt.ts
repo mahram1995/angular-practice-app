@@ -1,17 +1,15 @@
 import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Location } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
 import { CommonService } from '../../../../app-configuration/app.service/common.service';
-import { OverlayPanel } from 'primeng/overlaypanel';
-import { UDFDomain } from '../../udf/service/udf.domain';
+import JSZip from 'jszip';
 import { UDFService } from '../../udf/service/udf.service';
 import { JasperReportService } from '../service/JasperReportService';
 import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
 import { DatabaseConfig } from '../service/jaspser.report.domain';
-import { ConfirmationService } from 'primeng/api';
 
 const DETAILS_UI = 'admin/jasper-report-log';
 const CORRECTION_UI = 'admin/jasepr-report-log';
@@ -47,13 +45,19 @@ export class JasperReportListComponent extends FormBaseComponent implements OnIn
     selectedDataSource: string = '';
 
     showReportHistoryContent = false
-    selectedReprtForAudit: any
+    selectedReprtFileName: any
 
+
+    reportParameters: any[] = [];
+    parameterForm: FormGroup;
+
+    showParameterForm = false;
     constructor(
 
         private jasperReportService: JasperReportService,
         private udfService: UDFService,
         private formBuilder: FormBuilder,
+        private datePipe: DatePipe,
         private notificationService: NotificationService,
         protected override commonService: CommonService,
         protected override router: Router,
@@ -290,14 +294,16 @@ export class JasperReportListComponent extends FormBaseComponent implements OnIn
     }
 
     showAuditData(data: any): void {
-        this.selectedReprtForAudit = data.reportFileName
+        this.selectedReprtFileName = data.reportFileName
         this.fetchReportHistoryList(data.reportFileName);
     }
+
+
 
     showData(data: any): void {
 
         this.urlSearchMap = new Map();
-        this.urlSearchMap.set('auditLogId', data.id);
+        this.urlSearchMap.set('reportId', data.id);
         this.urlSearchMap.set('responseType', 'blob');
 
         this.jasperReportService.getJasperReportContent(this.urlSearchMap)
@@ -318,7 +324,7 @@ export class JasperReportListComponent extends FormBaseComponent implements OnIn
         this.jasperReportService.getReportHistoryContent(this.urlSearchMap)
             .subscribe({
                 next: (response: Blob) => {
-                    this.downloadFile(response, this.selectedReprtForAudit);
+                    this.downloadFile(response, this.selectedReprtFileName);
                 },
                 error: (error) => {
                     console.error('Report download failed:', error);
@@ -377,6 +383,200 @@ export class JasperReportListComponent extends FormBaseComponent implements OnIn
         if (fileInput) {
             fileInput.value = '';
         }
+    }
+
+    getParameterForm(data: any): void {
+        this.urlSearchMap = new Map();
+        this.urlSearchMap.set('reportId', data.id);
+        this.urlSearchMap.set('responseType', 'blob');
+        this.selectedReprtFileName = data.reportFileName
+
+        this.jasperReportService.getJasperReportContent(this.urlSearchMap)
+            .subscribe({
+                next: async (response: Blob) => {
+
+                    const arrayBuffer = await response.arrayBuffer();
+                    const decoder = new TextDecoder('UTF-8');
+                    const jrxmlContent = decoder.decode(arrayBuffer);
+
+                    //console.log('Actual JRXML Content:', jrxmlContent);
+                    // Extract parameters
+                    this.extractParameters(jrxmlContent);
+                },
+                error: error => {
+                    console.error('Report retrieval failed:', error);
+                }
+            });
+    }
+
+    extractParameters(jrxmlContent: string): void {
+
+        const parser = new DOMParser();
+
+        const xmlDoc = parser.parseFromString(
+            jrxmlContent,
+            'application/xml'
+        );
+
+        // Check XML parsing error
+        if (xmlDoc.getElementsByTagName('parsererror').length > 0) {
+            console.error('Invalid JRXML file');
+            return;
+        }
+
+        const root = xmlDoc.documentElement;
+
+        // Get only direct child parameter elements
+        const parameterElements = Array.from(root.children).filter(element => element.localName === 'parameter');
+
+        this.reportParameters = parameterElements.map(element => {
+            const descriptionElement = Array.from(element.children)
+                .find(child => child.localName === 'parameterDescription');
+            const description = descriptionElement?.textContent?.trim();
+
+            return {
+                name: element.getAttribute('name'),
+                dataType: this.getInputType(
+                    element.getAttribute('class') || 'java.lang.String'
+                ),
+                description: description || null
+            };
+        });
+
+        console.log(this.reportParameters);
+
+
+        // Generate dynamic form controls
+        const controls: { [key: string]: FormControl } = {};
+
+        this.reportParameters.forEach(parameter => {
+            controls[parameter.name] = new FormControl(null);
+        });
+
+        this.parameterForm = this.formBuilder.group(controls);
+
+        this.showParameterForm = true;
+    }
+
+    getInputType(className: string): string {
+
+        switch (className) {
+            case 'java.lang.Integer':
+            case 'java.lang.Long':
+            case 'java.lang.Double':
+            case 'java.lang.Float':
+            case 'java.math.BigDecimal':
+                return 'number';
+            case 'java.util.Date':
+            case 'java.sql.Date':
+                return 'date';
+            default:
+                return 'text';
+        }
+    }
+
+    isBooleanParameter(className: string): boolean {
+        return className === 'java.lang.Boolean' ||
+            className === 'boolean';
+    }
+
+    isJrxmlFile(fileName: string): boolean {
+        const extension = fileName.split('.').pop()?.toLowerCase();
+        return extension === 'jrxml';
+    }
+
+    runReport(): void {
+        const parameterValues = this.parameterForm.getRawValue();
+        // console.log('Parameters:', parameterValues);
+
+
+
+        let result: { [key: string]: any } = {};
+        Object.entries(parameterValues).forEach(([key, value]) => {
+            if (value === null || value === undefined || value === '') {
+                return; // Skip this key-value pair
+            }
+
+            let dataType = this.reportParameters.find(param => param.name === key)?.dataType;
+            if (dataType === 'date' && value) {
+                const date = new Date(value as string);
+                result[key] = this.datePipe.transform(date, 'yyyy-MM-dd');
+            }
+            else { result[key] = value; }
+        });
+
+        let reportFileName = this.selectedReprtFileName
+        const reportExtension = 'pdf'// data.reportExtension; // or 'html', 'txt'
+
+        if (reportFileName === "") {
+            this.notificationService.sendError('Report file name is not found, Please check the report file name or expresion')
+            return;
+        }
+
+
+        let reportData = {
+            //"jasperFileName": "CL4_XLSX_OLD.jrxml", //"CL1_TOPSHEET_OLD.jrxml"
+            "jasperFileName": reportFileName,
+            "reportName": reportFileName,
+            "databaseId": 101,
+            "reportFormat": reportExtension,
+            "parameters": result
+        }
+
+
+
+        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null, 'blob');
+        this.udfService.runReport(reportData, urlSearchParams).subscribe({
+            next: (blob: Blob) => {
+
+                const extension = reportExtension?.toLowerCase();
+
+                if (extension === 'pdf') {
+
+                    // Open PDF in a new tab
+                    const objectUrl = URL.createObjectURL(blob);
+
+                    window.open(objectUrl, '_blank');
+
+                    // Revoke URL after some time
+                    setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
+
+                } else {
+
+                    // Download other report formats
+                    const fileName = reportFileName;
+
+                    const objectUrl = URL.createObjectURL(blob);
+
+                    const link = document.createElement('a');
+                    link.href = objectUrl;
+                    link.download = fileName;
+                    link.click();
+
+                    URL.revokeObjectURL(objectUrl);
+                }
+
+            },
+
+            error: async (error) => {
+                let errorMessage = 'Report generation failed.';
+
+                try {
+                    if (error.error instanceof Blob) {
+                        const responseText = await error.error.text();
+                        const responseJson = JSON.parse(responseText);
+
+                        errorMessage = responseJson.message || errorMessage;
+                    } else {
+                        errorMessage = error.error?.message || error.message || errorMessage;
+                    }
+                } catch {
+                    errorMessage = 'Unable to generate report. Please check the server log.';
+                }
+
+                this.notificationService.sendError(errorMessage);
+            }
+        });
     }
 
 }

@@ -16,9 +16,10 @@
     <hr style="margin-top: 5px; margin-bottom: 2px;">
     <div class="app-list">
         <div style="padding: 0px 5px 5px 5px">
-            <p-table class=" table-hover table-responsive" #dataTable [value]="jasperReportAuditLogs" dataKey="id" editMode="row"
-                [paginator]="true" [rows]="20" [totalRecords]="totalRecords" [(selection)]="selectedCustomer"
-                styleClass="p-datatable-sm" (onRowSelect)="onRowSelect($event)" selectionMode="single">
+            <p-table class=" table-hover table-responsive" #dataTable [value]="jasperReportAuditLogs" dataKey="id"
+                editMode="row" [paginator]="true" [rows]="20" [totalRecords]="totalRecords"
+                [(selection)]="selectedCustomer" styleClass="p-datatable-sm" (onRowSelect)="onRowSelect($event)"
+                selectionMode="single">
                 <ng-template pTemplate="header">
                     <tr style="font-size: 14px;">
 
@@ -29,7 +30,7 @@
                         <th>Status</th>
                         <th>Data</th>
                         <th>Duration</th>
-                        <th style="width: 150px;">Parameter</th>
+                        <th style="   max-width: 200px;overflow-wrap: break-word;white-space: normal;">Parameter</th>
                         <th>Entry User</th>
                         <th>Entry Date</th>
 
@@ -59,7 +60,7 @@
                             {{ ((data.durationInms % 60000) / 1000) | number:'2.0-0' }}:
                             {{ data.durationInms % 1000 | number:'3.0-0' }}
                         </td>
-                        <td>{{ data.parameter }}</td>
+                        <td style="   max-width: 200px;overflow-wrap: break-word;white-space: normal;">{{ data.parameter }}</td>
                         <td>{{ data.entryUser }}</td>
                         <td>{{ data.entryDate ? (data.entryDate | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
 

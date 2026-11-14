@@ -25,7 +25,7 @@
                         <th style="min-width: 60px;">ID</th>
                         <th style="min-width: 180px;">Database Name</th>
                         <th style="min-width: 150px;">Database URL</th>
-                        <th >Username</th>
+                        <th>Username</th>
                         <th style="min-width:150px;">Driver Class</th>
                         <th style="min-width: 60px;">Test</th>
                         <th style="min-width: 40px;">Edit</th>
@@ -40,10 +40,12 @@
                         <td>{{ data.username }}</td>
                         <td>{{ data.driverClass }}</td>
                         <td style="text-align: center;">
-                            <button class="app-button" (click)="testConnection(data)"><i class="pi pi-refresh">Check</i></button>
+                            <button class="app-button" (click)="testConnection(data)"><i
+                                    class="pi pi-refresh">Check</i></button>
                         </td>
                         <td style="text-align: center;">
-                            <button class="app-button" (click)="editDataSource(data)"><i class="pi pi-pencil"></i></button>
+                            <button class="app-button" (click)="editDataSource(data)"><i
+                                    class="pi pi-pencil"></i></button>
                         </td>
                     </tr>
                 </ng-template>
@@ -55,14 +57,14 @@
 
 
     <p-overlayPanel #op [style]="{ width: '350px' }" showCloseIcon="true">
-    
+
         <form [formGroup]="searchForm">
             <div style="margin: 20px 10px 10px 10px;">
                 <div class="row app-row">
                     <div class="col-sm-6  col-md-12 ">
                         <div class="app-input-field">
                             <input type="text" id="reportName" placeholder=" " formControlName="reportName">
-                            <label for="reportName">Report Name</label>
+                            <label for="reportName">Data source Name</label>
                         </div>
                     </div>
 
@@ -74,9 +76,9 @@
         </form>
     </p-overlayPanel>
 
-    <p-dialog header="Upload Report" [(visible)]="displayUploadDialog" [modal]="true" [style]="{ width: '500px' } "
-        [closable]="true" [resizable]="false" [draggable]="false" filter="true">
-        
+    <p-dialog header="Create a New Data Source" [(visible)]="displayUploadDialog" [modal]="true"
+        [style]="{ width: '500px' } " [closable]="true" [resizable]="false" [draggable]="false" filter="true">
+
         <div class="container mt-4">
 
             <form [formGroup]="dataSourceForm">
@@ -84,8 +86,15 @@
                     <div class="row app-row">
                         <div class="col-sm-6  col-md-12 ">
                             <div class="app-input-field">
-                                <input type="text" id="dbName" placeholder=" " formControlName="dbName">
-                                <label for="dbName">Database Name</label>
+                                <input type="text" id="dbName" placeholder=" " formControlName="dbName" [ngClass]="{'is-invalid' :dataSourceForm.controls.dbName?.touched &&
+                                         dataSourceForm.controls.dbName?.errors}">
+                                <label for="dbName">Data Source Name</label>
+                                <div
+                                    *ngIf="dataSourceForm.controls['dbName']?.errors && dataSourceForm.controls['dbName']?.touched">
+                                    <div class="error-message"
+                                        [hidden]="!dataSourceForm.controls['dbName']?.errors?.required">
+                                        Data source name required.</div>
+                                </div>
                             </div>
                         </div>
 
@@ -94,24 +103,47 @@
                     <div class="row app-row">
                         <div class="col-sm-6  col-md-12 ">
                             <div class="app-input-field">
-                                <input type="text" id="url" placeholder=" " formControlName="url">
+                                <input type="text" id="url" placeholder=" " formControlName="url" [ngClass]="{'is-invalid' :dataSourceForm.controls.url?.touched &&
+                                         dataSourceForm.controls.url?.errors}">
                                 <label for="url">Database URL</label>
+                                <div
+                                    *ngIf="dataSourceForm.controls['url']?.errors && dataSourceForm.controls['url']?.touched">
+                                    <div class="error-message"
+                                        [hidden]="!dataSourceForm.controls['url']?.errors?.required">
+                                        Database URL required.</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="row app-row">
                         <div class="col-sm-6  col-md-12 ">
                             <div class="app-input-field">
-                                <input autocomplete="off"  type="text" id="username" placeholder=" " formControlName="username">
+                                <input autocomplete="off" type="text" id="username" placeholder=" "
+                                    formControlName="username" [ngClass]="{'is-invalid' :dataSourceForm.controls.username?.touched &&
+                                         dataSourceForm.controls.username?.errors}">
                                 <label for="username">Username</label>
+                                <div
+                                    *ngIf="dataSourceForm.controls['username']?.errors && dataSourceForm.controls['username']?.touched">
+                                    <div class="error-message"
+                                        [hidden]="!dataSourceForm.controls['username']?.errors?.required">
+                                        Username required.</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="row app-row">
                         <div class="col-sm-6  col-md-12 ">
                             <div class="app-input-field">
-                                <input autocomplete="off"  type="password" id="password" placeholder=" " formControlName="password">
+                                <input autocomplete="off" type="password" id="password" placeholder=" "
+                                    formControlName="password" [ngClass]="{'is-invalid' :dataSourceForm.controls.password?.touched &&
+                                         dataSourceForm.controls.password?.errors}">
                                 <label for="password">Password</label>
+                                <div
+                                    *ngIf="dataSourceForm.controls['password']?.errors && dataSourceForm.controls['password']?.touched">
+                                    <div class="error-message"
+                                        [hidden]="!dataSourceForm.controls['password']?.errors?.required">
+                                        Password required.</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -125,7 +157,8 @@
                         </div>
                         <div class="col-sm-6  col-md-6">
                             <div style="text-align: center;">
-                                <button class="app-button" (click)="saveDataSource();op.hide()">Save Data Source</button>
+                                <button class="app-button" (click)="saveDataSource();op.hide()">Save Data
+                                    Source</button>
                             </div>
                         </div>
                     </div>

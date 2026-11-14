@@ -16,15 +16,13 @@ import { ConfirmationService } from 'primeng/api';
 
 @NgModule({
     imports: [
-        AppShareModule,
-        CommonModule,
-        JasperReportRouteModule,
-        ProgressSpinnerModule,
-        MultiSelectModule,
-        ContextMenuModule,
-                
-
-    ],
+    AppShareModule,
+    CommonModule,
+    JasperReportRouteModule,
+    ProgressSpinnerModule,
+    MultiSelectModule,
+    ContextMenuModule
+],
 
     declarations: [
         JasperReportListComponent,

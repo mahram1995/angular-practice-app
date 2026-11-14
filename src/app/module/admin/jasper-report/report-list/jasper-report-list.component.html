@@ -5,10 +5,13 @@
                 <p class="app-page-header">Jasper Reports</p>
             </div>
             <div class="app-button-group">
+                <input pInputText pSize="small" type="text"
+                    (input)="dt.filterGlobal($any($event.target).value, 'contains')" placeholder="Keyword Search" />
 
                 <button (click)="op.show($event)"><i class="pi pi-search" style="font-size:10px"></i> Search</button>
                 <button (click)="addReport()"><i class="pi pi-plus" style="font-size:10px"></i> upload</button>
-                <button (click)="exportAllReports()"><i class="pi pi-download" style="font-size:10px"></i> Export All</button>
+                <button (click)="exportAllReports()"><i class="pi pi-download" style="font-size:10px"></i> Export
+                    All</button>
                 <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
                 <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
             </div>
@@ -18,38 +21,41 @@
     <hr style="margin-top: 5px; margin-bottom: 2px;">
     <div class="app-list">
         <div style="padding: 0px 5px 5px 5px">
-            <p-table class=" table-responsive" [value]="jasperReport" dataKey="id" editMode="row"
+            <p-table #dt dataKey="id" class="  table-responsive" [value]="jasperReport" dataKey="id" editMode="row"
                 [paginator]="true" [rows]="20" [totalRecords]="totalRecords" [(selection)]="selectedCustomer"
-                styleClass="p-datatable-sm">
+                styleClass="p-datatable-sm" [globalFilterFields]="[  'reportFileName', 'createdBy','dataSource'  ]">
                 <ng-template pTemplate="header">
                     <tr style="font-size: 14px;">
-
-                        <th style="min-width: 200px;">Report Name</th>
+                        <th style="min-width: 200px;" filterField="reportFileName">Report Name </th>
                         <th style="min-width: 150px;">Data Source</th>
-                        <th >Create By</th>
-                        <th >Create Date</th>
-                        <th >Update By</th>
-                        <th >Update Date</th>
-                        <th  style="width: 310px;">Actions</th>
+                        <th>Create By</th>
+                        <th>Create Date</th>
+                        <th>Update By</th>
+                        <th>Update Date</th>
+                        <th style="width: 310px;">Actions</th>
 
                     </tr>
                 </ng-template>
 
-                <ng-template pTemplate="body" let-data  let-ri="rowIndex">
+                <ng-template pTemplate="body" let-data let-ri="rowIndex">
                     <tr [pSelectableRow]="data" style="font-size: 14px;">
                         <td>{{ data.reportFileName }}</td>
                         <td>{{ getDatasourceNameById(data.dataSource) }}</td>
                         <td>{{ data.createdBy }}</td>
-                        <td>{{ data.createDate ? (data.createDate  | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
+                        <td>{{ data.createDate ? (data.createDate | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
                         <td>{{ data.updateBy }}</td>
                         <td>{{ data.updateDate ? (data.updateDate | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
                         <td style="display: flex; gap: 5px; justify-content: center;">
-                            <button  style=" background-color: #108a7d; color:white; border:none" 
-                             (click)="showData(data)">Download</button>
-                            <button  style=" background-color: #108a7d; color:white; border:none" 
-                             (click)="changeDataSource(data)">Change Data Source</button>
-                            <button  style=" background-color: #108a7d; color:white; border:none" 
-                             (click)="showAuditData(data)">Audit</button>
+                            <button style=" background-color: #108a7d; color:white; border:none"
+                                (click)="showData(data)">Download</button>
+                            <button *ngIf="isJrxmlFile(data.reportFileName)"
+                                style=" background-color: #108a7d; color:white; border:none"
+                                (click)="changeDataSource(data)">Edit</button>
+                            <button style=" background-color: #108a7d; color:white; border:none"
+                                (click)="showAuditData(data)">Audit</button>
+                            <button *ngIf="isJrxmlFile(data.reportFileName)"
+                                style=" background-color: #108a7d; color:white; border:none"
+                                (click)="getParameterForm(data)">Param</button>
                         </td>
                     </tr>
                 </ng-template>
@@ -161,45 +167,104 @@
         </div>
     </p-dialog>
 
-    <p-dialog [header]="'History for ' + selectedReprtForAudit" [(visible)]="showReportHistoryContent" [modal]="true"
+    <p-dialog [header]="'History for ' + selectedReprtFileName" [(visible)]="showReportHistoryContent" [modal]="true"
         [style]="{ width: '1000px' }" [closable]="true" [resizable]="false" [draggable]="false">
         <div class="app-list">
-        <div style="padding: 0px 5px 5px 5px">
-            <p-table class=" table-responsive" [value]="reportHistoryLogList" dataKey="id" editMode="row"
-                [paginator]="true" [rows]="20" [totalRecords]="totalRecords" [(selection)]="selectedCustomer"
-                styleClass="p-datatable-sm">
-                <ng-template pTemplate="header">
-                    <tr style="font-size: 14px;">
+            <div style="padding: 0px 5px 5px 5px">
+                <p-table class=" table-responsive" [value]="reportHistoryLogList" dataKey="id" editMode="row"
+                    [paginator]="true" [rows]="20" [totalRecords]="totalRecords" [(selection)]="selectedCustomer"
+                    styleClass="p-datatable-sm">
+                    <ng-template pTemplate="header">
+                        <tr style="font-size: 14px;">
 
-                        <th style="min-width: 50px;">Commit No</th>
-                        <th >Data Source</th>
-                        <th >Create By</th>
-                        <th >Create Date</th>
-                        <th >Update By</th>
-                        <th >Update Date</th>
-                        <th  style="width: 60px;">Actions</th>
+                            <th style="min-width: 50px;">Commit No</th>
+                            <th>Data Source</th>
+                            <th>Create By</th>
+                            <th>Create Date</th>
+                            <th>Update By</th>
+                            <th>Update Date</th>
+                            <th style="width: 60px;">Actions</th>
 
-                    </tr>
-                </ng-template>
+                        </tr>
+                    </ng-template>
 
-                <ng-template pTemplate="body" let-data  let-ri="rowIndex">
-                    <tr [pSelectableRow]="data" style="font-size: 14px;">
-                        <td>{{ data.auditNo }}</td>
-                        <td>{{ getDatasourceNameById(data.dataSource) }}</td>
-                        <td>{{ data.createBy }}</td>
-                        <td>{{ data.creteDate ? (data.creteDate  | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
-                        <td>{{ data.updateBy }}</td>
-                        <td>{{ data.updateDate ? (data.updateDate | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
-                        <td style="display: flex; gap: 5px; justify-content: center;">
-                            <button  style=" background-color: #108a7d; color:white; border:none" 
-                             (click)="showHistData(data)">Download</button>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
+                    <ng-template pTemplate="body" let-data let-ri="rowIndex">
+                        <tr [pSelectableRow]="data" style="font-size: 14px;">
+                            <td>{{ data.auditNo }}</td>
+                            <td>{{ getDatasourceNameById(data.dataSource) }}</td>
+                            <td>{{ data.createBy }}</td>
+                            <td>{{ data.createDate ? (data.createDate | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
+                            <td>{{ data.updateBy }}</td>
+                            <td>{{ data.updateDate ? (data.updateDate | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
+                            <td style="display: flex; gap: 5px; justify-content: center;">
+                                <button style=" background-color: #108a7d; color:white; border:none"
+                                    (click)="showHistData(data)">Download</button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+            </div>
+        </div>
+    </p-dialog>
+
+    <p-dialog [header]="'Paraform of ' + selectedReprtFileName" [(visible)]="showParameterForm" [modal]="true"
+        [style]="{ width: '1000px' }" [closable]="true" [resizable]="false" [draggable]="false">
+        <div *ngIf="showParameterForm">
+
+            <form [formGroup]="parameterForm">
+
+                <div class="row app-row">
+                    <div class="col-sm-6  col-md-6 " *ngFor="let parameter of reportParameters">
+                        <div *ngIf="parameter.dataType=='text'" class="app-input-field">
+                            <input type="text" [id]="parameter.name" placeholder="" [formControlName]="parameter.name">
+                            <label [for]="parameter.name"> {{ parameter.name + ' ' + (parameter.description? '( ' +
+                                parameter.description + ' )' : '' ) }}</label>
+                        </div>
+
+
+                        <div *ngIf="parameter.dataType=='number'" class="app-input-field">
+                            <input type="number" [id]="parameter.name" placeholder=""
+                                [formControlName]="parameter.name">
+                            <label [for]="parameter.name"> {{ parameter.name + ' ' + (parameter.description? '( ' +
+                                parameter.description + ' )' : '' ) }}</label>
+                        </div>
+
+                        <div *ngIf="parameter.dataType=='date'" class="app-input-field-date">
+                            <label [for]="parameter.name"> {{ parameter.name + ' ' + (parameter.description? '( ' +
+                                parameter.description + ' )' : '' ) }}</label>
+                            <p-calendar [id]="parameter.name" [formControlName]="parameter.name" appendTo="body"
+                                [dateFormat]="'dd/mm/yy'" [placeholder]="'dd/mm/yyyy'" [view]="'date'"
+                                [style]="{'min-witdh':'450px'}" [styleClass]="'app-date-field ' ">
+                            </p-calendar>
+                        </div>
+
+
+
+
+                        <p-checkbox *ngIf="isBooleanParameter(parameter.className)" [formControlName]="parameter.name">
+                        </p-checkbox>
+
+                        <!-- Other parameter types -->
+                        <!-- <input *ngIf="!isBooleanParameter(parameter.className)" pInputText class="w-full"
+                            [type]="getInputType(parameter.className)" [formControlName]="parameter.name"
+                            [placeholder]="'Enter ' + parameter.name" /> -->
+                        <br>
+                    </div>
+
+                </div>
+
+                <div class="flex justify-content-end mt-3">
+
+                    <button class="app-button" type="button" (click)="runReport()">Run Report
+                    </button>
+
+                </div>
+
+            </form>
 
         </div>
-    </div>
+
     </p-dialog>
 
 
