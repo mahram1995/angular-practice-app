@@ -10,6 +10,8 @@ import { JasperReportRouteModule } from './jasper-report.routes.module';
 import { JasperReportService } from './service/JasperReportService';
 import { JasperReportListComponent } from './report-list/jasper-report-list.componemt';
 import { JasperReportLogComponent } from './jasper-report-log/jasper-report-log.componemt';
+import { DataSourceListComponent } from './data-source/data-source-list.componemt';
+import { ConfirmationService } from 'primeng/api';
 
 
 @NgModule({
@@ -27,12 +29,12 @@ import { JasperReportLogComponent } from './jasper-report-log/jasper-report-log.
     declarations: [
         JasperReportListComponent,
         JasperReportLogComponent,
+        DataSourceListComponent
 
     ],
 
     providers: [
-      JasperReportService
-      
+      JasperReportService      
         
     ],
 

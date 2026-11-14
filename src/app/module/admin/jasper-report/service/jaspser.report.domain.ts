@@ -15,4 +15,13 @@ export class JasperReportAuditDomain {
   durationInms: number;
   terminal: string;
   userClient: string;
+};
+
+export class DatabaseConfig {
+    id: number | null;
+    dbName: string;
+    url: string;
+    username: string;
+    password: string;
+    driverClass: string;
 }

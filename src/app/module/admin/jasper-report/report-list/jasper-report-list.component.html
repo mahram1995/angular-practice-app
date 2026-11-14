@@ -8,6 +8,7 @@
 
                 <button (click)="op.show($event)"><i class="pi pi-search" style="font-size:10px"></i> Search</button>
                 <button (click)="addReport()"><i class="pi pi-plus" style="font-size:10px"></i> upload</button>
+                <button (click)="exportAllReports()"><i class="pi pi-download" style="font-size:10px"></i> Export All</button>
                 <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
                 <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
             </div>
@@ -17,28 +18,41 @@
     <hr style="margin-top: 5px; margin-bottom: 2px;">
     <div class="app-list">
         <div style="padding: 0px 5px 5px 5px">
-            <p-table class=" table-hover table-responsive" #dataTable [value]="jasperReport" dataKey="id" editMode="row"
-                [paginator]="true" [rows]="20" [totalRecords]="totalRecords" 
-                [(selection)]="selectedCustomer"  styleClass="p-datatable-sm"
-                (onRowSelect)="onRowSelect($event)" selectionMode="single">
+            <p-table class=" table-responsive" [value]="jasperReport" dataKey="id" editMode="row"
+                [paginator]="true" [rows]="20" [totalRecords]="totalRecords" [(selection)]="selectedCustomer"
+                styleClass="p-datatable-sm">
                 <ng-template pTemplate="header">
                     <tr style="font-size: 14px;">
 
                         <th style="min-width: 200px;">Report Name</th>
-                        <th style="min-width: 200px;">Data Source</th>
+                        <th style="min-width: 150px;">Data Source</th>
+                        <th >Create By</th>
+                        <th >Create Date</th>
+                        <th >Update By</th>
+                        <th >Update Date</th>
+                        <th  style="width: 310px;">Actions</th>
 
                     </tr>
                 </ng-template>
 
-                <ng-template pTemplate="body" let-data let-editing="editing" let-ri="rowIndex">
+                <ng-template pTemplate="body" let-data  let-ri="rowIndex">
                     <tr [pSelectableRow]="data" style="font-size: 14px;">
-
                         <td>{{ data.reportFileName }}</td>
-                        <td>{{ data.dataSource }}</td>
-
+                        <td>{{ getDatasourceNameById(data.dataSource) }}</td>
+                        <td>{{ data.createdBy }}</td>
+                        <td>{{ data.createDate ? (data.createDate  | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
+                        <td>{{ data.updateBy }}</td>
+                        <td>{{ data.updateDate ? (data.updateDate | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
+                        <td style="display: flex; gap: 5px; justify-content: center;">
+                            <button  style=" background-color: #108a7d; color:white; border:none" 
+                             (click)="showData(data)">Download</button>
+                            <button  style=" background-color: #108a7d; color:white; border:none" 
+                             (click)="changeDataSource(data)">Change Data Source</button>
+                            <button  style=" background-color: #108a7d; color:white; border:none" 
+                             (click)="showAuditData(data)">Audit</button>
+                        </td>
                     </tr>
                 </ng-template>
-
             </p-table>
 
         </div>
@@ -64,69 +78,129 @@
         </form>
     </p-overlayPanel>
 
-    <p-dialog header="Upload Report" [(visible)]="displayUploadDialog" [modal]="true" [style]="{ width: '500px' } "
-        [closable]="true" [resizable]="false" [draggable]="false" filter="true" >
+
+    <p-dialog header="Upload Reports & Images" [(visible)]="displayUploadDialog" [modal]="true"
+        [style]="{ width: '550px' }" [closable]="true" [resizable]="false" [draggable]="false">
+
         <div class="container mt-4">
 
-            <div>
+            <form (ngSubmit)="saveReport()">
 
-                <div>
+                <!-- Multiple Files -->
+                <div class="mb-3">
+                    <label style="color:  #1aa89c;" for="reportFiles" class="form-label">
+                        Select Report / Image Files
+                    </label>
 
-                    <form (ngSubmit)="saveReport()">
+                    <input type="file" id="reportFiles" class="form-control" (change)="onFilesSelected($event)"
+                        accept=".jrxml,.jasper,.png" multiple required />
 
-                        <!-- Report File Name -->
-                        <div class="mb-3">
-                            <label for="reportFileName" class="form-label">
-                                Report File Name
-                            </label>
+                    <small class="text-muted">
+                        Supported formats: JRXML, JASPER, PNG
+                    </small>
+                </div>
 
-                            <input type="text" id="reportFileName" class="form-control" [(ngModel)]="reportFileName"
-                                name="reportFileName" placeholder="Enter report file name" required />
-                        </div>
-                        <br>
-                        <!-- File -->
-                        <div class="mb-3">
-                            <label for="reportFile" class="form-label">
-                                Select Report File
-                            </label>
+                <!-- Selected Files -->
+                <div class="mb-3" *ngIf="selectedFiles.length > 0">
+                    <label class="form-label">Selected Files ({{selectedFiles.length}})</label>
 
-                            <input type="file" id="reportFile" class="form-control" (change)="onFileSelected($event)"
-                                accept=".jrxml,.jasper" required />
-                        </div>
-                        <br>
-                        <!-- Selected file -->
-                        <div class="mb-3">
-                            <label for="dataSource" class="form-label">
-                                Select Data Source
-                            </label>
+                    <ul class="list-group">
+                        <li style="border: none !important; font-size: 13px; padding: 2px !important;"
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                            *ngFor="let file of selectedFiles; let i = index">
 
-                            <select  id="dataSource" class="form-select" [(ngModel)]="selectedDataSource" name="selectedDataSource"
-                                required placeholder="Select Data Source">
-                                <option *ngFor="let option of dataSourceOptions" [value]="option.value">
-                                    {{ option.label }}
-                                </option>
-                            </select>
-                        </div>
-                        <br>
-                        <!-- Buttons -->
-                        <div class="d-flex gap-2 text-center">
+                            <span>
+                                <i class="fa fa-file me-2"></i>
+                                {{file.name}}
+                                <small class="text-muted">
+                                    ({{(file.size / 1024).toFixed(2)}} KB)
+                                </small>
+                            </span>
 
-                            <button type="submit" class="btn btn-primary" [disabled]="!selectedFile || !reportFileName">
-                                Upload
+                            <button type="button" style="padding: 2px; height: 25px; width: 25px; font-size: 12px;"
+                                class="btn btn-sm btn-danger" (click)="removeFile(i)">
+                                <i class="fa fa-trash" style="font-size: small;"></i>
                             </button>
+                        </li>
+                    </ul>
+                </div>
+                <br>
 
-                            <button type="button" class="btn btn-secondary" (click)="resetForm()">
-                                Reset
-                            </button>
+                <!-- Data Source -->
+                <div class="mb-3">
+                    <label style="color: #1aa89c;" for="dataSource" class="form-label">
+                        Select Data Source
+                    </label>
 
-                        </div>
+                    <select id="dataSource" class="form-select" [(ngModel)]="selectedDataSource"
+                        name="selectedDataSource" required>
 
-                    </form>
+                        <option value="" disabled>Select Data Source</option>
+
+                        <option *ngFor="let option of dataSourceOptions" [value]="option.value">
+                            {{option.label}}
+                        </option>
+                    </select>
+                </div>
+                <br>
+                <!-- Buttons -->
+                <div class="d-flex gap-2 justify-content-center">
+
+                    <button type="submit" class="btn btn-primary"
+                        [disabled]="selectedFiles.length === 0 || !selectedDataSource">
+                        Upload All ({{selectedFiles.length}})
+                    </button>
+
+                    <button type="button" class="btn btn-secondary" (click)="resetForm()">
+                        Reset
+                    </button>
 
                 </div>
-            </div>
 
+            </form>
         </div>
     </p-dialog>
+
+    <p-dialog [header]="'History for ' + selectedReprtForAudit" [(visible)]="showReportHistoryContent" [modal]="true"
+        [style]="{ width: '1000px' }" [closable]="true" [resizable]="false" [draggable]="false">
+        <div class="app-list">
+        <div style="padding: 0px 5px 5px 5px">
+            <p-table class=" table-responsive" [value]="reportHistoryLogList" dataKey="id" editMode="row"
+                [paginator]="true" [rows]="20" [totalRecords]="totalRecords" [(selection)]="selectedCustomer"
+                styleClass="p-datatable-sm">
+                <ng-template pTemplate="header">
+                    <tr style="font-size: 14px;">
+
+                        <th style="min-width: 50px;">Commit No</th>
+                        <th >Data Source</th>
+                        <th >Create By</th>
+                        <th >Create Date</th>
+                        <th >Update By</th>
+                        <th >Update Date</th>
+                        <th  style="width: 60px;">Actions</th>
+
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-data  let-ri="rowIndex">
+                    <tr [pSelectableRow]="data" style="font-size: 14px;">
+                        <td>{{ data.auditNo }}</td>
+                        <td>{{ getDatasourceNameById(data.dataSource) }}</td>
+                        <td>{{ data.createBy }}</td>
+                        <td>{{ data.creteDate ? (data.creteDate  | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
+                        <td>{{ data.updateBy }}</td>
+                        <td>{{ data.updateDate ? (data.updateDate | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
+                        <td style="display: flex; gap: 5px; justify-content: center;">
+                            <button  style=" background-color: #108a7d; color:white; border:none" 
+                             (click)="showHistData(data)">Download</button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+        </div>
+    </div>
+    </p-dialog>
+
 
 </div>

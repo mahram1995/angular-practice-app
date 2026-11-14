@@ -12,61 +12,109 @@ import { NotificationService } from './notification.service';
 import { AuthService } from '../../module/admin/login/service/auth.service';
 
 @Injectable()
+@Injectable()
+@Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
 
-    constructor(private messageService: NotificationService, private router: Router, private authService: AuthService) { }
+    constructor(
+        private messageService: NotificationService,
+        private router: Router,
+        private authService: AuthService
+    ) { }
 
-    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    intercept(
+        req: HttpRequest<any>,
+        next: HttpHandler
+    ): Observable<HttpEvent<any>> {
+
         return next.handle(req).pipe(
             catchError((error: HttpErrorResponse) => {
-                // Global error handling logic here
-                let errorMsg = 'An unexpected error occurred';
-                console.log(error);
 
+                let errorMsg = 'An unexpected error occurred';
+
+                console.log('HTTP Error:', error);
 
                 if (error.error instanceof ErrorEvent) {
+
                     // Client-side error
                     errorMsg = `Client Error: ${error.error.message}`;
+
                 } else {
+
                     // Server-side error
                     switch (error.status) {
-                        case 0:
-                            errorMsg = 'Server not reachable.\n' + error.url;
-                            break;
-                        case 400:
-                            errorMsg = error.error?.message ? error.error?.message : error.message;
-                            break;
-                        case 401:
-                            if (error.error.message) {
-                                errorMsg = error.error.message
-                            }
 
-                            this.authService.logoutByUser(null)
+                        case 0:
+                            errorMsg = 'Server not reachable.';
+                            break;
+
+                        case 400:
+                            errorMsg = this.getErrorMessage(error);
+                            break;
+
+                        case 401:
+                            errorMsg = this.getErrorMessage(error);
+
+                            this.authService.logoutByUser(null);
                             this.router.navigate(['/login']);
                             break;
+
                         case 403:
-                            errorMsg = 'Forbidden.';
+                            errorMsg = this.getErrorMessage(error) || 'Forbidden.';
                             break;
+
                         case 404:
-                            errorMsg = error.message ? 'API not found ' + error.message : 'Resource not found';
+                            errorMsg = this.getErrorMessage(error) || 'Resource not found';
                             break;
+
                         case 500:
-                            errorMsg = 'An unexpected server error occurred. Please try again later.';
-                            if (error.error?.error) {
-                                errorMsg += ` Details: ${error.error.error}`;
-                            }
-                            break
+                            errorMsg = this.getErrorMessage(error) ||
+                                'An unexpected server error occurred.';
+                            break;
+
+                        default:
+                            errorMsg = this.getErrorMessage(error);
+                            break;
                     }
                 }
 
-                // Optional: show toast message
-                this.messageService.sendError(errorMsg)
+                // Display only the actual error message
+                this.messageService.sendError(errorMsg);
 
                 return throwError(() => error);
-
             })
         );
     }
 
+    /**
+     * Extract error message from JSON object or JSON string.
+     */
+    private getErrorMessage(error: HttpErrorResponse): string {
 
+        const errorBody = error.error;
+
+        // Backend returns JSON object
+        if (typeof errorBody === 'object' && errorBody !== null) {
+            return errorBody.message || error.message ||
+                'An unexpected error occurred';
+        }
+
+        // Backend returns JSON string (responseType: 'text')
+        if (typeof errorBody === 'string') {
+
+            try {
+                const parsedError = JSON.parse(errorBody);
+
+                return parsedError.message ||
+                    errorBody ||
+                    'An unexpected error occurred';
+
+            } catch {
+                return errorBody || error.message ||
+                    'An unexpected error occurred';
+            }
+        }
+
+        return error.message || 'An unexpected error occurred';
+    }
 }

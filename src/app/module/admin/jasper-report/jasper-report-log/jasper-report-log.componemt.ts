@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Location } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
@@ -25,7 +25,7 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
         password: 'name',
         email: 'module',
     };
-    jasperReport: JasperReportAuditDomain[] = [];
+    jasperReportAuditLogs: JasperReportAuditDomain[] = [];
     urlSearchMap: Map<string, any> = new Map();
     totalRecords: number = 0;
     searchForm: FormGroup;
@@ -41,23 +41,22 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
 
     reportFileName: string = '';
     selectedFile: File | null = null;
-    dataSourceOptions: { label: string, value: string }[] = [
-        { label: 'Select Data Source', value: '' },
-        { label: 'DataSource1', value: 'DataSource1' },
-        { label: 'DataSource2', value: 'DataSource2' },
-        { label: 'DataSource3', value: 'DataSource3' }
+    reportStatus: { label: string, value: string }[] = [
+        { label: 'Select Status', value: '' },
+        { label: 'SUCCESS', value: 'SUCCESS' },
+        { label: 'PROCESSING', value: 'PROCESSING' },
+        { label: 'NOT-SUCCESS', value: 'NOT-SUCCESS' }
     ]
     selectedDataSource: string = '';
 
-    @ViewChild('dataTable') dt: Table | undefined;
-    @ViewChild('opUdfForm') overlayPanel!: OverlayPanel;
+
     constructor(
 
         private jasperReportService: JasperReportService,
         private udfService: UDFService,
         private formBuilder: FormBuilder,
         private notificationService: NotificationService,
-
+        private datePipe: DatePipe,
         protected override commonService: CommonService,
         protected override router: Router,
         protected override location: Location,
@@ -77,16 +76,23 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
 
     prepareSearchForm() {
         this.searchForm = this.formBuilder.group({
+            status: [''],
+            entryUser: [''],
+            fromDate: [''],
+            toDate: [''],
             reportName: [''],
         });
     }
 
 
     fetchJasperReportLog(searchParam: any) {
+        if (searchParam != null) {
+            this.urlSearchMap = searchParam;
+        }
         this.urlSearchMap.set('asList', false);
         this.jasperReportService.getJasperReportsAuditLog(this.urlSearchMap).subscribe(data => {
 
-            this.jasperReport = data
+            this.jasperReportAuditLogs = data
             this.totalRecords = data.length;
         })
     }
@@ -96,12 +102,12 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
     downloadReport(data: any) {
 
         const reportFormat = data.reportFormat?.toLowerCase() || '';
-        let reportName = (data.reportFileName || 'report') .replace(/\.jrxml$/i, '');
+        let reportName = (data.reportFileName || 'report').replace(/\.jrxml$/i, '');
 
         // Generate custom filename
         let fileName;
         if (data.status == 'SUCCESS') {
-            fileName = reportName + '.'+reportFormat;
+            fileName = reportName + '.' + reportFormat;
 
         } else if (data.status == 'NOT-SUCCESS') {
             fileName = reportName + '_error.txt';
@@ -120,7 +126,7 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
                     const blob = response.body;
 
                     if (!blob || blob.size === 0) {
-        
+
                         this.notificationService.sendError(
                             'Report data not found.'
                         );
@@ -273,14 +279,19 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
 
 
     search(searchMap: Map<string, any>) {
-        this.dt?.reset();
-        this.urlSearchMap.set('page', 0);
+        this.jasperReportAuditLogs = []
         if (searchMap != null) { this.urlSearchMap = searchMap; }
         for (const control in this.searchForm.controls) {
             this.urlSearchMap.delete(control);
             const formControlValue = (this.searchForm.get(control).value).toString().trim();
             if (formControlValue.length !== 0) {
-                this.urlSearchMap.set(control, formControlValue);
+                if (control === 'fromDate' || control === 'toDate') {
+                    const date = new Date(formControlValue as string);
+                    const formattedDate = this.datePipe.transform(date, 'yyyy-MM-dd');
+                    this.urlSearchMap.set(control, formattedDate);
+                } else {
+                    this.urlSearchMap.set(control, formControlValue);
+                }
             }
         }
         this.fetchJasperReportLog(this.urlSearchMap)
@@ -308,12 +319,13 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
     back() { this.location.back() }
 
     refresh() {
-        this.dt?.reset();
+        this.jasperReportAuditLogs = [];
         this.setAsPage()
     }
+
     setAsPage() {
         this.urlSearchMap = new Map();
-        this.urlSearchMap.set('asPage', true);
+        this.urlSearchMap.set('asList', false);
         this.urlSearchMap.set('size', this.rowPerPage);
         this.urlSearchMap.set('page', this.pageNumber);
         this.fetchJasperReportLog(this.urlSearchMap);
@@ -331,7 +343,7 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
         this.urlSearchMap.set('size', this.rowPerPage);
 
         this.udfService.getJapserReportList(this.urlSearchMap).subscribe(data => {
-            this.jasperReport = data.content;
+            this.jasperReportAuditLogs = data.content;
             this.totalRecords = data.totalElements;   // use backend's totalElements
             this.totalPages = data.totalPages;
         });

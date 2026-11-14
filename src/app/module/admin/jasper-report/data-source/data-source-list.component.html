@@ -1,0 +1,140 @@
+<div class="app-page">
+    <div>
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left  ">
+                <p class="app-page-header">Data Source List</p>
+            </div>
+            <div class="app-button-group">
+
+                <button (click)="op.show($event)"><i class="pi pi-search" style="font-size:10px"></i> Search</button>
+                <button (click)="addDataSource()"><i class="pi pi-plus" style="font-size:10px"></i> Add Data
+                    Source</button>
+                <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+            </div>
+        </div>
+    </div>
+
+    <hr style="margin-top: 5px; margin-bottom: 2px;">
+    <div class="app-list">
+        <div style="padding: 0px 5px 5px 5px">
+            <p-table class=" table-hover table-responsive" #dataTable [value]="dataSources" dataKey="id"
+                [paginator]="true" [rows]="20" [totalRecords]="totalRecords" styleClass="p-datatable-sm">
+                <ng-template pTemplate="header">
+                    <tr style="font-size: 14px;">
+                        <th style="min-width: 60px;">ID</th>
+                        <th style="min-width: 180px;">Database Name</th>
+                        <th style="min-width: 150px;">Database URL</th>
+                        <th >Username</th>
+                        <th style="min-width:150px;">Driver Class</th>
+                        <th style="min-width: 60px;">Test</th>
+                        <th style="min-width: 40px;">Edit</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-data let-editing="editing" let-ri="rowIndex">
+                    <tr [pSelectableRow]="data" style="font-size: 14px;">
+                        <td>{{ data.id }}</td>
+                        <td>{{ data.dbName }}</td>
+                        <td>{{ data.url }}</td>
+                        <td>{{ data.username }}</td>
+                        <td>{{ data.driverClass }}</td>
+                        <td style="text-align: center;">
+                            <button class="app-button" (click)="testConnection(data)"><i class="pi pi-refresh">Check</i></button>
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="app-button" (click)="editDataSource(data)"><i class="pi pi-pencil"></i></button>
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+    </div>
+
+
+    <p-overlayPanel #op [style]="{ width: '350px' }" showCloseIcon="true">
+    
+        <form [formGroup]="searchForm">
+            <div style="margin: 20px 10px 10px 10px;">
+                <div class="row app-row">
+                    <div class="col-sm-6  col-md-12 ">
+                        <div class="app-input-field">
+                            <input type="text" id="reportName" placeholder=" " formControlName="reportName">
+                            <label for="reportName">Report Name</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="text-align: center;">
+                    <button class="app-button" (click)="search(null);op.hide()">Search</button>
+                </div>
+            </div>
+        </form>
+    </p-overlayPanel>
+
+    <p-dialog header="Upload Report" [(visible)]="displayUploadDialog" [modal]="true" [style]="{ width: '500px' } "
+        [closable]="true" [resizable]="false" [draggable]="false" filter="true">
+        
+        <div class="container mt-4">
+
+            <form [formGroup]="dataSourceForm">
+                <div style="margin: 20px 10px 10px 10px;">
+                    <div class="row app-row">
+                        <div class="col-sm-6  col-md-12 ">
+                            <div class="app-input-field">
+                                <input type="text" id="dbName" placeholder=" " formControlName="dbName">
+                                <label for="dbName">Database Name</label>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="row app-row">
+                        <div class="col-sm-6  col-md-12 ">
+                            <div class="app-input-field">
+                                <input type="text" id="url" placeholder=" " formControlName="url">
+                                <label for="url">Database URL</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row app-row">
+                        <div class="col-sm-6  col-md-12 ">
+                            <div class="app-input-field">
+                                <input autocomplete="off"  type="text" id="username" placeholder=" " formControlName="username">
+                                <label for="username">Username</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row app-row">
+                        <div class="col-sm-6  col-md-12 ">
+                            <div class="app-input-field">
+                                <input autocomplete="off"  type="password" id="password" placeholder=" " formControlName="password">
+                                <label for="password">Password</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br> <br>
+                    <div class="row app-row">
+                        <div class="col-sm-6  col-md-6">
+                            <div style="text-align: center;">
+                                <button class="app-button" (click)="testConnection(null)">Test Connection</button>
+                            </div>
+                        </div>
+                        <div class="col-sm-6  col-md-6">
+                            <div style="text-align: center;">
+                                <button class="app-button" (click)="saveDataSource();op.hide()">Save Data Source</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+
+    </p-dialog>
+
+</div>
