@@ -52,6 +52,10 @@ export class ErrorInterceptor implements HttpInterceptor {
                             try {
                                 const responseJson = JSON.parse(responseText);
                                 errorMsg = responseJson.message || errorMsg;
+                                if (error.status === 401) {
+                                    this.authService.logoutByUser(null);
+                                    this.router.navigate(['/login']);
+                                }
                             } catch {
                                 errorMsg = responseText || errorMsg;
                             }
