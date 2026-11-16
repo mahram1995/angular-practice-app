@@ -233,7 +233,7 @@ export class JasperReportListComponent extends FormBaseComponent implements OnIn
             return;
         }
 
-        const allowedExtensions = ['jrxml', 'jasper', 'png'];
+        const allowedExtensions = ['jrxml', 'jasper', 'png','JPG','jpg','jpeg','gif','bmp','svg']; // Add more extensions as needed
 
         const files = Array.from(input.files);
 
@@ -525,58 +525,48 @@ export class JasperReportListComponent extends FormBaseComponent implements OnIn
 
 
 
-        const urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, null, null, 'blob');
+        // const pdfWindow = reportExtension?.toLowerCase() === 'pdf'
+        //     ? window.open('', '_blank')
+        //     : null;
+
+        const urlSearchParams = this.getQueryParamMapForApprovalFlow(
+            null, this.taskId, null, null, 'blob'
+        );
+
         this.udfService.runReport(reportData, urlSearchParams).subscribe({
+
             next: (blob: Blob) => {
 
+                if (!blob || blob.size === 0) {
+                    this.notificationService.sendError('Generated report is empty.');
+                    return;
+                }
+
                 const extension = reportExtension?.toLowerCase();
+                const objectUrl = URL.createObjectURL(
+                    new Blob([blob], {
+                        type: extension === 'pdf'
+                            ? 'application/pdf'
+                            : blob.type
+                    })
+                );
+
+                const link = document.createElement('a');
+                link.href = objectUrl;
 
                 if (extension === 'pdf') {
-
-                    // Open PDF in a new tab
-                    const objectUrl = URL.createObjectURL(blob);
-
-                    window.open(objectUrl, '_blank');
-
-                    // Revoke URL after some time
-                    setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
-
+                    link.target = '_blank';
+                    link.rel = 'noopener';
                 } else {
-
-                    // Download other report formats
-                    const fileName = reportFileName;
-
-                    const objectUrl = URL.createObjectURL(blob);
-
-                    const link = document.createElement('a');
-                    link.href = objectUrl;
-                    link.download = fileName;
-                    link.click();
-
-                    URL.revokeObjectURL(objectUrl);
+                    link.download = reportFileName;
                 }
 
-            },
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
 
-            error: async (error) => {
-                let errorMessage = 'Report generation failed.';
-
-                try {
-                    if (error.error instanceof Blob) {
-                        const responseText = await error.error.text();
-                        const responseJson = JSON.parse(responseText);
-
-                        errorMessage = responseJson.message || errorMessage;
-                    } else {
-                        errorMessage = error.error?.message || error.message || errorMessage;
-                    }
-                } catch {
-                    errorMessage = 'Unable to generate report. Please check the server log.';
-                }
-
-                this.notificationService.sendError(errorMessage);
+                setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
             }
         });
     }
-
 }

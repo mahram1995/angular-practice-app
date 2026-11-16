@@ -174,7 +174,8 @@ export class DataSourceListComponent extends FormBaseComponent implements OnInit
     testConnection(data) {
         let formData;
         if (data != null) {
-            formData = data
+            this.prepareDatabaseForm(data);
+            formData = this.dataSourceForm.value
         } else {
             formData = this.dataSourceForm.value
 

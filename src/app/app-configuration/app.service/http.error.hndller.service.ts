@@ -4,8 +4,8 @@ import { Injectable } from '@angular/core';
 import {
     HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse
 } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { from, Observable, throwError } from 'rxjs';
+import { catchError, retry, switchMap } from 'rxjs/operators';
 import { MessageService } from 'primeng/api'; // Optional: for showing toast
 import { Router } from '@angular/router';
 import { NotificationService } from './notification.service';
@@ -27,6 +27,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         next: HttpHandler
     ): Observable<HttpEvent<any>> {
 
+
         return next.handle(req).pipe(
             catchError((error: HttpErrorResponse) => {
 
@@ -38,6 +39,28 @@ export class ErrorInterceptor implements HttpInterceptor {
 
                     // Client-side error
                     errorMsg = `Client Error: ${error.error.message}`;
+
+                    this.messageService.sendError(errorMsg);
+                    return throwError(() => error);
+
+                } else if (error.error instanceof Blob) {
+
+                    // Handle Blob error response
+                    return from(error.error.text()).pipe(
+                        switchMap((responseText) => {
+
+                            try {
+                                const responseJson = JSON.parse(responseText);
+                                errorMsg = responseJson.message || errorMsg;
+                            } catch {
+                                errorMsg = responseText || errorMsg;
+                            }
+
+                            this.messageService.sendError(errorMsg);
+
+                            return throwError(() => error);
+                        })
+                    );
 
                 } else {
 
@@ -54,7 +77,6 @@ export class ErrorInterceptor implements HttpInterceptor {
 
                         case 401:
                             errorMsg = this.getErrorMessage(error);
-
                             this.authService.logoutByUser(null);
                             this.router.navigate(['/login']);
                             break;
@@ -64,7 +86,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                             break;
 
                         case 404:
-                            errorMsg = this.getErrorMessage(error) || 'Resource not found';
+                            errorMsg = this.getErrorMessage(error) || 'Resource not found.';
                             break;
 
                         case 500:
@@ -78,12 +100,12 @@ export class ErrorInterceptor implements HttpInterceptor {
                     }
                 }
 
-                // Display only the actual error message
                 this.messageService.sendError(errorMsg);
 
                 return throwError(() => error);
             })
         );
+
     }
 
     /**

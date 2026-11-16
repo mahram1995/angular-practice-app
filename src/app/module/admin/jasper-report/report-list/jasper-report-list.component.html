@@ -86,7 +86,7 @@
 
 
     <p-dialog header="Upload Reports & Images" [(visible)]="displayUploadDialog" [modal]="true"
-        [style]="{ width: '550px' }" [closable]="true" [resizable]="false" [draggable]="false">
+        [style]="{ width: '650px' }" [closable]="true" [resizable]="false" [draggable]="false">
 
         <div class="container mt-4">
 
@@ -99,10 +99,10 @@
                     </label>
 
                     <input type="file" id="reportFiles" class="form-control" (change)="onFilesSelected($event)"
-                        accept=".jrxml,.jasper,.png" multiple required />
+                        accept=".jrxml,.jasper,.png,.JPG,.jpg,.jpeg,.gif,.bmp,.svg" multiple required />
 
                     <small class="text-muted">
-                        Supported formats: JRXML, JASPER, PNG
+                        Supported formats: JRXML, JASPER, PNG, JPG, JPEG, GIF, BMP, SVG
                     </small>
                 </div>
 
