@@ -5,8 +5,8 @@
                 <p class="app-page-header">Jasper Reports</p>
             </div>
             <div class="app-button-group">
-                <input pInputText pSize="small" type="text"
-                    (input)="dt.filterGlobal($any($event.target).value, 'contains')" placeholder="Keyword Search" />
+                <input   style="width: 250px; height: 25px;" type="text"
+                (input)="dt.filterGlobal($any($event.target).value, 'contains')" placeholder="Keyword Search" />
 
                 <button (click)="op.show($event)"><i class="pi pi-search" style="font-size:10px"></i> Search</button>
                 <button (click)="addReport()"><i class="pi pi-plus" style="font-size:10px"></i> upload</button>
@@ -28,6 +28,7 @@
                     <tr style="font-size: 14px;">
                         <th style="min-width: 200px;" filterField="reportFileName">Report Name </th>
                         <th style="min-width: 150px;">Data Source</th>
+                        <th >Time Out Seconds</th>
                         <th>Create By</th>
                         <th>Create Date</th>
                         <th>Update By</th>
@@ -41,6 +42,7 @@
                     <tr [pSelectableRow]="data" style="font-size: 14px;">
                         <td>{{ data.reportFileName }}</td>
                         <td>{{ getDatasourceNameById(data.dataSource) }}</td>
+                        <td>{{ data.executionTimeoutSeconds }}</td>
                         <td>{{ data.createdBy }}</td>
                         <td>{{ data.createDate ? (data.createDate | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
                         <td>{{ data.updateBy }}</td>
@@ -147,6 +149,16 @@
                             {{option.label}}
                         </option>
                     </select>
+                </div>
+                <br>
+                <!-- Execution time  Source -->
+                <div class="mb-3">
+                    <label style="color: #1aa89c;" for="dataSource" class="form-label">
+                      Report Execution Time Out Seconds 
+                    </label>
+                    <input type="number" id="executionTimeoutSeconds" class="form-control"
+                        [(ngModel)]="executionTimeoutSeconds" name="executionTimeoutSeconds" 
+                        placeholder="Enter Execution Time Out Seconds" />
                 </div>
                 <br>
                 <!-- Buttons -->

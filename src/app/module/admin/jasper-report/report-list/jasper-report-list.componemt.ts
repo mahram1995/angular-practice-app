@@ -43,6 +43,7 @@ export class JasperReportListComponent extends FormBaseComponent implements OnIn
     dataSourceOptions: { label: string, value: string }[] = []
     reportHistoryLogList: any
     selectedDataSource: string = '';
+    executionTimeoutSeconds: number = 0;
 
     showReportHistoryContent = false
     selectedReprtFileName: any
@@ -195,6 +196,7 @@ export class JasperReportListComponent extends FormBaseComponent implements OnIn
         formData.append('reportFileName', this.reportFileName);
         formData.append('reportFile', this.selectedFile);
         formData.append('dataSource', this.selectedDataSource);
+        formData.append('executionTimeoutSeconds', this.executionTimeoutSeconds.toString());
 
 
 
@@ -273,7 +275,7 @@ export class JasperReportListComponent extends FormBaseComponent implements OnIn
 
         formData.append('reportFileName', this.reportFileName);
         formData.append('dataSource', this.selectedDataSource);
-
+        formData.append('executionTimeoutSeconds', this.executionTimeoutSeconds.toString());
         this.selectedFiles.forEach(file => {
             formData.append('files', file, file.name);
         });
@@ -376,6 +378,7 @@ export class JasperReportListComponent extends FormBaseComponent implements OnIn
         this.reportFileName = '';
         this.selectedFiles = [];
         this.selectedDataSource = '';
+        this.executionTimeoutSeconds=0;
 
 
         const fileInput = document.getElementById('reportFiles') as HTMLInputElement;
