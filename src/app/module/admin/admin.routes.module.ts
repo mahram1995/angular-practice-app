@@ -21,7 +21,6 @@ import { JasperReportComponent } from './daynamic-data-source-in-jasper-report/j
 
 
 
-
 export const routes: Routes = [
   {
     path: '',
@@ -56,7 +55,7 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./dynamic-report/dynamic-report.module').then(m => m.DynamicReportModule)
       },
-        {
+      {
         path: 'jasper-report',
         canActivate: [AuthGuard],
         loadChildren: () =>

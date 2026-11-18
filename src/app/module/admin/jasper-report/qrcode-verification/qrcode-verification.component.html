@@ -1,0 +1,64 @@
+<div class="app-page">
+    <div *ngIf="!isPublicVerify">
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left  ">
+                <p class="app-page-header">Verify the QR Code Token</p>
+            </div>
+            <div class="app-button-group">
+                <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <hr *ngIf="!isPublicVerify" style="margin-top: 5px; margin-bottom: 2px;">
+
+    <div *ngIf="!isPublicVerify">
+        <form (ngSubmit)="verifyQRCode(null)">
+
+            <div class="row app-row">
+                <div style=" width: 70%; margin: 0 auto;">
+                    <div>
+
+                        <input style="width: 100%;" type="text" id="securityToken" placeholder="Enter Security Token"
+                            [(ngModel)]="securityToken" name="securityToken">
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="row app-row">
+                <div style=" text-align: center; width: 70%; margin: 0 auto;">
+                    <button style="width: 120px; background-color: #067a71; color: white;" type="submit">Verify</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <br>
+    <div class="field-list" *ngIf="filteredFields.length > 0" style="margin-top: 20px; width: 60%; margin: 0 auto;">
+
+        <div *ngIf="filteredFields.length > 0"
+            style="background-color: green; color: white; height: 50px; text-align: center; font-size: 30px; padding-top: 15px;">
+            <label>Varificaiton Successfull</label>
+
+        </div>
+        <div class="field-row" *ngFor="let field of filteredFields">
+            <div class="field-label">
+                {{ field.label }}
+            </div>
+
+            <div class="field-colon">:</div>
+
+            <div class="field-value">
+                {{ field.value }}
+            </div>
+
+            <button type="button" class="copy-btn" title="Copy value" (click)="copyValue(field.value)">
+                <i class="pi pi-copy"></i>
+            </button>
+        </div>
+
+
+    </div>

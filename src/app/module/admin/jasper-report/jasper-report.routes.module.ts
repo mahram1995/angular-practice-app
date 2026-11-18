@@ -6,6 +6,7 @@ import { AuthGuard } from '../login/service/auth.guard';
 import { JasperReportLogComponent } from './jasper-report-log/jasper-report-log.componemt';
 import { JasperReportListComponent } from './report-list/jasper-report-list.componemt';
 import { DataSourceListComponent } from './data-source/data-source-list.componemt';
+import { QRCodeVerificationComponent } from './qrcode-verification/qrcode-verification.component';
 
 
 
@@ -15,11 +16,12 @@ import { DataSourceListComponent } from './data-source/data-source-list.componem
 export const routes: Routes = [
     {
         path: '',
-        canActivate: [AuthGuard],
+         canActivate: [AuthGuard],
         children: [
-            { path: 'report-list', component: JasperReportListComponent },
-            { path: 'data-source', component: DataSourceListComponent },
-            { path: 'report-log', component: JasperReportLogComponent },
+            { path: 'report-list', component: JasperReportListComponent, canActivate: [AuthGuard] },
+            { path: 'data-source', component: DataSourceListComponent, canActivate: [AuthGuard] },
+            { path: 'report-log', component: JasperReportLogComponent, canActivate: [AuthGuard] },
+            { path: 'qr-code-verification', component: QRCodeVerificationComponent, canActivate: [AuthGuard] },
             { path: '', redirectTo: "list", pathMatch: 'full' },
         ]
     },

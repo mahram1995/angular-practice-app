@@ -21,6 +21,7 @@ const TEST_DATA_SOURCE_CONNECTION = URL + 'admin/database-configuration/test-con
 
 const GET_JASPER_REPORT_AUDIT_LOG = URL + 'admin/jasper-reports/get-report-hist';
 const GET_JASPER_REPORT_AUDIT_CONTENT = URL + 'admin/jasper-reports/get-report-hist-content';
+const VERIFY_QR_CODE = URL + 'admin/jasper-reports/verify-qrcode';
 
 
 
@@ -48,6 +49,13 @@ export class JasperReportService extends BaseService {
 
     public getDataSource(urlSearchParams): Observable<any> {
         return this.http.get(GET_DATA_SOURCE, { params: urlSearchParams });
+    }
+    public verifyQRCode(securityToken: string): Observable<any> {
+        return this.httpclient.get(VERIFY_QR_CODE, {
+            params: {
+                securityToken: securityToken
+            }
+        });
     }
 
     public getReportHistoryList(urlSearchParams): Observable<any> {

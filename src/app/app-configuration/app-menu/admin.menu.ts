@@ -41,6 +41,7 @@ export const AdminMenuList = [
             { name: 'Data Source', url: '#', routerLink: "/admin/jasper-report/data-source" },
             { name: 'Upload Jasper', url: '#', routerLink: "/admin/jasper-report/report-list" },
             { name: 'Jasper Report Log', url: '#', routerLink: "/admin/jasper-report/report-log" },
+            { name: 'QR Code Verification', url: '#', routerLink: "/admin/jasper-report/qr-code-verification" },
         ]
     },
     {

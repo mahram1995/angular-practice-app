@@ -1,0 +1,51 @@
+.field-row {
+    display: grid;
+    grid-template-columns: 180px 15px minmax(0, 1fr) 30px;
+    align-items: center;
+    gap: 5px;
+    padding: 10px;
+    border-bottom: 1px solid var(--surface-border, #bcbec0);
+}
+
+.field-label {
+    font-weight: bold;
+    font-size: 14px;
+    color: rgb(13, 161, 206);
+}
+
+.field-colon {
+    font-weight: bold;
+    text-align: left;
+}
+
+.field-value {
+    font-size: 14px;
+
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+.copy-btn {
+    border: 0;
+    background: transparent;
+    color: var(--text-color-secondary, #64748b);
+    cursor: pointer;
+    padding: 5px;
+}
+
+@media (max-width: 600px) {
+    .field-row {
+        grid-template-columns: 115px 10px minmax(0, 1fr) 25px;
+        gap: 8px;
+        padding: 12px 8px;
+    }
+
+    .field-label {
+        font-size: 12px;
+    }
+
+    .field-value {
+        font-size: 13px;
+    }
+}

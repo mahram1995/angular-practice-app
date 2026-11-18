@@ -11,7 +11,7 @@ import { JasperReportService } from './service/JasperReportService';
 import { JasperReportListComponent } from './report-list/jasper-report-list.componemt';
 import { JasperReportLogComponent } from './jasper-report-log/jasper-report-log.componemt';
 import { DataSourceListComponent } from './data-source/data-source-list.componemt';
-import { ConfirmationService } from 'primeng/api';
+import { QRCodeVerificationComponent } from './qrcode-verification/qrcode-verification.component';
 
 
 @NgModule({
@@ -27,7 +27,9 @@ import { ConfirmationService } from 'primeng/api';
     declarations: [
         JasperReportListComponent,
         JasperReportLogComponent,
-        DataSourceListComponent
+        DataSourceListComponent,
+        QRCodeVerificationComponent
+        
 
     ],
 
