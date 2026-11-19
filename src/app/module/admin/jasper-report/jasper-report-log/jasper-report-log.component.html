@@ -18,7 +18,7 @@
         <div style="padding: 0px 5px 5px 5px">
             <p-table class=" table-hover table-responsive" #dataTable [value]="jasperReportAuditLogs" dataKey="id"
                 editMode="row" [paginator]="true" [rows]="20" [totalRecords]="totalRecords"
-                [(selection)]="selectedCustomer" styleClass="p-datatable-sm" (onRowSelect)="onRowSelect($event)"
+                styleClass="p-datatable-sm" 
                 selectionMode="single">
                 <ng-template pTemplate="header">
                     <tr style="font-size: 14px;">
@@ -73,7 +73,7 @@
     </div>
 
 
-    <p-overlayPanel #op [style]="{ width: '500px' }" showCloseIcon="true">
+    <p-overlayPanel #op [style]="{ width: '500px' }" showCloseIcon="true" >
         <form [formGroup]="searchForm">
             <div style="margin: 20px 10px 10px 10px;">
                 <div class="row app-row">
@@ -118,7 +118,7 @@
                         <div class="app-dropdown">
                             <label for="dataType">Status<span style="color: red;">*</span></label>
                             <p-dropdown [styleClass]="'app-dropdown-field '" [options]="reportStatus"
-                                formControlName="status" optionLabel="label" optionValue="value" appendTo="body"
+                                formControlName="status" optionLabel="label" optionValue="value" 
                                 placeholder="Select a status"></p-dropdown>
                         </div>
                     </div>
@@ -126,7 +126,7 @@
                 </div>
                 <br> <br>
                 <div style="text-align: center;">
-                    <button class="app-button" (click)="search(null);op.hide()">Search</button>
+                    <button type="button" class="app-button" (click)="search(null);op.hide()">Search</button>
                 </div>
             </div>
         </form>

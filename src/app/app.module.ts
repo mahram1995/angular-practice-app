@@ -40,6 +40,8 @@ import { AppShareModule } from './app-configuration/app-component/app-share-modu
 import { RouterModule, RouterStateSnapshot } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ResponseInterceptor } from './app-configuration/interceptor/response-Interceptor';
+import { Configuration } from './module/admin/app-configuration/service/app-configuration.domain';
+import { ConfiguraitonService } from './module/admin/app-configuration/service/app-configuration.service';
 
 
 
@@ -89,6 +91,7 @@ import { ResponseInterceptor } from './app-configuration/interceptor/response-In
     LoginService,
     AuthService,
     CommonService,
+    ConfiguraitonService,
     BaseService,
     MessageService,
     NotificationService,

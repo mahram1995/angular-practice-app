@@ -1,0 +1,98 @@
+<div class="app-page">
+    <div>
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left  ">
+                <p class="app-page-header">Global Configuration</p>
+            </div>
+            <div class="app-button-group">
+                 <button (click)="addNew()"><i class="pi pi pi-plus" style="font-size:12px"></i> Add</button>
+                <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+            </div>
+        </div>
+    </div>
+
+    <hr style="margin-top: 5px; margin-bottom: 2px;">
+    <div class="app-list">
+        <div style="padding: 0px 5px 5px 5px">
+            <p-table class=" table-hover table-responsive" #dataTable [value]="data" dataKey="id" editMode="row"
+                [paginator]="true" [rows]="rowPerPage" [totalRecords]="totalRecords" styleClass="p-datatable-sm">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Configuration Name</th>
+                        <th>Description</th>
+                        <th>Expected Value</th>
+                        <th>Actual Value</th>
+                        <th style="width: 60px;">Action</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-row let-editing="editing" let-ri="rowIndex">
+                    <tr [pEditableRow]="row" *ngIf="row.isVisible">
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.description }}</td>
+                        <td>{{ row.expectedValue }}</td>
+                        <td>{{ row.actualValue }}</td>
+                        <td style="text-align: center;"><button    [disabled]="!row.isChangeAble" class="app-button" (click)="onEdit(row)">
+                            <i class="pi pi-pencil" style="font-size:12px"></i></button></td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+    </div>
+
+
+    <p-dialog header="Motification of Configuratin" [(visible)]="isVisibleSearchDialog" [modal]="true"
+        [style]="{ width: '550px' } " [closable]="true" [resizable]="true" [draggable]="true" filter="true">
+        <form [formGroup]="configurationForm">
+            <div style="margin: 20px 10px 10px 10px;">
+                <div class="row app-row">
+                    <div class="col-sm-6  col-md-12 ">
+                        <div class="app-input-field">
+                            <input type="text" id="name" placeholder=" "  formControlName="name">
+                            <label for="name">Configuration Name</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row app-row">
+                    <div class="col-sm-6  col-md-12 ">
+                        <div class="app-input-field">
+                            <input type="text" id="description" placeholder=" " formControlName="description">
+                            <label for="description">Description </label>
+                        </div>
+                    </div>
+                </div>
+                 <div class="row app-row">
+                    <div class="col-sm-6  col-md-12 ">
+                        <div class="app-input-field">
+                            <input type="text" id="expectedValue" placeholder=" "  formControlName="expectedValue">
+                            <label for="expectedValue">Expected Value </label>
+                        </div>
+                    </div>
+                </div>
+                 <div class="row app-row">
+                    <div class="col-sm-6  col-md-12 ">
+                        <div class="app-input-field">
+                            <input type="text" id="actualValue" placeholder=" " formControlName="actualValue">
+                            <label for="actualValue">Actual Value </label>
+                             <div
+                                    *ngIf="configurationForm.controls['actualValue']?.errors && configurationForm.controls['actualValue']?.touched">
+                                    <div class="error-message"
+                                        [hidden]="!configurationForm.controls['actualValue']?.errors?.required">
+                                        Value is  required.</div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <div style="text-align: center;">
+                    <button class="app-button" (click)="updateConfiguration()">{{isEdit==true? 'Update':'Save'}}</button>
+                </div>
+            </div>
+        </form>
+    </p-dialog>
+
+</div>

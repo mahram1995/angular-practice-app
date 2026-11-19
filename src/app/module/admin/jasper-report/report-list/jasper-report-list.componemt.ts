@@ -312,9 +312,6 @@ export class JasperReportListComponent extends FormBaseComponent implements OnIn
             .subscribe({
                 next: (response: Blob) => {
                     this.downloadFile(response, data.reportFileName);
-                },
-                error: (error) => {
-                    console.error('Report download failed:', error);
                 }
             });
     }

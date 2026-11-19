@@ -70,7 +70,7 @@ export const AdminMenuList = [
         icon: 'pi pi-qrcode',
         active: false,
         submenu: [
-            { name: 'Employee Configuration', url: '#', routerLink: "/admin/document-lodge" },
+            { name: 'Global Configuration', url: '#', routerLink: "/admin/app-configuration" },
             { name: 'User Configuration', url: '#', routerLink: "/admin/document-lodge" },
         ]
     },

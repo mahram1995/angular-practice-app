@@ -18,6 +18,7 @@ import { CreateUdfFormComponent } from './udf/form/create-udf-form';
 import { GenerateReportUiFormComponent } from './udf/generate-report-ui/generate-report-ui.form';
 import { ReportListComponent } from './udf/report-list/report-list.componemt';
 import { JasperReportComponent } from './daynamic-data-source-in-jasper-report/jasper-report-demo';
+import { AppConfiguraitonComponent } from './app-configuration/list/app-configuration.component';
 
 
 
@@ -36,6 +37,7 @@ export const routes: Routes = [
       { path: 'user-details', component: UserRegistrationViewComponent, canActivate: [AuthGuard], },
       { path: 'demo-panel-manue', component: PanelMenuControlledDemo, canActivate: [AuthGuard], },
       { path: 'command', component: CommandListComponent, canActivate: [AuthGuard], },
+      { path: 'app-configuration', component: AppConfiguraitonComponent, canActivate: [AuthGuard], },
       { path: 'udf-list', component: UdfListComponent, canActivate: [AuthGuard], },
       { path: 'create-udf', component: CreateUdfFormComponent, canActivate: [AuthGuard] },
       { path: 'run-report', component: GenerateReportUiFormComponent, canActivate: [AuthGuard] },

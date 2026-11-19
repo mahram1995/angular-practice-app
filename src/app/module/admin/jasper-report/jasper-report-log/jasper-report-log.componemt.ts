@@ -5,47 +5,37 @@ import { Table, TableLazyLoadEvent } from 'primeng/table';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotificationService } from '../../../../app-configuration/app.service/notification.service';
 import { CommonService } from '../../../../app-configuration/app.service/common.service';
-import { OverlayPanel } from 'primeng/overlaypanel';
-import { UDFDomain } from '../../udf/service/udf.domain';
+
 import { UDFService } from '../../udf/service/udf.service';
 import { JasperReportService } from '../service/JasperReportService';
 import { FormBaseComponent } from '../../../../app-configuration/app-component/base-component/form.base.component';
 import { JasperReportAuditDomain } from '../service/jaspser.report.domain';
 import { HttpResponse } from '@angular/common/http';
 
-const DETAILS_UI = 'admin/udf-details';
-const CORRECTION_UI = 'admin/create-udf';
 @Component({
     selector: 'jasper-report-log',
     templateUrl: './jasper-report-log.component.html',
 })
 export class JasperReportLogComponent extends FormBaseComponent implements OnInit {
-    required_field: any = {
-        userName: 'code',
-        password: 'name',
-        email: 'module',
-    };
+  
     jasperReportAuditLogs: JasperReportAuditDomain[] = [];
     urlSearchMap: Map<string, any> = new Map();
     totalRecords: number = 0;
     searchForm: FormGroup;
-    udfForm: FormGroup;
     totalPages: number;
     rowPerPage: number = 15
     pageNumber: number = 0;
-    cols: any[] = []
-    selectedCustomer: any;
+   
 
-    isVisibleSearchDialog: boolean = false
-    displayUploadDialog: boolean = false;
 
     reportFileName: string = '';
     selectedFile: File | null = null;
     reportStatus: { label: string, value: string }[] = [
-        { label: 'Select Status', value: '' },
+        { label: 'Select Status', value: ''},
         { label: 'SUCCESS', value: 'SUCCESS' },
-        { label: 'PROCESSING', value: 'PROCESSING' },
-        { label: 'NOT-SUCCESS', value: 'NOT-SUCCESS' }
+        { label: 'PROCESSING', value: 'PROCESSING'},
+        { label: 'NOT-SUCCESS', value: 'NOT-SUCCESS'},
+        { label: 'TIMEOUT', value: 'TIMEOUT'}
     ]
     selectedDataSource: string = '';
 
@@ -68,10 +58,6 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
     ngOnInit() {
         this.fetchJasperReportLog(new Map())
         this.prepareSearchForm();
-    }
-
-    addReport() {
-        this.displayUploadDialog = true;
     }
 
     prepareSearchForm() {
@@ -112,6 +98,8 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
         } else if (data.status == 'NOT-SUCCESS') {
             fileName = reportName + '_error.txt';
 
+        } else{
+            fileName = reportName + '_time_out.txt';
         }
 
 
@@ -124,7 +112,6 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
                 next: (response: HttpResponse<Blob>) => {
 
                     const blob = response.body;
-
                     if (!blob || blob.size === 0) {
 
                         this.notificationService.sendError(
@@ -135,9 +122,6 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
 
                     const fileURL = window.URL.createObjectURL(blob);
 
-
-
-
                     const link = document.createElement('a');
 
                     link.href = fileURL;
@@ -147,52 +131,17 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
                     link.click();
                     link.remove();
 
-
                     // Release memory
                     setTimeout(() => {
                         window.URL.revokeObjectURL(fileURL);
                     }, 60000);
-
-                },
-
-                error: async (error) => {
-
-                    let errorMessage = 'Report data not found.';
-
-                    try {
-
-                        if (error.error instanceof Blob) {
-
-                            const responseText = await error.error.text();
-                            const responseJson = JSON.parse(responseText);
-
-                            errorMessage = responseJson.message || errorMessage;
-
-                        } else {
-
-                            errorMessage =
-                                error.error?.message ||
-                                error.message ||
-                                errorMessage;
-                        }
-
-                    } catch {
-
-                        errorMessage =
-                            'Unable to generate report. Please check the server log.';
-                    }
-
-                    this.notificationService.sendError(errorMessage);
                 }
             })
         }
         else {
             this.jasperReportService.getJasperReportError(this.urlSearchMap).subscribe({
-
                 next: (response: HttpResponse<Blob>) => {
-
                     const blob = response.body;
-
                     if (!blob || blob.size === 0) {
                         this.notificationService.sendError(
                             'Report data not found.'
@@ -210,71 +159,14 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
                     link.click();
                     link.remove();
 
-
                     // Release memory
                     setTimeout(() => {
                         window.URL.revokeObjectURL(fileURL);
                     }, 60000);
-
-                },
-
-                error: async (error) => {
-
-                    let errorMessage = 'Report data not found.';
-
-                    try {
-
-                        if (error.error instanceof Blob) {
-
-                            const responseText = await error.error.text();
-                            const responseJson = JSON.parse(responseText);
-
-                            errorMessage = responseJson.message || errorMessage;
-
-                        } else {
-
-                            errorMessage =
-                                error.error?.message ||
-                                error.message ||
-                                errorMessage;
-                        }
-
-                    } catch {
-
-                        errorMessage =
-                            'Unable to generate report. Please check the server log.';
-                    }
-
-                    this.notificationService.sendError(errorMessage);
                 }
             })
 
         };
-    }
-
-
-
-    private getFileName(blob: Blob): string {
-
-        switch (blob.type) {
-            case 'application/pdf':
-                return 'report.pdf';
-
-            case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-                return 'report.xlsx';
-
-            case 'application/vnd.ms-excel':
-                return 'report.xls';
-
-            case 'text/csv':
-                return 'report.csv';
-
-            case 'text/html':
-                return 'report.html';
-
-            default:
-                return 'report';
-        }
     }
 
 
@@ -297,23 +189,13 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
         this.fetchJasperReportLog(this.urlSearchMap)
         this.prepareSearchForm()
     }
-    onRowsChange(event: any) {
-        this.rowPerPage = event.rows;
-        this.fetchJasperReportLog(null)
-    }
+  
 
     onPageChange(event: any) {
         this.pageNumber = event.first / event.rows;
         const pageSize = event.rows;
     }
-    onRowSelect(event: any) {
-        console.log(event.data);
-        // this.router.navigate(['admin/dynamic-report/view-report'], {
-        //     queryParams: {
-        //         udfProfileId: event.data.id
-        //     }
-        // })
-    }
+
 
 
     back() { this.location.back() }
@@ -349,76 +231,5 @@ export class JasperReportLogComponent extends FormBaseComponent implements OnIni
         });
     }
 
-
-    onFileSelected(event: any): void {
-
-        const file = event.target.files?.[0];
-
-        if (file) {
-            this.selectedFile = file;
-
-            // Automatically set file name
-            if (!this.reportFileName) {
-                this.reportFileName = file.name;
-            }
-        }
-    }
-
-    saveReport(): void {
-
-        if (!this.selectedFile) {
-            alert('Please select a report file.');
-            return;
-        }
-
-        if (!this.reportFileName) {
-            alert('Please enter report file name.');
-            return;
-        }
-
-        const formData = new FormData();
-
-        formData.append('reportFileName', this.reportFileName);
-        formData.append('reportFile', this.selectedFile);
-        formData.append('dataSource', this.selectedDataSource);
-
-
-
-        let urlSearchParams = this.getQueryParamMapForApprovalFlow(null, this.taskId, DETAILS_UI, CORRECTION_UI);
-        this.jasperReportService.saveJasperReport(formData, urlSearchParams)
-            .subscribe({
-                next: (response) => {
-
-                    console.log('Report saved:', response);
-
-                    this.notificationService.sendSuccess('Report saved successfully.', null);
-
-                    this.resetForm();
-                    this.refresh();
-                },
-
-                error: (error) => {
-
-                    console.error('Error saving report:', error);
-
-                    this.notificationService.sendError('Failed to save report.');
-                }
-            });
-
-
-    }
-
-    resetForm(): void {
-
-        this.reportFileName = '';
-        this.selectedFile = null;
-
-        const fileInput =
-            document.getElementById('reportFile') as HTMLInputElement;
-
-        if (fileInput) {
-            fileInput.value = '';
-        }
-    }
 
 }

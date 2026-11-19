@@ -226,12 +226,6 @@ export class QRCodeVerificationComponent extends FormBaseComponent implements On
         this.location.back();
     }
 
-    refresh(): void {
-
-        if (this.securityToken) {
-            this.verifyQRCode(this.securityToken);
-        }
-
-    }
+   
 
 }

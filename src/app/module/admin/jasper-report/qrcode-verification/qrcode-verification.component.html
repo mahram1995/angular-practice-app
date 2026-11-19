@@ -5,7 +5,6 @@
                 <p class="app-page-header">Verify the QR Code Token</p>
             </div>
             <div class="app-button-group">
-                <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
                 <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
             </div>
         </div>
@@ -37,28 +36,47 @@
         </form>
     </div>
     <br>
-    <div class="field-list" *ngIf="filteredFields.length > 0" style="margin-top: 20px; width: 60%; margin: 0 auto;">
+   <div class="field-list" *ngIf="filteredFields.length > 0">
 
-        <div *ngIf="filteredFields.length > 0"
-            style="background-color: green; color: white; height: 50px; text-align: center; font-size: 30px; padding-top: 15px;">
-            <label>Varificaiton Successfull</label>
-
-        </div>
-        <div class="field-row" *ngFor="let field of filteredFields">
-            <div class="field-label">
-                {{ field.label }}
-            </div>
-
-            <div class="field-colon">:</div>
-
-            <div class="field-value">
-                {{ field.value }}
-            </div>
-
-            <button type="button" class="copy-btn" title="Copy value" (click)="copyValue(field.value)">
-                <i class="pi pi-copy"></i>
-            </button>
+    <!-- Verification Success Header -->
+    <div class="verification-header">
+        <div class="success-icon">
+            <i class="pi pi-check-circle"></i>
         </div>
 
+        <div class="success-text">
+            <div class="success-title">Verification Successful</div>
+            <div class="success-subtitle">Customer information is verified</div>
+        </div>
+    </div>
+
+    <!-- Customer Information -->
+    <div class="field-row" *ngFor="let field of filteredFields">
+
+        <div class="field-label">
+            {{ field.label }}
+        </div>
+
+        <div class="field-colon">:</div>
+
+        <div class="field-value">
+            {{ field.value }}
+        </div>
+
+        <button
+            type="button"
+            class="copy-btn"
+            title="Copy value"
+            aria-label="Copy value"
+            (click)="copyValue(field.value)">
+
+            <i class="pi pi-copy"></i>
+        </button>
 
     </div>
+
+    <div class="verification-footer">
+        Verified information provided by the issuing system.
+    </div>
+
+</div>
