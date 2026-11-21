@@ -4,7 +4,7 @@ import { HttpService } from "../../../../app-configuration/app.service/http.serv
 import { BASE_URL } from "../../../../app-configuration/app.service/environment";
 import { HttpClient, HttpResponse } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { DatabaseConfig } from "./jaspser.report.domain";
+import { DatabaseConfig, JasperReportScheduler } from "./jaspser.report.domain";
 
 const URL = BASE_URL
 
@@ -23,6 +23,13 @@ const GET_JASPER_REPORT_AUDIT_LOG = URL + 'admin/jasper-reports/get-report-hist'
 const GET_JASPER_REPORT_AUDIT_CONTENT = URL + 'admin/jasper-reports/get-report-hist-content';
 const VERIFY_QR_CODE = URL + 'admin/jasper-reports/verify-qrcode';
 
+const GET_SCHEDULE_DATA = URL + 'admin/jasper-report-scheduler/get-all';
+const CHECK_SCHEDULE_NOW = URL + 'admin/jasper-report-scheduler/check-report-schedule';
+const SAVE_REPORT_SCHEDULER = URL + 'admin/jasper-report-scheduler/save';
+const UPDATE_REPORT_SCHEDULER = URL + 'admin/jasper-report-scheduler/update';
+const GET_SCHEDULER_EXECUTION_LOG = URL + 'admin/jasper-report-scheduler/get-schedule-execution-log';
+
+
 
 
 @Injectable()
@@ -38,6 +45,12 @@ export class JasperReportService extends BaseService {
     public saveJasperReport(data: FormData, urlSearchParams): Observable<any> {
         return this.http.post(SAVE_JASPER_REPORT, data, urlSearchParams);
     }
+    public updateScheduler(data: JasperReportScheduler, urlSearchParams): Observable<any> {
+        return this.http.put(UPDATE_REPORT_SCHEDULER, data, urlSearchParams);
+    }
+    public createScheduler(data: JasperReportScheduler, urlSearchParams): Observable<any> {
+        return this.http.post(SAVE_REPORT_SCHEDULER, data, urlSearchParams);
+    }
 
     public getJasperReports(urlSearchParams): Observable<any> {
         return this.http.get(GET_JASPER_REPORTS, { params: urlSearchParams });
@@ -50,6 +63,22 @@ export class JasperReportService extends BaseService {
     public getDataSource(urlSearchParams): Observable<any> {
         return this.http.get(GET_DATA_SOURCE, { params: urlSearchParams });
     }
+
+    public fetchExecutionLogs(urlSearchParams): Observable<any> {
+        return this.http.get(GET_SCHEDULER_EXECUTION_LOG, { params: urlSearchParams });
+    }
+    public getReportScsedule(urlSearchParams): Observable<any> {
+        return this.http.get(GET_SCHEDULE_DATA, { params: urlSearchParams });
+    }
+
+    public checkSchedule(urlSearchParams): Observable<any> {
+        return this.http.get(CHECK_SCHEDULE_NOW, {
+            params: urlSearchParams,
+            responseType: 'text'
+        });
+    }
+
+
     public verifyQRCode(securityToken: string): Observable<any> {
         return this.httpclient.get(VERIFY_QR_CODE, {
             params: {

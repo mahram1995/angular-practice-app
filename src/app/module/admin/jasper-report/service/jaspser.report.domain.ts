@@ -25,3 +25,64 @@ export class DatabaseConfig {
     password: string;
     driverClass: string;
 }
+
+export class JasperReportScheduler {
+  id?: number;
+
+  // Report
+  reportFileName: string;
+  reportFormat: string;
+  reportParameters?: Record<string, any>;
+
+  // Email
+  emailAddressTo: string;
+  emailAddressCc?: string;
+  isSendEmailSeparately: boolean;
+  emailSubject?: string;
+  emailBody?: string;
+  emailSignature?: string;
+
+  // Schedule
+  scheduleTime: string;
+  scheduleFrequency: ScheduleFrequency;
+  scheduleDate?: number;
+  scheduleDay?: string;
+  scheduleMonth?: number;
+  scheduleWeekCycle?: number;
+
+  // Validity
+  startDate: string;
+  endDate?: string;
+  isActive: boolean;
+}
+export enum ScheduleFrequency {
+  DAILY = 'DAILY',
+  WEEKLY = 'WEEKLY',
+  MONTHLY = 'MONTHLY',
+  QUARTERLY = 'QUARTERLY',
+  HALF_YEARLY = 'HALF_YEARLY',
+  YEARLY = 'YEARLY'
+}
+
+export const SCHEDULE_FREQUENCY_OPTIONS = [
+  { label: 'Daily', value: ScheduleFrequency.DAILY },
+  { label: 'Weekly', value: ScheduleFrequency.WEEKLY },
+  { label: 'Monthly', value: ScheduleFrequency.MONTHLY },
+  { label: 'Quarterly', value: ScheduleFrequency.QUARTERLY },
+  { label: 'Half Yearly', value: ScheduleFrequency.HALF_YEARLY },
+  { label: 'Yearly', value: ScheduleFrequency.YEARLY }
+];
+
+export class JasperReportScheduleExecution {
+    id: number;
+    schedulerId: number;
+    reportFileName: string;
+    executionStartTime: string;
+    executionEndTime: string;
+    executionDurationMs: number;
+    executionStatus: string;
+    errorMessage: string;
+    emailSent: boolean;
+    emailSentTo: string;
+    reportFormat: string;
+}

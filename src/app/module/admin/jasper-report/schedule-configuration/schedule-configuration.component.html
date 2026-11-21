@@ -1,0 +1,471 @@
+<div class="app-page">
+    <div>
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left  ">
+                <p class="app-page-header">Jasper Report Scheduler</p>
+            </div>
+            <div class="app-button-group">
+
+                <!-- <button (click)="op.show($event)"><i class="pi pi-search" style="font-size:10px"></i> Search</button> -->
+                <button (click)="addDataSource()"><i class="pi pi-plus" style="font-size:10px"></i> Add New</button>
+                <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+            </div>
+        </div>
+    </div>
+
+    <hr style="margin-top: 5px; margin-bottom: 2px;">
+    <div class="app-list">
+        <div style="padding: 0px 5px 5px 5px">
+            <p-table class="table-hover table-responsive" #dataTable [value]="schedulerConfigList" dataKey="id"
+                [paginator]="true" [rows]="20" [totalRecords]="totalRecords" styleClass="p-datatable-sm">
+                <ng-template pTemplate="header">
+                    <tr style="font-size: 14px;">
+                        <th>ID</th>
+                        <th style="min-width: 220px;">Report Name</th>
+                        <th>Format</th>
+                        <th>Frequency</th>
+                        <th>Time</th>
+                        <th style="min-width: 120px;">Schedule Details</th>
+                        <th style="min-width: 200px;">Email To</th>
+                        <th style="min-width: 80px;">Start Date</th>
+                        <th style="min-width: 140px;">Next Run</th>
+                        <th style="min-width: 140px;">Last Run</th>
+                        <th style="min-width: 80px;">Status</th>
+                        <th>Active</th>
+                        <th style="min-width: 100px;">Actions</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-data let-ri="rowIndex">
+                    <tr [pSelectableRow]="data" style="font-size: 14px;">
+                        <td>{{ data.id }}</td>
+                        <td>{{ data.reportFileName }}</td>
+                        <td>{{ data.reportFormat | uppercase }}</td>
+                        <td>{{ data.scheduleFrequency }}</td>
+                        <td>{{ data.scheduleTime }}</td>
+                        <td> {{ getScheduleDetails(data) }}</td>
+                        <td> {{ data.emailAddressTo }}</td>
+                        <td> {{ data.startDate | date:'dd-MMM-yyyy' }}</td>
+                        <td> {{ convertDateTime(data.nextRunAt) | date:'dd-MMM-yyyy hh:mm a' }} </td>
+                        <td> {{ convertDateTime(data.lastRunAt) | date:'dd-MMM-yyyy hh:mm a' }} </td>
+                        <td>
+                            <span [ngClass]="{
+                            'text-success': data.lastStatus === 'SUCCESS',
+                            'text-danger': data.lastStatus === 'FAILED',
+                            'text-warning': data.lastStatus === 'RUNNING',
+                            'text-secondary': data.lastStatus === 'PENDING' }">
+                                {{ data.lastStatus || 'PENDING' }}
+                            </span>
+                        </td>
+                        <td style="text-align: center;">
+                            <i class="pi"
+                                [ngClass]="data.isActive ? 'pi-check-circle text-success' : 'pi-times-circle text-danger'">
+                            </i>
+                        </td>
+                        <td style="text-align: center; white-space: nowrap;">
+                            <button class="app-button" title="Edit" (click)="editRow(data)">
+                                <i class="pi pi-pencil"></i>
+                            </button>
+                            <button class="app-button" title="Delete" (click)="deleteRow(data)">
+                                <i class="pi pi-trash"></i>
+                            </button>
+                            <button class="app-button" title="Delete" (click)="runNow(data.id)">
+                               Run
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="13" style="text-align: center;">
+                            No scheduled reports found.
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+    </div>
+
+
+    <p-overlayPanel #op [style]="{ width: '350px' }" showCloseIcon="true">
+
+        <form [formGroup]="searchForm">
+            <div style="margin: 20px 10px 10px 10px;">
+                <div class="row app-row">
+                    <div class="col-sm-6  col-md-12 ">
+                        <div class="app-input-field">
+                            <input type="text" id="reportName" placeholder=" " formControlName="reportName">
+                            <label for="reportName">Data source Name</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="text-align: center;">
+                    <button class="app-button" (click)="search(null);op.hide()">Search</button>
+                </div>
+            </div>
+        </form>
+    </p-overlayPanel>
+
+
+    <p-dialog header="Create a New Schedule" [(visible)]="displayNewScheduleDialog" [modal]="true"
+        [style]="{ width: '60%', maxWidth: '97vw' }" [closable]="true" [resizable]="false" [draggable]="false">
+
+        <div class="container mt-3">
+            <form [formGroup]="schedulerConfigForm" (ngSubmit)="saveConfiguration()">
+
+                <div class="row app-row">
+                    <div class="col-sm-6">
+                        <div class="app-input-field">
+                            <input type="text" id="reportFileName" placeholder=" " formControlName="reportFileName"
+                                [ngClass]="{'is-invalid': isInvalidForm('reportFileName')}">
+                            <label for="reportFileName">Report File Name <span style="color: red;">*</span></label>
+
+                            <div *ngIf="isInvalidForm('reportFileName')">
+                                <div class="error-message"
+                                    *ngIf="schedulerConfigForm.get('reportFileName')?.errors?.['required']">
+                                    Report file name is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="app-dropdown">
+                            <label for="reportFormat">Report Foramt<span style="color: red;">*</span></label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('schedulerConfigForm','reportFormat') ? 'is-invalid' : '')"
+                                [options]="reportFormatList" formControlName="reportFormat" optionLabel="label"
+                                optionValue="value" appendTo="body" placeholder="'Select a format" [filter]="true"
+                                [resetFilterOnHide]='true'>
+                            </p-dropdown>
+
+                            <div *ngIf="isInvalidForm('reportFormat')">
+                                <div class="error-message" *ngIf="isRequired('schedulerConfigForm', 'reportFormat')">
+                                    Format is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row app-row">
+                   <div class="col-sm-12">
+                        <div class="app-input-textarea">
+                            <label for="reportParameters">Parameters<span style="color: red;">*</span></label>
+                            <textarea style="width: 100%;" id="reportParameters" rows="3" placeholder=" "
+                                formControlName="reportParameters"></textarea>
+                            <div *ngIf="isInvalidForm('emailAddressTo')">
+                                <div  style="color: red; font-size: 12px;"
+                                    *ngIf="schedulerConfigForm.get('reportParameters')?.errors?.['required']">
+                                    Paremeter is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ================= EMAIL CONFIGURATION ================= -->
+
+                <div class="row app-row">
+                    <div class="col-sm-6">
+                        <div class="app-input-textarea">
+                            <label for="emailAddressTo">Email To <span style="color: red;">*</span></label>
+                            <textarea style="width: 100%;" id="emailBody" rows="3" placeholder=" "
+                                formControlName="emailAddressTo"></textarea>
+                            <div *ngIf="isInvalidForm('emailAddressTo')">
+                                <div  style="color: red; font-size: 12px;"
+                                    *ngIf="schedulerConfigForm.get('emailAddressTo')?.errors?.['required']">
+                                    Recipient email is required.
+                                </div>
+                                <div  style="color: red; font-size: 12px;"
+                                    *ngIf="schedulerConfigForm.get('emailAddressTo')?.errors?.['emailList']">
+                                    Please provide valid email addresses separated by comma or semicolon.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="app-input-textarea">
+                            <label for="emailAddressCc">Email CC</label>
+                            <textarea style="width: 100%;" id="emailBody" rows="3" placeholder=" "
+                                formControlName="emailAddressCc"></textarea>
+
+                            <div *ngIf="isInvalidForm('emailAddressCc')">
+                                <div  style="color: red; font-size: 12px;"
+                                    *ngIf="schedulerConfigForm.get('emailAddressCc')?.errors?.['emailList']">
+                                    Please provide valid CC email addresses separated by comma or semicolon.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row app-row">
+                    <div class="col-sm-6">
+                        <label class="d-flex align-items-center">
+                            <input type="checkbox" formControlName="isSendEmailSeparately">
+                            <span class="ml-2"> Send email separately to each recipient</span>
+                        </label>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="d-flex align-items-center">
+                            <input type="checkbox" formControlName="isActive">
+                            <span class="ml-2">Schedule Active</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="row app-row">
+                    <div class="col-sm-12">
+                        <div class="app-input-field">
+                            <input type="text" id="emailSubject" placeholder=" " formControlName="emailSubject">
+                            <label for="emailSubject">Email Subject<span style="color: red;">*</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row app-row">
+                    <div class="col-sm-12">
+                        <div class="app-input-textarea">
+                            <label for="emailBody">Email Body</label>
+                            <textarea style="width: 100%;" id="emailBody" rows="4" placeholder=" "
+                                formControlName="emailBody"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row app-row">
+                    <div class="col-sm-12">
+                        <div class="app-input-textarea">
+                            <label for="emailSignature">Email Signature</label>
+                            <textarea style="width: 100%;" id="emailSignature" rows="4" placeholder=" "
+                                formControlName="emailSignature"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ================= SCHEDULE CONFIGURATION ================= -->
+                <h2>Schedule Configuration</h2>
+
+                <div class="row app-row">
+                    <div class="col-sm-6">
+                        <div class="app-dropdown">
+                            <label for="scheduleFrequency">Frequency Type<span style="color: red;">*</span></label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('schedulerConfigForm','scheduleFrequency') ? 'is-invalid' : '')"
+                                [options]="scheduleFrequency" formControlName="scheduleFrequency" optionLabel="label"
+                                optionValue="value" appendTo="body" placeholder="Select a frequency" [filter]="true"
+                                [resetFilterOnHide]='true'>
+                            </p-dropdown>
+
+                            <div *ngIf="isInvalidForm('scheduleFrequency')">
+                                <div class="error-message"
+                                    *ngIf="isRequired('schedulerConfigForm', 'scheduleFrequency')">
+                                    Frequency Type is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="app-input-field">
+                            <input type="time" id="scheduleTime" placeholder=" " formControlName="scheduleTime"
+                                [ngClass]="{'is-invalid': isInvalidForm('scheduleTime')}">
+                            <label for="scheduleTime">Schedule Time <span style="color: red;">*</span></label>
+
+                            <div *ngIf="isInvalidForm('scheduleTime')">
+                                <div class="error-message"
+                                    *ngIf="schedulerConfigForm.get('scheduleTime')?.errors?.['required']">
+                                    Schedule time is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WEEKLY: DAY SELECTION -->
+                <div class="row app-row" *ngIf="schedulerConfigForm.get('scheduleFrequency')?.value === 'WEEKLY'">
+                    <div class="col-sm-12">
+                        <label style="color: #1aa89c;" class="mb-2">Schedule Days <span
+                                class="text-danger">*</span></label>
+                        <div class="d-flex flex-wrap" style="gap: 12px;">
+                            <label *ngFor="let day of weekDays" class="d-flex align-items-center">
+                                <input type="checkbox" [checked]="isWeekDaySelected(day.value)"
+                                    (change)="toggleWeekDay(day.value, $event)">
+                                <span class="ml-1">{{ day.label }}</span>
+                            </label>
+                        </div>
+                        <div style="color: red; font-size: 12px;" *ngIf="isInvalidForm('scheduleDay')">
+                            Select at least one day of the week.
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- MONTHLY: DAY OF MONTH -->
+                <div class="row app-row" *ngIf="schedulerConfigForm.get('scheduleFrequency')?.value === 'MONTHLY'">
+
+                    <div class="col-sm-6">
+                        <div class="app-dropdown">
+                            <label for="scheduleDate">Schedule Date <span style="color: red;">*</span></label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('schedulerConfigForm','scheduleDate') ? 'is-invalid' : '')"
+                                [options]="monthDays" formControlName="scheduleDate" optionLabel="label"
+                                optionValue="value" appendTo="body" placeholder="Select a day" [filter]="true"
+                                [resetFilterOnHide]='true'>
+                            </p-dropdown>
+
+                            <div *ngIf="isInvalidForm('scheduleDate')">
+                                <div class="error-message" *ngIf="isRequired('schedulerConfigForm', 'scheduleDate')">
+                                    Day of Month is requird.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- QUARTERLY / HALF-YEARLY: ANCHOR MONTH + DAY -->
+                <div class="row app-row"
+                    *ngIf="['QUARTERLY', 'HALF_YEARLY'].includes(schedulerConfigForm.get('scheduleFrequency')?.value)">
+
+                    <div class="col-sm-6">
+                        <div class="app-dropdown">
+                            <label for="scheduleMonth">Anchor Month <span style="color: red;">*</span></label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('schedulerConfigForm','scheduleMonth') ? 'is-invalid' : '')"
+                                [options]="months" formControlName="scheduleMonth" optionLabel="label"
+                                optionValue="value" appendTo="body" placeholder="Select a anchor month" [filter]="true"
+                                [resetFilterOnHide]='true'>
+                            </p-dropdown>
+
+                            <div *ngIf="isInvalidForm('scheduleMonth')">
+                                <div class="error-message" *ngIf="isRequired('schedulerConfigForm', 'scheduleMonth')">
+                                    Anchor month is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="app-dropdown">
+                            <label for="scheduleDate">Schedule Date <span style="color: red;">*</span></label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('schedulerConfigForm','scheduleDate') ? 'is-invalid' : '')"
+                                [options]="monthDays" formControlName="scheduleDate" optionLabel="label"
+                                optionValue="value" appendTo="body" placeholder="Select a day " [filter]="true"
+                                [resetFilterOnHide]='true'>
+                            </p-dropdown>
+
+                            <div *ngIf="isInvalidForm('scheduleDate')">
+                                <div class="error-message" *ngIf="isRequired('schedulerConfigForm', 'scheduleDate')">
+                                    Day of Month is requird.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- YEARLY: MONTH + DAY -->
+                <div class="row app-row" *ngIf="schedulerConfigForm.get('scheduleFrequency')?.value === 'YEARLY'">
+
+                    <div class="col-sm-6">
+                        <div class="app-dropdown">
+                            <label for="scheduleMonth">Month <span style="color: red;">*</span></label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('schedulerConfigForm','scheduleMonth') ? 'is-invalid' : '')"
+                                [options]="months" formControlName="scheduleMonth" optionLabel="label"
+                                optionValue="value" appendTo="body" placeholder="Select a day " [filter]="true"
+                                [resetFilterOnHide]='true'>
+                            </p-dropdown>
+
+                            <div *ngIf="isInvalidForm('scheduleMonth')">
+                                <div class="error-message" *ngIf="isRequired('schedulerConfigForm', 'scheduleMonth')">
+                                    Month is requird.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="app-dropdown">
+                            <label for="scheduleDate">Schedule Date <span style="color: red;">*</span></label>
+                            <p-dropdown
+                                [styleClass]="'app-dropdown-field ' + (isInvalid('schedulerConfigForm','scheduleDate') ? 'is-invalid' : '')"
+                                [options]="monthDays" formControlName="scheduleDate" optionLabel="label"
+                                optionValue="value" appendTo="body" placeholder="Select a day " [filter]="true"
+                                [resetFilterOnHide]='true'>
+                            </p-dropdown>
+
+                            <div *ngIf="isInvalidForm('scheduleDate')">
+                                <div class="error-message" *ngIf="isRequired('schedulerConfigForm', 'scheduleDate')">
+                                    Day of Month is requird.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <!-- START DATE -->
+                <div class="row app-row">
+                    <div class="col-sm-6">
+                        <div class="app-input-field">
+                            <input type="date" id="startDate" placeholder=" " formControlName="startDate"
+                                [ngClass]="{'is-invalid': isInvalidForm('startDate')}">
+                            <label for="startDate">Start Date<span style="color: red;">*</span></label>
+
+                            <div *ngIf="isInvalidForm('startDate')">
+                                <div class="error-message"
+                                    *ngIf="schedulerConfigForm.get('startDate')?.errors?.['required']">
+                                    Start date is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- END DATE -->
+                    <div class="col-sm-6">
+                        <div class="app-input-field">
+                            <input type="date" id="endDate" placeholder=" " formControlName="endDate"
+                                [ngClass]="{'is-invalid': isInvalidForm('endDate')}">
+                            <label for="endDate">End Date (Optional)</label>
+
+                            <div *ngIf="isInvalidForm('endDate')">
+                                <div class="error-message"
+                                    *ngIf="schedulerConfigForm.get('endDate')?.errors?.['dateRange']">
+                                    End date must be equal to or after start date.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- FORM ACTIONS -->
+                <div class="row app-row">
+                    <div class="col-sm-6">
+                        <button type="button" class="app-button" (click)="displayNewScheduleDialog = false">
+                            Cancel
+                        </button>
+                    </div>
+
+                    <div class="col-sm-6" style="text-align: right;">
+                        <button type="submit" class="app-button" [disabled]="isSaving">
+                            {{ isEditMode ? 'Update Schedule' : 'Save Schedule' }}
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </p-dialog>
+
+
+</div>

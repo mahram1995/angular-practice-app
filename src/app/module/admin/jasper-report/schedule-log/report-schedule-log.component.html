@@ -1,0 +1,99 @@
+<div class="app-page">
+    <div>
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left  ">
+                <p class="app-page-header">Report Shceduler Log</p>
+            </div>
+            <div class="app-button-group">
+                <button (click)="op.show($event)"><i class="pi pi-search" style="font-size:10px"></i> Search</button>
+                <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+            </div>
+        </div>
+    </div>
+
+    <hr style="margin-top: 5px; margin-bottom: 2px;">
+    <div class="app-list">
+        <div style="padding: 0px 5px 5px 5px">
+            <p-table class="table-hover table-responsive" #dataTable [value]="schedulerLogs" dataKey="id"
+                [paginator]="true" [rows]="20" [totalRecords]="totalRecords" styleClass="p-datatable-sm">
+
+                <ng-template pTemplate="header">
+                    <tr style="font-size: 14px;">
+                        <th style="min-width: 60px;">ID</th>
+                        <th style="min-width: 10px;">Scheduler ID</th>
+                        <th style="min-width: 200px;">Report File Name</th>
+                        <th style="min-width: 160px;">Start Time</th>
+                        <th style="min-width: 160px;">End Time</th>
+                        <th >Duration (ms)</th>
+                        <th >Status</th>
+                        <th>Email Sent</th>
+                        <th >Email Sent To</th>
+                        <th >Format</th>
+                        <th >Error Message</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-data let-editing="editing" let-ri="rowIndex">
+                    <tr [pSelectableRow]="data" style="font-size: 14px;">
+                        <td>{{ data.id }}</td>
+                        <td>{{ data.schedulerId }}</td>
+                        <td>{{ data.reportFileName }}</td>
+                    
+                        <td> {{ convertDateTime(data.executionStartTime) | date:'dd-MMM-yyyy hh:mm a' }} </td>
+                        <td> {{ convertDateTime(data.executionEndTime) | date:'dd-MMM-yyyy hh:mm a' }} </td>
+                        <td>{{ data.executionDurationMs | number }}</td>
+                        <td>
+                            <span [ngClass]="{
+                    'text-success': data.executionStatus === 'SUCCESS',
+                    'text-danger': data.executionStatus === 'FAILED',
+                    'text-warning': data.executionStatus === 'PENDING'
+                }">
+                                {{ data.executionStatus }}
+                            </span>
+                        </td>
+                        <td>{{ data.emailSent ? 'Yes' : 'No' }}</td>
+                        <td>{{ data.emailSentTo }}</td>
+                        <td>{{ data.reportFormat }}</td>
+                        <td>
+                            <span *ngIf="data.errorMessage; else noError" [title]="data.errorMessage">
+                                {{ data.errorMessage }}
+                            </span>
+                            <ng-template #noError>—</ng-template>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="11" style="text-align: center;">
+                            No scheduler execution history found.
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </div>
+
+
+    <p-overlayPanel #op [style]="{ width: '350px' }" showCloseIcon="true">
+        <form [formGroup]="searchForm">
+            <div style="margin: 20px 10px 10px 10px;">
+                <div class="row app-row">
+                    <div class="col-sm-6  col-md-12 ">
+                        <div class="app-input-field">
+                            <input type="text" id="reportName" placeholder=" " formControlName="reportName">
+                            <label for="reportName">Data source Name</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="text-align: center;">
+                    <button class="app-button" (click)="search(null);op.hide()">Search</button>
+                </div>
+            </div>
+        </form>
+    </p-overlayPanel>
+
+</div>

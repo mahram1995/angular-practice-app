@@ -84,6 +84,24 @@
     font-weight: 500;
 }
 
+.app-input-textarea {
+    font-size: 12px;
+    transform: translate(0, 2px);
+
+}
+
+.app-input-textarea label {
+    font-size: 13px;
+    color: #1aa89c;
+    font-weight: 500;
+}
+
+.app-input-textarea textarea {
+    width: 100%;
+    padding-left: 2px;
+    border-bottom: 1px solid #737272;
+    transition: border-color 0.2s ease;
+}
 
 .app-input-field {
     font-size: 12px;
@@ -499,7 +517,7 @@ table>tr>th {
 
 
 
-.p-datatable.p-datatable-sm .p-datatable-thead >tr>th {
+.p-datatable.p-datatable-sm .p-datatable-thead>tr>th {
     padding-top: 4px !important;
     font-size: 13px !important;
     border: 1px solid rgb(190, 188, 188) !important;

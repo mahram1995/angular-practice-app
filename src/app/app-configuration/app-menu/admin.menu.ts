@@ -40,7 +40,10 @@ export const AdminMenuList = [
         submenu: [
             { name: 'Data Source', url: '#', routerLink: "/admin/jasper-report/data-source" },
             { name: 'Upload Jasper', url: '#', routerLink: "/admin/jasper-report/report-list" },
+            { name: 'QR Configuration', url: '#', routerLink: "/admin/jasper-report/qrcode-configuration" },
+            { name: 'Schedule Configuration', url: '#', routerLink: "/admin/jasper-report/schedule-configuration" },
             { name: 'Jasper Report Log', url: '#', routerLink: "/admin/jasper-report/report-log" },
+            { name: 'Schedule Running Log', url: '#', routerLink: "/admin/jasper-report/schedule-log" },
             { name: 'QR Code Verification', url: '#', routerLink: "/admin/jasper-report/qr-code-verification" },
         ]
     },
