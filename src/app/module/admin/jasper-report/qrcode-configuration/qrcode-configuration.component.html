@@ -1,0 +1,160 @@
+<div class="app-page">
+    <div>
+        <div style="padding: 0px 10px 0px 10px;">
+            <div style="float:left  ">
+                <p class="app-page-header">Data Source List</p>
+            </div>
+            <div class="app-button-group">
+
+                <button (click)="op.show($event)"><i class="pi pi-search" style="font-size:10px"></i> Search</button>
+                <button (click)="addDataSource()"><i class="pi pi-plus" style="font-size:10px"></i> Add New</button>
+                <button (click)="refresh()"><i class="pi pi pi-refresh" style="font-size:12px"></i> Refresh</button>
+                <button (click)="back()"><i class="pi pi-angle-left" style="font-size:12px"></i> Back</button>
+            </div>
+        </div>
+    </div>
+
+    <hr style="margin-top: 5px; margin-bottom: 2px;">
+    <div class="app-list">
+        <div style="padding: 0px 5px 5px 5px">
+            <p-table #dt dataKey="id" class="  table-responsive" [value]="jasperReport" dataKey="id" editMode="row"
+                [paginator]="true" [rows]="20" [totalRecords]="totalRecords" styleClass="p-datatable-sm"
+                [globalFilterFields]="[  'reportFileName', 'createdBy','dataSource'  ]">
+                <ng-template pTemplate="header">
+                    <tr style="font-size: 14px;">
+                        <th style="min-width: 200px;" filterField="reportFileName">Report Name </th>
+                        <th style="min-width: 150px;">Data Source</th>
+                        <th>Time Out Seconds</th>
+                        <th>Create By</th>
+                        <th>Create Date</th>
+                        <th>Update By</th>
+                        <th>Update Date</th>
+
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-data let-ri="rowIndex">
+                    <tr [pSelectableRow]="data" style="font-size: 14px;">
+                        <td>{{ data.reportFileName }}</td>
+                        <td>{{ getDatasourceNameById(data.dataSource) }}</td>
+                        <td>{{ data.executionTimeoutSeconds }}</td>
+                        <td>{{ data.createdBy }}</td>
+                        <td>{{ data.createDate ? (data.createDate | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
+                        <td>{{ data.updateBy }}</td>
+                        <td>{{ data.updateDate ? (data.updateDate | date:'dd-MMM-yyyy hh:mm:ss a') : '-' }}</td>
+
+                    </tr>
+                </ng-template>
+            </p-table>
+
+        </div>
+    </div>
+
+
+    <p-overlayPanel #op [style]="{ width: '350px' }" showCloseIcon="true">
+
+        <form [formGroup]="searchForm">
+            <div style="margin: 20px 10px 10px 10px;">
+                <div class="row app-row">
+                    <div class="col-sm-6  col-md-12 ">
+                        <div class="app-input-field">
+                            <input type="text" id="reportName" placeholder=" " formControlName="reportName">
+                            <label for="reportName">Data source Name</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="text-align: center;">
+                    <button class="app-button" (click)="search(null);op.hide()">Search</button>
+                </div>
+            </div>
+        </form>
+    </p-overlayPanel>
+
+    <p-dialog header="Create a New Data Source" [(visible)]="displayDialog" [modal]="true" [style]="{ width: '500px'} "
+        [closable]="true" [resizable]="false" [draggable]="false" filter="true">
+
+        <div class="container mt-4">
+
+            <form [formGroup]="qrcodeForm">
+                <div style="margin: 20px 10px 10px 10px;">
+                    <div class="row app-row">
+                        <div class="col-sm-6  col-md-12 ">
+                            <div class="app-dropdown">
+                                <label for="name">Report Name<span style="color: red;">*</span></label>
+                                <p-dropdown
+                                    [styleClass]="'app-dropdown-field ' + (isInvalid('schedulerConfigForm','name') ? 'is-invalid' : '')"
+                                    [options]="allJasperOptions" formControlName="reportFileName" optionLabel="label"
+                                    optionValue="value" appendTo="body" placeholder="Select a frequency" [filter]="true"
+                                    [resetFilterOnHide]='true'>
+                                </p-dropdown>
+                                <div *ngIf="isInvalid('schedulerConfigForm','reportFileName')">
+                                    <div class="error-message" *ngIf="isRequired('schedulerConfigForm', 'name')">
+                                       Report is requird required.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row app-row">
+                        <div class="col-sm-6  col-md-12 ">
+                             <div class="app-input-textarea">
+                            <label for="sqlQueryForQrCode">SQ for QR code data</label>
+                            <textarea style="width: 100%;" id="emailBody" rows="5" placeholder=" "
+                                formControlName="sqlQueryForQrCode"></textarea>
+                            <div *ngIf="isInvalid('schedulerConfigForm','sqlQueryForQrCode')">
+                                <div  style="color: red; font-size: 12px;"
+                                    *ngIf="qrcodeForm.get('sqlQueryForQrCode')?.errors?.['sqlQueryForQrCode']">
+                                   please 
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="row app-row">
+                        <div class="col-sm-6  col-md-12 ">
+                            <div class="app-input-field">
+                                <input autocomplete="off" type="number" id="maxQrcodeScanLimit" placeholder=" "
+                                    formControlName="maxQrcodeScanLimit" >
+                                <label for="username">Maximum QR scan limit </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row app-row">
+                        <div class="col-sm-6  col-md-12 ">
+                           <div class="app-input-field">
+                                <input autocomplete="off" type="number" id="daysOfQrCodeExpiry" placeholder=" "
+                                    formControlName="daysOfQrCodeExpiry" >
+                                <label for="username">QR code expire days </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row app-row">
+                        <div class="col-sm-6  col-md-12 ">
+                           <div class="app-input-field-checkbox">
+                                <input autocomplete="off" type="checkbox" id="isQrcodeEnable" placeholder=" "
+                                    formControlName="isQrcodeEnable" >
+                                <label for="username">Is Active </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br> <br>
+                    <div class="row app-row">
+                        
+                        <div class="col-sm-6  col-md-6">
+                            <div style="text-align: center;">
+                                <button class="app-button" (click)="saveQrcodeInfo();op.hide()">Save Data</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+
+    </p-dialog>
+
+</div>

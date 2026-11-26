@@ -9,6 +9,7 @@ import { DataSourceListComponent } from './data-source/data-source-list.componem
 import { QRCodeVerificationComponent } from './qrcode-verification/qrcode-verification.component';
 import { ScheduleConfigurationComponent } from './schedule-configuration/schedule-configuration.componemt';
 import { JasperReportScheduleLogComponent } from './schedule-log/report-schedule-log.componemt';
+import { QrcodeConfigurationComponent } from './qrcode-configuration/qrcode-configuration.componemt';
 
 
 
@@ -23,7 +24,7 @@ export const routes: Routes = [
             { path: 'report-list', component: JasperReportListComponent, canActivate: [AuthGuard] },
             { path: 'data-source', component: DataSourceListComponent, canActivate: [AuthGuard] },
             { path: 'report-log', component: JasperReportLogComponent, canActivate: [AuthGuard] },
-            { path: 'qrcode-configuration', component: JasperReportListComponent, canActivate: [AuthGuard] },
+            { path: 'qrcode-configuration', component: QrcodeConfigurationComponent, canActivate: [AuthGuard] },
             { path: 'schedule-configuration', component: ScheduleConfigurationComponent, canActivate: [AuthGuard] },
             { path: 'schedule-log', component: JasperReportScheduleLogComponent, canActivate: [AuthGuard] },
             { path: 'qr-code-verification', component: QRCodeVerificationComponent, canActivate: [AuthGuard] },

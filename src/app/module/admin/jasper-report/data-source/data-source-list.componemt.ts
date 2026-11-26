@@ -34,8 +34,6 @@ export class DataSourceListComponent extends FormBaseComponent implements OnInit
     totalPages: number;
     rowPerPage: number = 15
     pageNumber: number = 0;
-    cols: any[] = []
-    selectedCustomer: any;
 
     isVisibleSearchDialog: boolean = false
     displayUploadDialog: boolean = false;
@@ -116,27 +114,6 @@ export class DataSourceListComponent extends FormBaseComponent implements OnInit
         }
         this.fetchDataSourceList(this.urlSearchMap)
         this.prepareSearchForm()
-    }
-
-
-
-
-    onRowsChange(event: any) {
-        this.rowPerPage = event.rows;
-        this.fetchDataSourceList(null)
-    }
-
-    onPageChange(event: any) {
-        this.pageNumber = event.first / event.rows;
-        const pageSize = event.rows;
-    }
-    onRowSelect(event: any) {
-        console.log(event.data);
-        // this.router.navigate(['admin/dynamic-report/view-report'], {
-        //     queryParams: {
-        //         udfProfileId: event.data.id
-        //     }
-        // })
     }
 
 

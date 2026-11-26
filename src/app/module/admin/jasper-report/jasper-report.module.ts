@@ -14,6 +14,7 @@ import { DataSourceListComponent } from './data-source/data-source-list.componem
 import { QRCodeVerificationComponent } from './qrcode-verification/qrcode-verification.component';
 import { ScheduleConfigurationComponent } from './schedule-configuration/schedule-configuration.componemt';
 import { JasperReportScheduleLogComponent } from './schedule-log/report-schedule-log.componemt';
+import { QrcodeConfigurationComponent } from './qrcode-configuration/qrcode-configuration.componemt';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { JasperReportScheduleLogComponent } from './schedule-log/report-schedule
         DataSourceListComponent,
         QRCodeVerificationComponent,
         ScheduleConfigurationComponent,
-        JasperReportScheduleLogComponent
+        JasperReportScheduleLogComponent,
+        QrcodeConfigurationComponent
         
 
     ],

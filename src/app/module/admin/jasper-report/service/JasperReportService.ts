@@ -9,7 +9,7 @@ import { DatabaseConfig, JasperReportScheduler } from "./jaspser.report.domain";
 const URL = BASE_URL
 
 const SAVE_JASPER_REPORT = URL + 'admin/jasper-reports';
-const GET_JASPER_REPORTS = URL + 'admin/jasper-reports';
+const SAVE_JASPER_QRCODE_FONFIGURATIN = URL + 'admin/jasper-reports/save-qrcode-info';
 const GET_JASPER_REPORTS_CONTENT = URL + 'admin/jasper-reports/get-report-content';
 const GET_JASPER_REPORTS_LOG = URL + 'admin/jasper-reports-audit/get-audit-log';
 const GET_JASPER_REPORTS_DATA = URL + 'admin/jasper-reports-audit/get-report';
@@ -28,7 +28,7 @@ const CHECK_SCHEDULE_NOW = URL + 'admin/jasper-report-scheduler/check-report-sch
 const SAVE_REPORT_SCHEDULER = URL + 'admin/jasper-report-scheduler/save';
 const UPDATE_REPORT_SCHEDULER = URL + 'admin/jasper-report-scheduler/update';
 const GET_SCHEDULER_EXECUTION_LOG = URL + 'admin/jasper-report-scheduler/get-schedule-execution-log';
-
+const GET_JASPER_REPORTS = URL + 'admin/jasper-reports/get-jasper-reports'
 
 
 
@@ -97,6 +97,9 @@ export class JasperReportService extends BaseService {
 
     public saveDataSource(data: DatabaseConfig, urlSearchParams): Observable<any> {
         return this.http.post(SAVE_DATA_SOURCE, data, urlSearchParams);
+    }
+    public saveQrcodeConfiguraiton(data: DatabaseConfig, urlSearchParams): Observable<any> {
+        return this.http.put(SAVE_JASPER_QRCODE_FONFIGURATIN, data, urlSearchParams);
     }
 
     public updateDataSource(data: DatabaseConfig, urlSearchParams: Map<string, any>): Observable<any> {
